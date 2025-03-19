@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://images.unsplash.com; script-src 'self' 'unsafe-inline';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://images.unsplash.com; script-src 'self' 'unsafe-inline';">
     <title>LiftMate - Workout Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -5037,32 +5037,32 @@
                     <form id="meal-plan-form">
                         <div class="form-group">
                             <label for="meal-plan-name">Plan Name</label>
-                            <input type="text" id="meal-plan-name" placeholder="e.g., Bulking Plan, Cutting Plan, Maintenance" required>
+                            <input type="text" id="meal-plan-name" name="meal-plan-name" placeholder="e.g., Bulking Plan, Cutting Plan, Maintenance" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="meal-plan-description">Description</label>
-                            <textarea id="meal-plan-description" rows="2" placeholder="Describe your meal plan"></textarea>
+                            <textarea id="meal-plan-description" name="meal-plan-description" rows="2" placeholder="Describe your meal plan"></textarea>
                         </div>
                         
                         <div class="form-group">
                             <label for="calorie-target">Daily Calorie Target</label>
-                            <input type="number" id="calorie-target" min="500" step="50" required>
+                            <input type="number" id="calorie-target" name="calorie-target" min="500" step="50" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="protein-target">Protein Target (g)</label>
-                            <input type="number" id="protein-target" min="0" required>
+                            <input type="number" id="protein-target" name="protein-target" min="0" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="carbs-target">Carbs Target (g)</label>
-                            <input type="number" id="carbs-target" min="0" required>
+                            <input type="number" id="carbs-target" name="carbs-target" min="0" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="fat-target">Fat Target (g)</label>
-                            <input type="number" id="fat-target" min="0" required>
+                            <input type="number" id="fat-target" name="fat-target" min="0" required>
                         </div>
                         
                         <div class="meal-plan-buttons">
@@ -5079,37 +5079,38 @@
                     <span class="close-nested-modal">&times;</span>
                     <h3>Add Food Item</h3>
                     <div class="food-search">
-                        <input type="text" id="food-search-input" placeholder="Search for a food...">
+                        <label for="food-search-input" class="sr-only">Search for food</label>
+                        <input type="text" id="food-search-input" name="food-search-input" placeholder="Search for a food...">
                         <button id="search-food-btn"><i class="fas fa-search"></i></button>
                     </div>
                     <div id="food-search-results"></div>
                     
                     <form id="add-food-form">
-                        <input type="hidden" id="food-meal-type">
+                        <input type="hidden" id="food-meal-type" name="food-meal-type">
                         <div class="form-group">
                             <label for="food-name">Food Name</label>
-                            <input type="text" id="food-name" required>
+                            <input type="text" id="food-name" name="food-name" required>
                         </div>
                         <div class="form-group">
                             <label for="food-serving">Serving Size</label>
-                            <input type="text" id="food-serving" placeholder="e.g., 1 cup, 100g" required>
+                            <input type="text" id="food-serving" name="food-serving" placeholder="e.g., 1 cup, 100g" required>
                         </div>
                         <div class="form-group">
                             <label for="food-calories">Calories</label>
-                            <input type="number" id="food-calories" min="0" required>
+                            <input type="number" id="food-calories" name="food-calories" min="0" required>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="food-protein">Protein (g)</label>
-                                <input type="number" id="food-protein" min="0" step="0.1" required>
+                                <input type="number" id="food-protein" name="food-protein" min="0" step="0.1" required>
                             </div>
                             <div class="form-group">
                                 <label for="food-carbs">Carbs (g)</label>
-                                <input type="number" id="food-carbs" min="0" step="0.1" required>
+                                <input type="number" id="food-carbs" name="food-carbs" min="0" step="0.1" required>
                             </div>
                             <div class="form-group">
                                 <label for="food-fat">Fat (g)</label>
-                                <input type="number" id="food-fat" min="0" step="0.1" required>
+                                <input type="number" id="food-fat" name="food-fat" min="0" step="0.1" required>
                             </div>
                         </div>
                         <button type="submit">Add Food</button>
