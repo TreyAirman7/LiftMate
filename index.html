@@ -5526,28 +5526,7 @@
                 }
             });
             
-            // Create diagnostic button
-            const diagnosticBtn = document.createElement('button');
-            diagnosticBtn.id = 'storage-diagnostic';
-            diagnosticBtn.innerHTML = '<i class="fas fa-stethoscope"></i> Storage Diagnostic';
-            diagnosticBtn.style.position = 'fixed';
-            diagnosticBtn.style.bottom = '10px';
-            diagnosticBtn.style.right = '10px';
-            diagnosticBtn.style.zIndex = '9999';
-            diagnosticBtn.style.padding = '5px 10px';
-            diagnosticBtn.style.fontSize = '12px';
-            diagnosticBtn.style.border = 'none';
-            diagnosticBtn.style.borderRadius = '4px';
-            diagnosticBtn.style.backgroundColor = 'var(--primary-color, #00d0ff)';
-            diagnosticBtn.style.color = 'black';
-            diagnosticBtn.style.cursor = 'pointer';
-            diagnosticBtn.style.opacity = '0.7';
-            
-            diagnosticBtn.addEventListener('click', function() {
-                runStorageDiagnostic();
-            });
-            
-            document.body.appendChild(diagnosticBtn);
+            // Diagnostic button removed as requested
         }
         
         // Run diagnostic on localStorage
