@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline';">
-    <title>Ultimate Fitness Tracker</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://images.unsplash.com; script-src 'self' 'unsafe-inline';">
+    <title>LiftMate - Workout Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -3886,7 +3886,7 @@
     
     <div class="container">
         <header>
-            <h1 id="app-title">Fitness Tracker</h1>
+            <h1 id="app-title">LiftMate</h1>
             <p class="subtitle" id="app-subtitle">Track your workouts, monitor progress, achieve goals</p>
         </header>
         
@@ -5173,6 +5173,29 @@
         // Set today's date as default
         document.getElementById('workout-date').valueAsDate = new Date();
         
+        // Initialize app on load
+        function initializeApp() {
+            console.log("Initializing LiftMate app...");
+            
+            // Clear any potentially corrupted data
+            try {
+                const themeValue = localStorage.getItem('preferred-theme');
+                if (themeValue && (themeValue === 'theme-dark' || themeValue === 'theme-nature' || 
+                                 themeValue === 'theme-futuristic' || themeValue === 'theme-retro')) {
+                    // Theme is valid, keep it
+                } else if (themeValue) {
+                    // Theme is invalid, reset it
+                    console.log("Resetting invalid theme value:", themeValue);
+                    localStorage.removeItem('preferred-theme');
+                }
+            } catch (e) {
+                console.error("Error processing theme:", e);
+            }
+            
+            // Initialize required localStorage keys if missing
+            initializeRequiredKeys();
+        }
+        
         // Theme switcher functionality
         const htmlElement = document.documentElement;
         const themeButtons = document.querySelectorAll('.theme-button');
@@ -5182,25 +5205,30 @@
         // Theme data
         const themes = {
             'theme-dark': {
-                title: 'PULSE FITNESS',
+                title: 'LIFTMATE',
                 subtitle: 'Track your workouts • Monitor progress • Achieve goals'
             },
             'theme-nature': {
-                title: 'Nature Fitness',
+                title: 'LiftMate Naturals',
                 subtitle: 'Embrace nature, nurture your body, track your journey'
             },
             'theme-futuristic': {
-                title: 'NEURO-FIT',
+                title: 'LIFTMATE AI',
                 subtitle: 'Advanced Workout Analytics & Tracking System'
             },
             'theme-retro': {
-                title: 'RAD FITNESS',
+                title: 'LIFT-O-MATIC',
                 subtitle: '/// Totally awesome workout tracker ///'
             }
         };
         
         // Set active theme
         function setActiveTheme(themeId) {
+            // Default to dark theme if the themeId is invalid
+            if (!themes[themeId]) {
+                themeId = 'theme-dark';
+            }
+            
             // Remove all theme classes
             htmlElement.classList.remove('theme-dark', 'theme-nature', 'theme-futuristic', 'theme-retro');
             
@@ -5217,8 +5245,8 @@
             
             // Update title and subtitle
             const themeData = themes[themeId];
-            appTitle.textContent = themeData.title;
-            appSubtitle.textContent = themeData.subtitle;
+            if (appTitle) appTitle.textContent = themeData.title;
+            if (appSubtitle) appSubtitle.textContent = themeData.subtitle;
             
             // Save theme preference to localStorage
             safeSaveItem('preferred-theme', themeId);
@@ -5605,9 +5633,17 @@
         function safeGetItem(key, defaultValue = []) {
             try {
                 const data = localStorage.getItem(key);
+                // Handle theme differently - it's not JSON but a string
+                if (key === 'preferred-theme') {
+                    return data || defaultValue;
+                }
                 return data ? JSON.parse(data) : defaultValue;
             } catch (error) {
                 console.error(`Error getting ${key} from localStorage:`, error);
+                // If there was a parsing error, try to recover by clearing bad data
+                if (error instanceof SyntaxError) {
+                    localStorage.removeItem(key);
+                }
                 return defaultValue;
             }
         }
@@ -5615,7 +5651,12 @@
         // Helper to safely save data to localStorage
         function safeSaveItem(key, data) {
             try {
-                localStorage.setItem(key, JSON.stringify(data));
+                // Special handling for theme which should not be JSON stringified
+                if (key === 'preferred-theme') {
+                    localStorage.setItem(key, data);
+                } else {
+                    localStorage.setItem(key, JSON.stringify(data));
+                }
                 return true;
             } catch (error) {
                 console.error(`Error saving ${key} to localStorage:`, error);
@@ -5628,6 +5669,32 @@
         const isStorageAvailable = checkLocalStorage();
 
         // Workout data storage
+        // Initialize all required storage keys
+        function initializeRequiredKeys() {
+            const requiredKeys = [
+                'workouts', 
+                'workout-templates', 
+                'template-history', 
+                'personal-records', 
+                'exercise-library', 
+                'nutrition-data', 
+                'meal-plans'
+            ];
+            
+            requiredKeys.forEach(key => {
+                if (localStorage.getItem(key) === null) {
+                    const defaultValue = key === 'template-history' || key === 'nutrition-data' ? {} : [];
+                    safeSaveItem(key, defaultValue);
+                }
+            });
+        }
+        
+        // Initialize storage on load
+        initializeRequiredKeys();
+        
+        // Call main initialization function
+        document.addEventListener('DOMContentLoaded', initializeApp);
+        
         let workouts = safeGetItem('workouts', []);
         let goals = safeGetItem('goals', []);
         let templates = safeGetItem('workout-templates', []);
