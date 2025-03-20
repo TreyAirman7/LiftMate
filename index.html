@@ -245,6 +245,82 @@
             </div>
         </div>
         
+        <!-- Progress Pics Tab -->
+        <div class="tab-content" id="progress-pics">
+            <div class="container">
+                <div class="section-header">
+                    <div class="title-wrapper">
+                        <div class="title-icon"><i class="fas fa-camera"></i></div>
+                        <h2>Progress Pictures</h2>
+                    </div>
+                    <button class="add-button" id="add-progress-pic">
+                        <i class="fas fa-plus"></i> Add Photo
+                    </button>
+                </div>
+                
+                <div class="progress-pics-container">
+                    <div class="date-filter">
+                        <button class="date-filter-button active" data-filter="all">All Time</button>
+                        <button class="date-filter-button" data-filter="week">This Week</button>
+                        <button class="date-filter-button" data-filter="month">This Month</button>
+                        <button class="date-filter-button" data-filter="year">This Year</button>
+                    </div>
+                    
+                    <div class="pics-grid" id="progress-pics-grid">
+                        <!-- Progress pics will be added here dynamically -->
+                    </div>
+                    
+                    <div class="empty-state hidden" id="no-pics-message">
+                        <i class="fas fa-camera empty-icon"></i>
+                        <p>No progress pictures yet. Add your first photo to start tracking your visual progress!</p>
+                    </div>
+                </div>
+                
+                <div class="comparison-container">
+                    <div class="section-header">
+                        <div class="title-wrapper">
+                            <div class="title-icon"><i class="fas fa-arrows-alt-h"></i></div>
+                            <h2>Before & After Comparison</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-options">
+                        <div class="comparison-selection">
+                            <label for="before-date">Before:</label>
+                            <select id="before-date">
+                                <option value="">Select date...</option>
+                                <!-- Dates will be added here dynamically -->
+                            </select>
+                        </div>
+                        
+                        <div class="comparison-selection">
+                            <label for="after-date">After:</label>
+                            <select id="after-date">
+                                <option value="">Select date...</option>
+                                <!-- Dates will be added here dynamically -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-view">
+                        <div class="comparison-image" id="before-image">
+                            <div class="image-placeholder">
+                                <i class="fas fa-image"></i>
+                                <p>Select a "before" date</p>
+                            </div>
+                        </div>
+                        
+                        <div class="comparison-image" id="after-image">
+                            <div class="image-placeholder">
+                                <i class="fas fa-image"></i>
+                                <p>Select an "after" date</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Mobile Navigation -->
         <div class="mobile-nav">
             <button class="nav-button active" data-tab="current-workout">
@@ -266,6 +342,10 @@
             <button class="nav-button" data-tab="history">
                 <i class="fas fa-history"></i>
                 <span>History</span>
+            </button>
+            <button class="nav-button" data-tab="progress-pics">
+                <i class="fas fa-camera"></i>
+                <span>Pics</span>
             </button>
         </div>
     </div>
@@ -612,6 +692,90 @@
         </div>
     </div>
     
+    <!-- Progress Pic Modal -->
+    <div class="modal" id="progress-pic-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Progress Picture</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="progress-pic-form">
+                    <div class="form-group">
+                        <label for="pic-date">Date</label>
+                        <input type="date" id="pic-date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pic-category">Category</label>
+                        <select id="pic-category" required>
+                            <option value="front">Front View</option>
+                            <option value="back">Back View</option>
+                            <option value="side">Side View</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pic-notes">Notes (optional)</label>
+                        <textarea id="pic-notes" placeholder="Add any notes about this picture..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pic-upload">Upload Picture</label>
+                        <input type="file" id="pic-upload" accept="image/*" capture="camera" required>
+                        <div class="upload-preview">
+                            <img id="upload-preview-img" src="" alt="Preview" class="hidden">
+                            <div id="upload-placeholder" class="upload-placeholder">
+                                <i class="fas fa-camera"></i>
+                                <p>Tap to take a photo or select from your camera roll</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="button secondary" id="cancel-progress-pic">Cancel</button>
+                        <button type="submit" class="button primary" id="save-progress-pic">Save Photo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Pic Detail Modal -->
+    <div class="modal" id="pic-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="pic-detail-date">Date</h2>
+                <div class="modal-actions">
+                    <button class="icon-button" id="delete-pic">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="close-modal">&times;</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="pic-detail-image">
+                    <img id="pic-detail-img" src="" alt="Progress Picture">
+                </div>
+                
+                <div class="pic-detail-info">
+                    <div class="info-item">
+                        <span class="info-label">Category:</span>
+                        <span id="pic-detail-category">Front View</span>
+                    </div>
+                    
+                    <div class="info-item" id="pic-detail-notes-container">
+                        <span class="info-label">Notes:</span>
+                        <p id="pic-detail-notes"></p>
+                    </div>
+                </div>
+                
+                <button class="button secondary full-width" id="back-to-pics">Back to All Pictures</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
@@ -625,6 +789,7 @@
     <script src="js/progress.js"></script>
     <script src="js/history.js"></script>
     <script src="js/weight.js"></script>
+    <script src="js/progress-pics.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
