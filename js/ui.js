@@ -97,7 +97,20 @@ const UI = (() => {
      * @param {HTMLElement} modal - Modal element to close
      */
     const closeModal = (modal) => {
-        modal.classList.remove('active');
+        if (!modal) {
+            console.error('Attempted to close a null or undefined modal');
+            return;
+        }
+        
+        // Handle both direct element and string ID
+        const modalElement = typeof modal === 'string' ? document.getElementById(modal) : modal;
+        
+        if (!modalElement) {
+            console.error('Modal element not found');
+            return;
+        }
+        
+        modalElement.classList.remove('active');
         document.body.style.overflow = ''; // Restore scrolling
     };
     
