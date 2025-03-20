@@ -1569,12 +1569,23 @@ input[type="file"] {
     cursor: pointer;
     top: 0;
     left: 0;
-    z-index: 1; /* Ensure it doesn't overlap with buttons below */
+}
+
+/* This limits the file input to stay inside its container */
+.form-group {
+    position: relative;
 }
 
 /* Add more space between upload preview and form actions */
 .upload-preview {
     margin-bottom: 30px;
+    position: relative;
+}
+
+/* Ensure form actions are visible */
+.form-actions {
+    position: relative;
+    z-index: 10;
 }
 
 textarea {
