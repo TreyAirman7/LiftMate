@@ -55,12 +55,18 @@ const ProgressPicsManager = (() => {
         backToPicsButton = document.getElementById('back-to-pics');
         filterButtons = document.querySelectorAll('.date-filter-button');
         
-        // Set up event listeners
-        setupEventListeners();
-        
-        // Load and display progress pictures
-        refreshProgressPics();
-        populateComparisonsDropdowns();
+        // Ensure IndexedDB is initialized before displaying pictures
+        initializeIndexedDB().then(() => {
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Load and display progress pictures
+            refreshProgressPics();
+            populateComparisonsDropdowns();
+        }).catch(error => {
+            console.error('Error initializing IndexedDB:', error);
+            UI.showToast('Error initializing progress pictures storage', 'error');
+        });
         
         // Add event listener for tab activation
         document.querySelectorAll('.nav-button').forEach(button => {
@@ -73,6 +79,46 @@ const ProgressPicsManager = (() => {
                     populateComparisonsDropdowns();
                 }
             });
+        });
+    };
+    
+    /**
+     * Initialize IndexedDB for progress pictures
+     * @returns {Promise} - Promise that resolves when DB is ready
+     */
+    const initializeIndexedDB = () => {
+        return new Promise((resolve, reject) => {
+            const dbName = 'ProgressPicsDB';
+            const storeName = 'pictures';
+            const dbVersion = 1;
+            
+            // Check if IndexedDB is supported
+            if (!window.indexedDB) {
+                reject(new Error('Your browser does not support IndexedDB'));
+                return;
+            }
+            
+            // Open or create the database
+            const request = indexedDB.open(dbName, dbVersion);
+            
+            request.onerror = (event) => {
+                reject(event.target.error);
+            };
+            
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                
+                // Create object store if it doesn't exist
+                if (!db.objectStoreNames.contains(storeName)) {
+                    db.createObjectStore(storeName, { keyPath: 'id' });
+                    console.log('Created IndexedDB store for progress pictures');
+                }
+            };
+            
+            request.onsuccess = () => {
+                console.log('IndexedDB initialized for progress pictures');
+                resolve();
+            };
         });
     };
     
@@ -298,27 +344,42 @@ const ProgressPicsManager = (() => {
         loadingIndicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         imgContainer.appendChild(loadingIndicator);
         
-        // Load and add image
-        DataManager.getProgressPicImage(pic.id)
-            .then(imageBlob => {
-                // Create image URL
-                const imageUrl = URL.createObjectURL(imageBlob);
-                
-                // Create and add image element
-                const img = document.createElement('img');
-                img.src = imageUrl;
-                img.alt = `Progress pic from ${pic.date}`;
-                img.onload = () => {
-                    // Remove loading indicator once image is loaded
-                    loadingIndicator.remove();
-                };
-                
-                imgContainer.appendChild(img);
-            })
-            .catch(error => {
-                console.error('Error loading image:', error);
-                imgContainer.innerHTML = '<div class="error-loading"><i class="fas fa-exclamation-circle"></i><p>Error loading image</p></div>';
-            });
+        // Load and add image with retry mechanism
+        const loadImage = (retryCount = 0) => {
+            DataManager.getProgressPicImage(pic.id)
+                .then(imageBlob => {
+                    // Create image URL
+                    const imageUrl = URL.createObjectURL(imageBlob);
+                    
+                    // Create and add image element
+                    const img = document.createElement('img');
+                    img.src = imageUrl;
+                    img.alt = `Progress pic from ${pic.date}`;
+                    img.onload = () => {
+                        // Remove loading indicator once image is loaded
+                        if (loadingIndicator.parentNode) {
+                            loadingIndicator.remove();
+                        }
+                    };
+                    
+                    imgContainer.appendChild(img);
+                })
+                .catch(error => {
+                    console.error(`Error loading image (attempt ${retryCount + 1}):`, error);
+                    
+                    // Retry up to 3 times with exponential backoff
+                    if (retryCount < 3) {
+                        setTimeout(() => {
+                            loadImage(retryCount + 1);
+                        }, 300 * Math.pow(2, retryCount));
+                    } else {
+                        imgContainer.innerHTML = '<div class="error-loading"><i class="fas fa-exclamation-circle"></i><p>Error loading image</p></div>';
+                    }
+                });
+        };
+        
+        // Start loading the image
+        loadImage();
         
         gridItem.appendChild(imgContainer);
         
@@ -366,6 +427,10 @@ const ProgressPicsManager = (() => {
         const deleteButton = document.getElementById('delete-pic');
         deleteButton.setAttribute('data-pic-id', pic.id);
         
+        // Make sure the buttons are responsive
+        deleteButton.disabled = false;
+        document.getElementById('back-to-pics').disabled = false;
+        
         // Set modal content
         document.getElementById('pic-detail-date').textContent = UI.formatDate(pic.date);
         document.getElementById('pic-detail-category').textContent = getCategoryDisplayName(pic.category);
@@ -389,21 +454,34 @@ const ProgressPicsManager = (() => {
         const imgContainer = document.querySelector('.pic-detail-image');
         imgContainer.innerHTML = '<div class="loading-indicator"><i class="fas fa-spinner fa-spin"></i></div>';
         
-        // Load image
-        DataManager.getProgressPicImage(pic.id)
-            .then(imageBlob => {
-                // Create image URL
-                const imageUrl = URL.createObjectURL(imageBlob);
-                
-                // Clear loading indicator and add image
-                imgContainer.innerHTML = '';
-                detailImg.src = imageUrl;
-                imgContainer.appendChild(detailImg);
-            })
-            .catch(error => {
-                console.error('Error loading image:', error);
-                imgContainer.innerHTML = '<div class="error-loading"><i class="fas fa-exclamation-circle"></i><p>Error loading image</p></div>';
-            });
+        // Load image with retry mechanism
+        const loadDetailImage = (retryCount = 0) => {
+            DataManager.getProgressPicImage(pic.id)
+                .then(imageBlob => {
+                    // Create image URL
+                    const imageUrl = URL.createObjectURL(imageBlob);
+                    
+                    // Clear loading indicator and add image
+                    imgContainer.innerHTML = '';
+                    detailImg.src = imageUrl;
+                    imgContainer.appendChild(detailImg);
+                })
+                .catch(error => {
+                    console.error(`Error loading detail image (attempt ${retryCount + 1}):`, error);
+                    
+                    // Retry up to 3 times with exponential backoff
+                    if (retryCount < 3) {
+                        setTimeout(() => {
+                            loadDetailImage(retryCount + 1);
+                        }, 300 * Math.pow(2, retryCount));
+                    } else {
+                        imgContainer.innerHTML = '<div class="error-loading"><i class="fas fa-exclamation-circle"></i><p>Error loading image</p></div>';
+                    }
+                });
+        };
+        
+        // Start loading the image
+        loadDetailImage();
         
         // Open the modal
         UI.openModal('pic-detail-modal');
@@ -544,31 +622,44 @@ const ProgressPicsManager = (() => {
         // Use the front view image if available, otherwise use the first image
         const targetPic = pics.find(pic => pic.category === 'front') || pics[0];
         
-        // Load and display the image
-        DataManager.getProgressPicImage(targetPic.id)
-            .then(imageBlob => {
-                // Create image URL
-                const imageUrl = URL.createObjectURL(imageBlob);
-                
-                // Create image element
-                const img = document.createElement('img');
-                img.src = imageUrl;
-                img.alt = `${position} picture from ${date}`;
-                
-                // Add category label
-                const categoryLabel = document.createElement('div');
-                categoryLabel.className = 'comparison-category';
-                categoryLabel.textContent = getCategoryDisplayName(targetPic.category);
-                
-                // Clear container and add image with label
-                containerElement.innerHTML = '';
-                containerElement.appendChild(img);
-                containerElement.appendChild(categoryLabel);
-            })
-            .catch(error => {
-                console.error(`Error loading ${position} image:`, error);
-                containerElement.innerHTML = '<div class="error-loading"><i class="fas fa-exclamation-circle"></i><p>Error loading image</p></div>';
-            });
+        // Load image with retry mechanism
+        const loadImage = (retryCount = 0) => {
+            DataManager.getProgressPicImage(targetPic.id)
+                .then(imageBlob => {
+                    // Create image URL
+                    const imageUrl = URL.createObjectURL(imageBlob);
+                    
+                    // Create image element
+                    const img = document.createElement('img');
+                    img.src = imageUrl;
+                    img.alt = `${position} picture from ${date}`;
+                    
+                    // Add category label
+                    const categoryLabel = document.createElement('div');
+                    categoryLabel.className = 'comparison-category';
+                    categoryLabel.textContent = getCategoryDisplayName(targetPic.category);
+                    
+                    // Clear container and add image with label
+                    containerElement.innerHTML = '';
+                    containerElement.appendChild(img);
+                    containerElement.appendChild(categoryLabel);
+                })
+                .catch(error => {
+                    console.error(`Error loading ${position} image (attempt ${retryCount + 1}):`, error);
+                    
+                    // Retry up to 3 times with exponential backoff
+                    if (retryCount < 3) {
+                        setTimeout(() => {
+                            loadImage(retryCount + 1);
+                        }, 300 * Math.pow(2, retryCount));
+                    } else {
+                        containerElement.innerHTML = '<div class="error-loading"><i class="fas fa-exclamation-circle"></i><p>Error loading image</p></div>';
+                    }
+                });
+        };
+        
+        // Start loading the image
+        loadImage();
     };
     
     /**
