@@ -1,7 +1,7 @@
 {
-    "name": "LiftMate - All Purpose Workout Tracker",
+    "name": "LiftMate: Gym Tracking Tool",
     "short_name": "LiftMate",
-    "description": "Track your workouts, progress, and fitness goals",
+    "description": "A comprehensive gym workout tracking application",
     "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#FEF4E5",
