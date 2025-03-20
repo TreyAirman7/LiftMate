@@ -696,7 +696,7 @@
     <div class="modal" id="progress-pic-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Add Progress Picture <small>(Auto-save enabled)</small></h2>
+                <h2>Add Progress Picture</h2>
                 <button class="close-modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -728,13 +728,14 @@
                             <img id="upload-preview-img" src="" alt="Preview" class="hidden">
                             <div id="upload-placeholder" class="upload-placeholder">
                                 <i class="fas fa-camera"></i>
-                                <p>Tap to take a photo or select from your camera roll<br><small>(Photo will be saved automatically)</small></p>
+                                <p>Tap to take a photo or select from your camera roll</p>
                             </div>
                         </div>
                     </div>
                     
                     <div class="form-actions">
-                        <button type="button" class="button secondary full-width" id="cancel-progress-pic">Close</button>
+                        <button type="button" class="button primary" id="save-progress-pic">Save Picture</button>
+                        <button type="button" class="button secondary" id="cancel-progress-pic">Cancel</button>
                     </div>
                 </form>
             </div>
