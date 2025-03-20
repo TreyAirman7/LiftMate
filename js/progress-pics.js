@@ -35,54 +35,63 @@ const ProgressPicsManager = (() => {
     const initialize = () => {
         console.log('Initializing ProgressPicsManager');
         
-        // Cache DOM elements
-        addPicButton = document.getElementById('add-progress-pic');
-        progressPicsGrid = document.getElementById('progress-pics-grid');
-        noMessageElement = document.getElementById('no-pics-message');
-        beforeDateSelect = document.getElementById('before-date');
-        afterDateSelect = document.getElementById('after-date');
-        beforeImageElement = document.getElementById('before-image');
-        afterImageElement = document.getElementById('after-image');
-        picDateInput = document.getElementById('pic-date');
-        picCategorySelect = document.getElementById('pic-category');
-        picNotesInput = document.getElementById('pic-notes');
-        picUploadInput = document.getElementById('pic-upload');
-        uploadPreviewImg = document.getElementById('upload-preview-img');
-        uploadPlaceholderElement = document.getElementById('upload-placeholder');
-        saveProgressPicButton = document.getElementById('save-progress-pic');
-        cancelProgressPicButton = document.getElementById('cancel-progress-pic');
-        deletePicButton = document.getElementById('delete-pic');
-        backToPicsButton = document.getElementById('back-to-pics');
-        filterButtons = document.querySelectorAll('.date-filter-button');
-        
-        // Ensure IndexedDB is initialized before displaying pictures
-        initializeIndexedDB().then(() => {
-            // Set up event listeners
-            setupEventListeners();
+        // Ensure DOM is ready before proceeding
+        setTimeout(() => {
+            // Cache DOM elements
+            addPicButton = document.getElementById('add-progress-pic');
+            progressPicsGrid = document.getElementById('progress-pics-grid');
+            noMessageElement = document.getElementById('no-pics-message');
+            beforeDateSelect = document.getElementById('before-date');
+            afterDateSelect = document.getElementById('after-date');
+            beforeImageElement = document.getElementById('before-image');
+            afterImageElement = document.getElementById('after-image');
+            picDateInput = document.getElementById('pic-date');
+            picCategorySelect = document.getElementById('pic-category');
+            picNotesInput = document.getElementById('pic-notes');
+            picUploadInput = document.getElementById('pic-upload');
+            uploadPreviewImg = document.getElementById('upload-preview-img');
+            uploadPlaceholderElement = document.getElementById('upload-placeholder');
+            saveProgressPicButton = document.getElementById('save-progress-pic');
+            cancelProgressPicButton = document.getElementById('cancel-progress-pic');
+            deletePicButton = document.getElementById('delete-pic');
+            backToPicsButton = document.getElementById('back-to-pics');
+            filterButtons = document.querySelectorAll('.date-filter-button');
             
-            // Load and display progress pictures
-            refreshProgressPics();
-            populateComparisonsDropdowns();
-        }).catch(error => {
-            console.error('Error initializing IndexedDB:', error);
-            // Continue anyway to avoid blocking user
-            setupEventListeners();
-            refreshProgressPics();
-            populateComparisonsDropdowns();
-        });
-        
-        // Add event listener for tab activation
-        document.querySelectorAll('.nav-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const tabId = button.getAttribute('data-tab');
-                if (tabId === 'progress-pics') {
-                    console.log('Progress pics tab activated');
-                    // Refresh data when tab is activated
-                    refreshProgressPics();
-                    populateComparisonsDropdowns();
-                }
+            // Set up event listener for tab activation first, which is less likely to fail
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    if (tabId === 'progress-pics') {
+                        console.log('Progress pics tab activated');
+                        // Refresh data when tab is activated
+                        refreshProgressPics();
+                        populateComparisonsDropdowns();
+                    }
+                });
             });
-        });
+            
+            // Ensure IndexedDB is initialized before displaying pictures
+            initializeIndexedDB().then(() => {
+                // Set up event listeners safely
+                if (addPicButton && picUploadInput && deletePicButton && backToPicsButton) {
+                    setupEventListeners();
+                }
+                
+                // Load and display progress pictures
+                refreshProgressPics();
+                populateComparisonsDropdowns();
+            }).catch(error => {
+                console.error('Error initializing IndexedDB:', error);
+                
+                // Continue anyway to avoid blocking user
+                if (addPicButton && picUploadInput && deletePicButton && backToPicsButton) {
+                    setupEventListeners();
+                }
+                
+                refreshProgressPics();
+                populateComparisonsDropdowns();
+            });
+        }, 100); // Short delay to ensure DOM is ready
     };
     
     /**
@@ -141,15 +150,12 @@ const ProgressPicsManager = (() => {
                 currentImageFile = file;
                 displayFilePreview(file);
                 
-                // Auto-save after a short delay to allow the preview to display
-                setTimeout(() => {
-                    saveProgressPic();
-                }, 500);
+                // Auto-save is still available but now controlled by a button
+                // to prevent double saving
             }
         });
         
-        // Save progress picture via form submission (removed to avoid double submission)
-        // Add direct click handler to save button instead
+        // Save progress picture via button click
         saveProgressPicButton.addEventListener('click', (event) => {
             event.preventDefault();
             saveProgressPic();
