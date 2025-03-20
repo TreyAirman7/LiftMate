@@ -79,8 +79,9 @@ const ProgressPicsManager = (() => {
             }
         });
         
-        // Save progress picture
-        document.getElementById('progress-pic-form').addEventListener('submit', (event) => {
+        // Save progress picture via form submission (removed to avoid double submission)
+        // Add direct click handler to save button instead
+        saveProgressPicButton.addEventListener('click', (event) => {
             event.preventDefault();
             saveProgressPic();
         });
