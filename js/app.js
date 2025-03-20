@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ProgressManager.initialize();   // Depends on workout data
     HistoryManager.initialize();    // Depends on workout data
     WeightManager.initialize();
+    ProgressPicsManager.initialize();
     
     // Add CSS for weight stats (wasn't included in the main CSS)
     const styleEl = document.createElement('style');
@@ -139,6 +140,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
 
 
