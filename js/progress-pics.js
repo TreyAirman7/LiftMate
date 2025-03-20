@@ -33,6 +33,8 @@ const ProgressPicsManager = (() => {
      * Initialize the progress pictures module
      */
     const initialize = () => {
+        console.log('Initializing ProgressPicsManager');
+        
         // Cache DOM elements
         addPicButton = document.getElementById('add-progress-pic');
         progressPicsGrid = document.getElementById('progress-pics-grid');
@@ -59,6 +61,19 @@ const ProgressPicsManager = (() => {
         // Load and display progress pictures
         refreshProgressPics();
         populateComparisonsDropdowns();
+        
+        // Add event listener for tab activation
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                if (tabId === 'progress-pics') {
+                    console.log('Progress pics tab activated');
+                    // Refresh data when tab is activated
+                    refreshProgressPics();
+                    populateComparisonsDropdowns();
+                }
+            });
+        });
     };
     
     /**
@@ -99,18 +114,27 @@ const ProgressPicsManager = (() => {
         
         // Delete picture
         deletePicButton.addEventListener('click', () => {
-            if (selectedPicId) {
+            // Try to get the ID from the selectedPicId variable or the button data attribute as fallback
+            const picIdToDelete = selectedPicId || deletePicButton.getAttribute('data-pic-id');
+            
+            console.log('Delete button clicked, ID to delete:', picIdToDelete);
+            
+            if (picIdToDelete) {
                 UI.showConfirmation(
                     'Delete Picture',
                     'Are you sure you want to delete this progress picture? This action cannot be undone.',
-                    () => deleteProgressPic(selectedPicId)
+                    () => deleteProgressPic(picIdToDelete)
                 );
+            } else {
+                console.error('No picture ID found for deletion');
+                UI.showToast('Error: Cannot identify which picture to delete', 'error');
             }
         });
         
         // Back to pictures list
         backToPicsButton.addEventListener('click', () => {
             UI.closeModal(document.getElementById('pic-detail-modal'));
+            console.log('Back to pics button clicked');
         });
         
         // Filter buttons
@@ -333,8 +357,14 @@ const ProgressPicsManager = (() => {
      * @param {Object} pic - Picture metadata object
      */
     const openPicDetailModal = (pic) => {
+        console.log('Opening detail modal for picture:', pic);
+        
         // Store the selected picture ID
         selectedPicId = pic.id;
+        
+        // Also store it as a data attribute on the delete button for debugging
+        const deleteButton = document.getElementById('delete-pic');
+        deleteButton.setAttribute('data-pic-id', pic.id);
         
         // Set modal content
         document.getElementById('pic-detail-date').textContent = UI.formatDate(pic.date);
@@ -390,33 +420,43 @@ const ProgressPicsManager = (() => {
             return;
         }
         
+        console.log('Deleting picture with ID:', picId);
+        
         // Show loading state
         const deleteButton = document.getElementById('delete-pic');
         const originalHtml = deleteButton.innerHTML;
         deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         deleteButton.disabled = true;
         
-        DataManager.deleteProgressPic(picId)
-            .then(success => {
-                if (success) {
-                    UI.closeModal(document.getElementById('pic-detail-modal'));
-                    UI.showToast('Progress picture deleted', 'success');
-                    refreshProgressPics();
-                    populateComparisonsDropdowns();
-                } else {
+        try {
+            DataManager.deleteProgressPic(picId)
+                .then(success => {
+                    console.log('Delete result:', success);
+                    if (success) {
+                        UI.closeModal(document.getElementById('pic-detail-modal'));
+                        UI.showToast('Progress picture deleted', 'success');
+                        refreshProgressPics();
+                        populateComparisonsDropdowns();
+                    } else {
+                        // Restore button state
+                        deleteButton.innerHTML = originalHtml;
+                        deleteButton.disabled = false;
+                        UI.showToast('Error deleting picture: Not found in storage', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting progress picture:', error);
                     // Restore button state
                     deleteButton.innerHTML = originalHtml;
                     deleteButton.disabled = false;
-                    UI.showToast('Error deleting picture', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting progress picture:', error);
-                // Restore button state
-                deleteButton.innerHTML = originalHtml;
-                deleteButton.disabled = false;
-                UI.showToast('Error deleting picture', 'error');
-            });
+                    UI.showToast('Error deleting picture: ' + (error.message || 'Unknown error'), 'error');
+                });
+        } catch (error) {
+            console.error('Exception when deleting picture:', error);
+            deleteButton.innerHTML = originalHtml;
+            deleteButton.disabled = false;
+            UI.showToast('Error deleting picture: ' + (error.message || 'Unknown error'), 'error');
+        }
     };
     
     /**
