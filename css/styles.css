@@ -1567,6 +1567,14 @@ input[type="file"] {
     width: 100%;
     height: 100%;
     cursor: pointer;
+    top: 0;
+    left: 0;
+    z-index: 1; /* Ensure it doesn't overlap with buttons below */
+}
+
+/* Add more space between upload preview and form actions */
+.upload-preview {
+    margin-bottom: 30px;
 }
 
 textarea {
