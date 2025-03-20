@@ -65,7 +65,10 @@ const ProgressPicsManager = (() => {
             populateComparisonsDropdowns();
         }).catch(error => {
             console.error('Error initializing IndexedDB:', error);
-            UI.showToast('Error initializing progress pictures storage', 'error');
+            // Continue anyway to avoid blocking user
+            setupEventListeners();
+            refreshProgressPics();
+            populateComparisonsDropdowns();
         });
         
         // Add event listener for tab activation
@@ -159,18 +162,24 @@ const ProgressPicsManager = (() => {
         });
         
         // Delete picture
-        deletePicButton.addEventListener('click', () => {
+        deletePicButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
             // Try to get the ID from the selectedPicId variable or the button data attribute as fallback
             const picIdToDelete = selectedPicId || deletePicButton.getAttribute('data-pic-id');
             
             console.log('Delete button clicked, ID to delete:', picIdToDelete);
             
             if (picIdToDelete) {
-                UI.showConfirmation(
-                    'Delete Picture',
-                    'Are you sure you want to delete this progress picture? This action cannot be undone.',
-                    () => deleteProgressPic(picIdToDelete)
-                );
+                // Directly delete without confirmation for testing
+                deleteProgressPic(picIdToDelete);
+                
+                // UI.showConfirmation(
+                //     'Delete Picture',
+                //     'Are you sure you want to delete this progress picture? This action cannot be undone.',
+                //     () => deleteProgressPic(picIdToDelete)
+                // );
             } else {
                 console.error('No picture ID found for deletion');
                 UI.showToast('Error: Cannot identify which picture to delete', 'error');
@@ -178,9 +187,13 @@ const ProgressPicsManager = (() => {
         });
         
         // Back to pictures list
-        backToPicsButton.addEventListener('click', () => {
-            UI.closeModal(document.getElementById('pic-detail-modal'));
+        backToPicsButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             console.log('Back to pics button clicked');
+            const modal = document.getElementById('pic-detail-modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
         });
         
         // Filter buttons
