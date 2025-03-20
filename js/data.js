@@ -10,6 +10,8 @@ const DataManager = (() => {
         TEMPLATES: 'liftmate-templates',
         WORKOUTS: 'liftmate-workouts',
         WEIGHT_ENTRIES: 'liftmate-weight-entries',
+        PROGRESS_PICS: 'liftmate-progress-pics',
+        PROGRESS_PICS_META: 'liftmate-progress-pics-meta',
         SETTINGS: 'liftmate-settings'
     };
     
@@ -138,6 +140,14 @@ const DataManager = (() => {
             localStorage.setItem(STORAGE_KEYS.WEIGHT_ENTRIES, JSON.stringify([]));
         }
         
+        // Initialize empty arrays for progress pictures metadata
+        if (!localStorage.getItem(STORAGE_KEYS.PROGRESS_PICS_META)) {
+            localStorage.setItem(STORAGE_KEYS.PROGRESS_PICS_META, JSON.stringify([]));
+        }
+        
+        // Initialize progress pics IndexedDB if needed
+        initializeProgressPicsDB();
+        
         // Initialize settings if they don't exist
         if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) {
             const defaultSettings = {
@@ -145,6 +155,43 @@ const DataManager = (() => {
             };
             localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(defaultSettings));
         }
+    };
+    
+    /**
+     * Initialize IndexedDB for storing progress pictures
+     */
+    const initializeProgressPicsDB = () => {
+        const dbName = 'ProgressPicsDB';
+        const storeName = 'pictures';
+        const dbVersion = 1;
+        
+        // Check if IndexedDB is supported
+        if (!window.indexedDB) {
+            console.error('Your browser does not support IndexedDB. Progress pictures will not work.');
+            return;
+        }
+        
+        // Open or create the database
+        const request = indexedDB.open(dbName, dbVersion);
+        
+        // Handle database events
+        request.onerror = (event) => {
+            console.error('Error opening IndexedDB:', event.target.error);
+        };
+        
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            
+            // Create object store if it doesn't exist
+            if (!db.objectStoreNames.contains(storeName)) {
+                db.createObjectStore(storeName, { keyPath: 'id' });
+                console.log('Created IndexedDB store for progress pictures');
+            }
+        };
+        
+        request.onsuccess = () => {
+            console.log('IndexedDB initialized for progress pictures');
+        };
     };
     
     /**
@@ -483,6 +530,168 @@ const DataManager = (() => {
         return progressData;
     };
     
+    /**
+     * Get progress picture metadata from storage
+     * @returns {Array} - Array of progress picture metadata objects
+     */
+    const getProgressPicsMeta = () => {
+        const meta = localStorage.getItem(STORAGE_KEYS.PROGRESS_PICS_META);
+        return meta ? JSON.parse(meta) : [];
+    };
+    
+    /**
+     * Save a progress picture to IndexedDB and its metadata to localStorage
+     * @param {Object} picData - Picture metadata object
+     * @param {Blob} imageBlob - The image blob to save
+     * @returns {Promise<Object>} - Promise resolving to saved picture metadata object with ID
+     */
+    const saveProgressPic = (picData, imageBlob) => {
+        return new Promise((resolve, reject) => {
+            // Generate ID if not present
+            if (!picData.id) {
+                picData.id = generateId();
+            }
+            
+            // Get all picture metadata
+            const picsMeta = getProgressPicsMeta();
+            
+            // Add or update metadata
+            const existingIndex = picsMeta.findIndex(pic => pic.id === picData.id);
+            if (existingIndex !== -1) {
+                picsMeta[existingIndex] = picData;
+            } else {
+                picsMeta.push(picData);
+            }
+            
+            // Sort by date (newest first)
+            picsMeta.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // Save metadata to localStorage
+            localStorage.setItem(STORAGE_KEYS.PROGRESS_PICS_META, JSON.stringify(picsMeta));
+            
+            // Save image to IndexedDB
+            const dbName = 'ProgressPicsDB';
+            const storeName = 'pictures';
+            const dbRequest = indexedDB.open(dbName);
+            
+            dbRequest.onerror = (event) => {
+                console.error('Error opening IndexedDB:', event.target.error);
+                reject(event.target.error);
+            };
+            
+            dbRequest.onsuccess = (event) => {
+                const db = event.target.result;
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                
+                // Store image blob with same ID as metadata
+                const item = {
+                    id: picData.id,
+                    image: imageBlob
+                };
+                
+                const putRequest = store.put(item);
+                
+                putRequest.onsuccess = () => {
+                    resolve(picData);
+                };
+                
+                putRequest.onerror = (event) => {
+                    console.error('Error saving image to IndexedDB:', event.target.error);
+                    reject(event.target.error);
+                };
+            };
+        });
+    };
+    
+    /**
+     * Get a progress picture image from IndexedDB by ID
+     * @param {string} picId - ID of picture to retrieve
+     * @returns {Promise<Blob>} - Promise resolving to image blob
+     */
+    const getProgressPicImage = (picId) => {
+        return new Promise((resolve, reject) => {
+            const dbName = 'ProgressPicsDB';
+            const storeName = 'pictures';
+            const dbRequest = indexedDB.open(dbName);
+            
+            dbRequest.onerror = (event) => {
+                console.error('Error opening IndexedDB:', event.target.error);
+                reject(event.target.error);
+            };
+            
+            dbRequest.onsuccess = (event) => {
+                const db = event.target.result;
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                
+                const getRequest = store.get(picId);
+                
+                getRequest.onsuccess = () => {
+                    if (getRequest.result) {
+                        resolve(getRequest.result.image);
+                    } else {
+                        reject(new Error('Image not found'));
+                    }
+                };
+                
+                getRequest.onerror = (event) => {
+                    console.error('Error retrieving image from IndexedDB:', event.target.error);
+                    reject(event.target.error);
+                };
+            };
+        });
+    };
+    
+    /**
+     * Delete a progress picture by ID
+     * @param {string} picId - ID of picture to delete
+     * @returns {Promise<boolean>} - Promise resolving to success status
+     */
+    const deleteProgressPic = (picId) => {
+        return new Promise((resolve, reject) => {
+            // Remove from metadata
+            const picsMeta = getProgressPicsMeta();
+            const filteredPics = picsMeta.filter(pic => pic.id !== picId);
+            
+            if (filteredPics.length === picsMeta.length) {
+                // Picture not found in metadata
+                resolve(false);
+                return;
+            }
+            
+            // Update metadata in localStorage
+            localStorage.setItem(STORAGE_KEYS.PROGRESS_PICS_META, JSON.stringify(filteredPics));
+            
+            // Remove from IndexedDB
+            const dbName = 'ProgressPicsDB';
+            const storeName = 'pictures';
+            const dbRequest = indexedDB.open(dbName);
+            
+            dbRequest.onerror = (event) => {
+                console.error('Error opening IndexedDB:', event.target.error);
+                reject(event.target.error);
+            };
+            
+            dbRequest.onsuccess = (event) => {
+                const db = event.target.result;
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                
+                const deleteRequest = store.delete(picId);
+                
+                deleteRequest.onsuccess = () => {
+                    resolve(true);
+                };
+                
+                deleteRequest.onerror = (event) => {
+                    console.error('Error deleting image from IndexedDB:', event.target.error);
+                    reject(event.target.error);
+                };
+            };
+        });
+    };
+    
     // Public API
     return {
         initializeStorage,
@@ -499,6 +708,10 @@ const DataManager = (() => {
         getWeightEntries,
         saveWeightEntry,
         deleteWeightEntry,
+        getProgressPicsMeta,
+        saveProgressPic,
+        getProgressPicImage,
+        deleteProgressPic,
         getSettings,
         saveSettings,
         getMuscleGroups,
