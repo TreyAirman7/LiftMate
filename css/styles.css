@@ -599,6 +599,13 @@ button {
     font-size: 1.5rem;
 }
 
+.modal-header h2 small {
+    font-size: 0.8rem;
+    font-weight: normal;
+    color: var(--muted-text-color);
+    display: inline-block;
+}
+
 .close-modal {
     background: none;
     border: none;
