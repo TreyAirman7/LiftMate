@@ -70,12 +70,17 @@ const ProgressPicsManager = (() => {
             openAddPicModal();
         });
         
-        // File upload preview
+        // File upload preview and auto-save
         picUploadInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
                 currentImageFile = file;
                 displayFilePreview(file);
+                
+                // Auto-save after a short delay to allow the preview to display
+                setTimeout(() => {
+                    saveProgressPic();
+                }, 500);
             }
         });
         
@@ -379,6 +384,18 @@ const ProgressPicsManager = (() => {
      * @param {string} picId - ID of picture to delete
      */
     const deleteProgressPic = (picId) => {
+        if (!picId) {
+            console.error('No picture ID provided for deletion');
+            UI.showToast('Error deleting picture: No ID provided', 'error');
+            return;
+        }
+        
+        // Show loading state
+        const deleteButton = document.getElementById('delete-pic');
+        const originalHtml = deleteButton.innerHTML;
+        deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        deleteButton.disabled = true;
+        
         DataManager.deleteProgressPic(picId)
             .then(success => {
                 if (success) {
@@ -387,11 +404,17 @@ const ProgressPicsManager = (() => {
                     refreshProgressPics();
                     populateComparisonsDropdowns();
                 } else {
+                    // Restore button state
+                    deleteButton.innerHTML = originalHtml;
+                    deleteButton.disabled = false;
                     UI.showToast('Error deleting picture', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error deleting progress picture:', error);
+                // Restore button state
+                deleteButton.innerHTML = originalHtml;
+                deleteButton.disabled = false;
                 UI.showToast('Error deleting picture', 'error');
             });
     };
