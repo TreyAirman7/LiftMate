@@ -22,6 +22,9 @@ const UI = (() => {
         
         // Setup dark mode toggle
         setupDarkModeToggle();
+        
+        // Setup storage info toggle
+        setupStorageInfoToggle();
     };
     
     /**
@@ -558,6 +561,12 @@ const UI = (() => {
     const toggleThemePanel = (force) => {
         const themePanel = document.getElementById('theme-panel');
         
+        // Close storage info panel if open
+        const storageInfoPanel = document.getElementById('storage-info-panel');
+        if (storageInfoPanel && storageInfoPanel.classList.contains('active')) {
+            storageInfoPanel.classList.remove('active');
+        }
+        
         if (force === true) {
             themePanel.classList.add('active');
         } else if (force === false) {
@@ -756,6 +765,139 @@ const UI = (() => {
         
         // Refresh charts when dark mode changes
         refreshChartsWithThemeColors();
+    };
+    
+    /**
+     * Setup storage info toggle button
+     */
+    const setupStorageInfoToggle = () => {
+        const storageInfoToggle = document.getElementById('storage-info-toggle');
+        const storageInfoPanel = document.getElementById('storage-info-panel');
+        
+        if (storageInfoToggle) {
+            storageInfoToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleStorageInfoPanel();
+                
+                // Immediately update storage usage when panel is opened
+                if (storageInfoPanel.classList.contains('active')) {
+                    updateStorageInfo();
+                }
+            });
+        }
+        
+        // Close storage info panel when clicking elsewhere
+        document.body.addEventListener('click', () => {
+            if (storageInfoPanel && storageInfoPanel.classList.contains('active')) {
+                toggleStorageInfoPanel(false);
+            }
+        });
+        
+        // Prevent clicks within the panel from bubbling to body
+        if (storageInfoPanel) {
+            storageInfoPanel.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+        
+        // Set initial update
+        setTimeout(updateStorageInfo, 1000);
+    };
+    
+    /**
+     * Toggle storage info panel visibility
+     * @param {boolean} [force] - Force specific state (true = open, false = close)
+     */
+    const toggleStorageInfoPanel = (force) => {
+        const storageInfoPanel = document.getElementById('storage-info-panel');
+        
+        // Close theme panel if open
+        toggleThemePanel(false);
+        
+        if (force === true) {
+            storageInfoPanel.classList.add('active');
+        } else if (force === false) {
+            storageInfoPanel.classList.remove('active');
+        } else {
+            storageInfoPanel.classList.toggle('active');
+        }
+    };
+    
+    /**
+     * Format bytes to human-readable format
+     * @param {number} bytes - Number of bytes
+     * @param {number} [decimals=2] - Number of decimal places
+     * @returns {string} - Formatted string with appropriate unit
+     */
+    const formatBytes = (bytes, decimals = 2) => {
+        if (bytes === 0) return '0 Bytes';
+        
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    };
+    
+    /**
+     * Update storage info display
+     */
+    const updateStorageInfo = async () => {
+        try {
+            const storageInfo = await DataManager.getStorageInfo();
+            
+            // Update local storage info
+            const localStorageBar = document.getElementById('local-storage-bar');
+            const localStoragePercent = document.getElementById('local-storage-percent');
+            const localStorageUsage = document.getElementById('local-storage-usage');
+            
+            if (localStorageBar && localStoragePercent && localStorageUsage && storageInfo.localStorage) {
+                const percent = parseFloat(storageInfo.localStorage.usagePercent);
+                localStorageBar.style.width = `${percent}%`;
+                
+                // Change color based on usage
+                if (percent > 90) {
+                    localStorageBar.style.backgroundColor = 'var(--md-error)';
+                } else if (percent > 70) {
+                    localStorageBar.style.backgroundColor = 'var(--warning-color)';
+                } else {
+                    localStorageBar.style.backgroundColor = 'var(--md-primary)';
+                }
+                
+                localStoragePercent.textContent = `${percent}%`;
+                const formattedUsage = formatBytes(storageInfo.localStorage.usage);
+                const formattedCapacity = formatBytes(storageInfo.localStorage.capacity);
+                localStorageUsage.textContent = `${formattedUsage} / ${formattedCapacity}`;
+            }
+            
+            // Update IndexedDB info
+            const indexedDBBar = document.getElementById('indexeddb-bar');
+            const indexedDBPercent = document.getElementById('indexeddb-percent');
+            const indexedDBUsage = document.getElementById('indexeddb-usage');
+            
+            if (indexedDBBar && indexedDBPercent && indexedDBUsage && storageInfo.indexedDB) {
+                const percent = parseFloat(storageInfo.indexedDB.usagePercent);
+                indexedDBBar.style.width = `${percent}%`;
+                
+                // Change color based on usage
+                if (percent > 90) {
+                    indexedDBBar.style.backgroundColor = 'var(--md-error)';
+                } else if (percent > 70) {
+                    indexedDBBar.style.backgroundColor = 'var(--warning-color)';
+                } else {
+                    indexedDBBar.style.backgroundColor = 'var(--md-primary)';
+                }
+                
+                indexedDBPercent.textContent = `${percent}%`;
+                const formattedUsage = formatBytes(storageInfo.indexedDB.usage);
+                const formattedCapacity = formatBytes(storageInfo.indexedDB.capacity);
+                indexedDBUsage.textContent = `${formattedUsage} / ${formattedCapacity}`;
+            }
+        } catch (error) {
+            console.error('Error updating storage info:', error);
+        }
     };
     
     /**
