@@ -27,6 +27,9 @@
             <div class="header-content">
                 <h1><i class="fas fa-dumbbell"></i> LiftMate</h1>
                 <div class="theme-controls">
+                    <button id="storage-info-toggle" class="theme-toggle" title="View storage usage">
+                        <i class="fas fa-database"></i>
+                    </button>
                     <button id="dark-mode-toggle" class="theme-toggle" title="Toggle dark mode">
                         <i class="fas fa-moon"></i>
                     </button>
@@ -77,6 +80,36 @@
                 <div class="theme-option" data-theme="cyan">
                     <div class="color-preview cyan"></div>
                     <span>Cyan</span>
+                </div>
+            </div>
+            
+            <!-- Storage Info Panel -->
+            <div id="storage-info-panel" class="storage-info-panel">
+                <h3>Storage Usage</h3>
+                <div class="storage-info-section">
+                    <h4>Local Storage</h4>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="local-storage-bar"></div>
+                    </div>
+                    <div class="storage-details">
+                        <span id="local-storage-percent">0%</span>
+                        <span id="local-storage-usage">0 KB / 5 MB</span>
+                    </div>
+                </div>
+                
+                <div class="storage-info-section">
+                    <h4>IndexedDB (Images)</h4>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="indexeddb-bar"></div>
+                    </div>
+                    <div class="storage-details">
+                        <span id="indexeddb-percent">0%</span>
+                        <span id="indexeddb-usage">0 KB / 50 MB</span>
+                    </div>
+                </div>
+                
+                <div class="storage-info-note">
+                    <p>Note: Storage limits vary by browser.</p>
                 </div>
             </div>
         </div>
