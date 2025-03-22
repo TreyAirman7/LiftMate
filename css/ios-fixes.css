@@ -1,67 +1,28 @@
-/* iOS Fullscreen Mode fixes */
+/* iOS Fullscreen Mode fixes - minimal approach */
 
-/* Add padding to the top of the app header to account for status bar */
+/* Add modest padding to the top of the app header */
 .app-header {
-    padding-top: calc(16px + env(safe-area-inset-top, 20px));
-    height: auto;
-    min-height: 64px;
+    padding-top: calc(16px + env(safe-area-inset-top, 10px));
 }
 
 /* Adjust the theme toggle buttons positioning */
-.header-content {
-    justify-content: space-between;
-}
-
 .theme-controls {
     display: flex;
     align-items: center;
 }
 
-.theme-toggle {
-    margin-left: 8px;
-}
-
-/* Fix bottom navigation to account for home indicator area */
+/* Fix bottom navigation with minimal adjustments */
 .mobile-nav {
-    height: auto;
-    min-height: 80px;
-    padding-bottom: env(safe-area-inset-bottom, 20px);
+    padding-bottom: env(safe-area-inset-bottom, 10px);
 }
 
 .nav-button {
-    padding-top: 16px;
-    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: auto;
+    padding-top: 8px;
 }
 
-/* Adjust content area to account for the header and nav changes */
-.tab-content {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
-}
-
-/* Media query for iOS devices */
+/* Media query for iOS devices - minimal adjustments */
 @supports (padding-top: env(safe-area-inset-top)) {
-    body {
-        /* This ensures content isn't hidden under notches or rounded corners */
-        padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) 
-                env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
-    }
-    
-    .app-container {
-        padding-top: env(safe-area-inset-top, 0);
-    }
-    
-    /* Ensure modals don't get cut off by the notch */
-    .modal-content {
-        margin-top: env(safe-area-inset-top, 0);
-        margin-bottom: env(safe-area-inset-bottom, 0);
-    }
-    
-    /* Ensure the app tabs adjust for the bottom safe area */
     .tab-content {
-        padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 10px));
     }
 }
