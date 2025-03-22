@@ -11,19 +11,36 @@
     align-items: center;
 }
 
-/* Fix bottom navigation with minimal adjustments */
+/* Fix bottom navigation with more aggressive adjustments */
 .mobile-nav {
     padding-bottom: env(safe-area-inset-bottom, 10px);
+    padding-top: 15px; /* Add padding to the top of the entire nav bar */
+    height: auto;
+    min-height: 95px; /* Increase minimum height */
 }
 
 .nav-button {
-    padding-top: 13px; /* Increased by 5px from previous 8px */
-    margin-top: 5px;
+    padding-top: 0; /* Reset padding and use flexbox spacing */
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80px; /* Fixed height for buttons */
 }
 
 /* Media query for iOS devices - minimal adjustments */
 @supports (padding-top: env(safe-area-inset-top)) {
     .tab-content {
-        padding-bottom: calc(80px + env(safe-area-inset-bottom, 10px));
+        padding-bottom: calc(95px + env(safe-area-inset-bottom, 10px));
+    }
+    
+    /* Ensure space for the bottom nav icons */
+    .nav-button .icon {
+        margin-bottom: 4px;
+    }
+    
+    .nav-button span {
+        margin-top: 4px;
     }
 }
