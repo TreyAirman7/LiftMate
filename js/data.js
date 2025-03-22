@@ -737,6 +737,124 @@ const DataManager = (() => {
         return goals;
     };
     
+        /**
+     * Get storage usage and capacity information
+     * @returns {Promise<Object>} - Object containing storage usage info
+     */
+    const getStorageInfo = async () => {
+        // Calculate localStorage usage
+        let localStorageSize = 0;
+        let localStorageInfo = {};
+        
+        // Calculate each key's size
+        for (let key in STORAGE_KEYS) {
+            const data = localStorage.getItem(STORAGE_KEYS[key]);
+            if (data) {
+                const size = new Blob([data]).size;
+                localStorageSize += size;
+                localStorageInfo[STORAGE_KEYS[key]] = size;
+            }
+        }
+        
+        // Calculate IndexedDB usage for progress pics
+        let indexedDBSize = 0;
+        
+        try {
+            const dbName = 'ProgressPicsDB';
+            const storeName = 'pictures';
+            
+            return new Promise((resolve) => {
+                const request = indexedDB.open(dbName);
+                
+                request.onerror = () => {
+                    // If error, just return local storage info
+                    resolve({
+                        localStorage: {
+                            usage: localStorageSize,
+                            capacity: 5 * 1024 * 1024, // Approximate 5MB limit
+                            usagePercent: (localStorageSize / (5 * 1024 * 1024) * 100).toFixed(2),
+                            details: localStorageInfo
+                        },
+                        indexedDB: {
+                            usage: 0,
+                            capacity: 'Unknown',
+                            usagePercent: 0,
+                            details: {}
+                        }
+                    });
+                };
+                
+                request.onsuccess = (event) => {
+                    const db = event.target.result;
+                    const transaction = db.transaction([storeName], 'readonly');
+                    const store = transaction.objectStore(storeName);
+                    const cursorRequest = store.openCursor();
+                    
+                    cursorRequest.onsuccess = (e) => {
+                        const cursor = e.target.result;
+                        if (cursor) {
+                            // Add the size of the current record to the total
+                            if (cursor.value && cursor.value.image) {
+                                const size = cursor.value.image.size || 0;
+                                indexedDBSize += size;
+                            }
+                            cursor.continue();
+                        } else {
+                            // When no more records, resolve with the final sizes
+                            resolve({
+                                localStorage: {
+                                    usage: localStorageSize,
+                                    capacity: 5 * 1024 * 1024, // Approximate 5MB limit
+                                    usagePercent: (localStorageSize / (5 * 1024 * 1024) * 100).toFixed(2),
+                                    details: localStorageInfo
+                                },
+                                indexedDB: {
+                                    usage: indexedDBSize,
+                                    capacity: 50 * 1024 * 1024, // Approximate 50MB limit for most browsers
+                                    usagePercent: (indexedDBSize / (50 * 1024 * 1024) * 100).toFixed(2),
+                                    details: { 'pictures': indexedDBSize }
+                                }
+                            });
+                        }
+                    };
+                    
+                    cursorRequest.onerror = () => {
+                        // If error, just return local storage info
+                        resolve({
+                            localStorage: {
+                                usage: localStorageSize,
+                                capacity: 5 * 1024 * 1024, // Approximate 5MB limit
+                                usagePercent: (localStorageSize / (5 * 1024 * 1024) * 100).toFixed(2),
+                                details: localStorageInfo
+                            },
+                            indexedDB: {
+                                usage: 0,
+                                capacity: 'Unknown',
+                                usagePercent: 0,
+                                details: {}
+                            }
+                        });
+                    };
+                };
+            });
+        } catch (error) {
+            return {
+                localStorage: {
+                    usage: localStorageSize,
+                    capacity: 5 * 1024 * 1024, // Approximate 5MB limit
+                    usagePercent: (localStorageSize / (5 * 1024 * 1024) * 100).toFixed(2),
+                    details: localStorageInfo
+                },
+                indexedDB: {
+                    usage: 0,
+                    capacity: 'Unknown',
+                    usagePercent: 0,
+                    details: {}
+                }
+            };
+        }
+    };
+
     // Public API
     return {
         initializeStorage,
@@ -764,7 +882,8 @@ const DataManager = (() => {
         getExerciseProgress,
         getGoals,
         saveGoals,
-        generateId
+        generateId,
+        getStorageInfo
     };
 })();
 
