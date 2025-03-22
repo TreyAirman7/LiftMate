@@ -1,0 +1,67 @@
+/* iOS Fullscreen Mode fixes */
+
+/* Add padding to the top of the app header to account for status bar */
+.app-header {
+    padding-top: calc(16px + env(safe-area-inset-top, 20px));
+    height: auto;
+    min-height: 64px;
+}
+
+/* Adjust the theme toggle buttons positioning */
+.header-content {
+    justify-content: space-between;
+}
+
+.theme-controls {
+    display: flex;
+    align-items: center;
+}
+
+.theme-toggle {
+    margin-left: 8px;
+}
+
+/* Fix bottom navigation to account for home indicator area */
+.mobile-nav {
+    height: auto;
+    min-height: 80px;
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+.nav-button {
+    padding-top: 16px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+}
+
+/* Adjust content area to account for the header and nav changes */
+.tab-content {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+}
+
+/* Media query for iOS devices */
+@supports (padding-top: env(safe-area-inset-top)) {
+    body {
+        /* This ensures content isn't hidden under notches or rounded corners */
+        padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) 
+                env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+    }
+    
+    .app-container {
+        padding-top: env(safe-area-inset-top, 0);
+    }
+    
+    /* Ensure modals don't get cut off by the notch */
+    .modal-content {
+        margin-top: env(safe-area-inset-top, 0);
+        margin-bottom: env(safe-area-inset-bottom, 0);
+    }
+    
+    /* Ensure the app tabs adjust for the bottom safe area */
+    .tab-content {
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+    }
+}
