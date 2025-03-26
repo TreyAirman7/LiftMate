@@ -23,55 +23,84 @@
   z-index: 100;
 }
 
-/* Enhanced header for iPhone - adjusted size */
+/* Modern iPhone header redesign */
 @media (max-width: 428px) {
-  /* Make the header larger but still fit properly */
+  /* Compact, iOS-style header */
   .app-header {
-    padding-top: calc(15px + var(--safe-area-inset-top));
-    padding-bottom: 10px;
+    padding-top: calc(8px + var(--safe-area-inset-top));
+    padding-bottom: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
     position: relative;
+    background-color: var(--background-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    z-index: 200;
   }
   
-  /* Increase title size but keep it fitting */
+  /* iOS-style app title */
   .app-header h1 {
-    font-size: 2.4rem; /* Slightly larger but fits */
+    font-size: 1.8rem;
+    font-weight: 600;
     margin: 0;
-    padding: 5px 0;
-    white-space: nowrap; /* Prevent wrapping */
+    padding: 0;
+    letter-spacing: -0.5px; /* iOS-style tight letter spacing */
+    white-space: nowrap;
   }
   
-  /* Adjust logo icon size */
+  /* Adjust logo icon for iOS style */
   .app-header .fa-dumbbell {
-    font-size: 1.8rem; /* Balanced size */
+    font-size: 1.6rem;
     margin-right: 8px;
+    opacity: 0.9;
   }
   
-  /* Adjust control buttons size */
+  /* iOS-style header controls */
   .app-header .theme-toggle {
-    width: 40px; /* Balanced size */
-    height: 40px; /* Balanced size */
-    font-size: 1.4rem;
-    margin-left: 6px;
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+    margin-left: 8px;
+    border-radius: 50%;
+    background-color: rgba(var(--md-primary-rgb), 0.08);
+    color: var(--primary-color);
+    transition: all 0.15s ease;
   }
   
-  /* Add colored bottom border for visual emphasis */
+  .app-header .theme-toggle:active {
+    background-color: rgba(var(--md-primary-rgb), 0.15);
+    transform: scale(0.95);
+  }
+  
+  /* Modern header layout */
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 44px; /* iOS standard header height */
+  }
+  
+  /* Add subtle bottom border for iOS style */
   .app-header:after {
     content: "";
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background-color: var(--primary-color);
-    z-index: 101;
+    height: 1px;
+    background-color: var(--border-color);
+    opacity: 0.5;
   }
   
-  /* Keep the header content properly spaced */
-  .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    overflow: hidden; /* Prevent overflow */
+  /* Add accent color bar below regular border */
+  .app-header:before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 25%; /* Only part of the bottom */
+    height: 2px;
+    background-color: var(--primary-color);
+    z-index: 101;
   }
 }
 
@@ -101,14 +130,13 @@
   height: 80px; /* Fixed height for consistent touch targets */
 }
 
-/* iPhone navigation - icons only */
+/* iOS-style navigation bar */
 @media (max-width: 428px) {
   .mobile-nav {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    min-height: 60px; /* Reduced height */
-    height: 60px; /* Fixed smaller height */
+    height: 49px; /* iOS standard tab bar height */
     width: 100%;
     max-width: 100%;
     position: fixed;
@@ -116,11 +144,13 @@
     left: 0;
     right: 0;
     z-index: 1000;
-    background-color: var(--background-color);
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    background-color: rgba(250, 250, 250, 0.95); /* Light background with slight transparency */
+    backdrop-filter: blur(10px); /* iOS-style blur effect */
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 -0.5px 0 rgba(0,0,0,0.2); /* Subtle iOS-style top border */
     box-sizing: border-box;
-    padding-top: 0; /* Remove top padding */
-    padding-bottom: calc(var(--safe-area-inset-bottom)); /* Only inset padding at bottom */
+    padding-top: 0;
+    padding-bottom: calc(var(--safe-area-inset-bottom)); /* Account for home indicator */
   }
   
   .nav-button {
@@ -130,19 +160,24 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 60px; /* Match nav height */
+    height: 49px; /* Match iOS standard */
     position: relative;
+    transition: all 0.2s ease;
   }
   
-  /* Style icons */
+  /* iOS-style navigation icons */
   .nav-button .nav-icon {
-    font-size: 1.6rem;
-    margin-bottom: 0; /* Remove bottom margin */
+    font-size: 22px; /* iOS standard tab icon size */
     color: var(--text-secondary-color);
+    opacity: 0.75;
+    transition: all 0.2s ease;
   }
   
+  /* Active tab styling */
   .nav-button.active .nav-icon {
     color: var(--primary-color);
+    opacity: 1;
+    transform: translateY(-2px) scale(1.1); /* Subtle lift effect */
   }
   
   /* Hide text labels on iPhone */
@@ -150,27 +185,39 @@
     display: none;
   }
   
-  /* Style the indicator dot for active tab */
+  /* Replace dot with iOS-style active line indicator */
   .nav-button .nav-indicator {
     position: absolute;
-    bottom: 8px; /* Position closer to bottom */
+    bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 4px; /* Smaller dot */
-    height: 4px; /* Smaller dot */
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background-color: var(--primary-color);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: all 0.2s ease;
   }
   
   .nav-button.active .nav-indicator {
     opacity: 1;
   }
   
+  /* Active tab press effect */
+  .nav-button:active {
+    opacity: 0.7;
+  }
+  
   /* Ensure the content area adjusts for fixed navigation */
   .tab-content {
-    padding-bottom: 70px; /* Reduced to match smaller nav */
+    padding-bottom: calc(49px + var(--safe-area-inset-bottom)); /* iOS height + safe area */
+    position: relative;
+  }
+  
+  /* Dark mode adjustments for tab bar */
+  .dark-mode .mobile-nav {
+    background-color: rgba(30, 30, 30, 0.95);
+    box-shadow: 0 -0.5px 0 rgba(255,255,255,0.1);
   }
 }
 
