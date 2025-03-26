@@ -1,0 +1,393 @@
+/* LiftMate - Enhanced iOS and iPhone Specific Fixes */
+
+/* ===== Safe Area Insets for Notches and Dynamic Island ===== */
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top, 10px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 10px);
+  --safe-area-inset-left: env(safe-area-inset-left, 0px);
+  --safe-area-inset-right: env(safe-area-inset-right, 0px);
+  --vh: 1vh; /* Will be set by JS for correct viewport height */
+}
+
+/* Apply safe area padding to container */
+.app-container {
+  padding-left: var(--safe-area-inset-left);
+  padding-right: var(--safe-area-inset-right);
+}
+
+/* Enhanced header for notch and Dynamic Island */
+.app-header {
+  padding-top: calc(16px + var(--safe-area-inset-top));
+  padding-left: max(16px, var(--safe-area-inset-left));
+  padding-right: max(16px, var(--safe-area-inset-right));
+  z-index: 100;
+}
+
+/* Adjust the theme toggle buttons positioning */
+.theme-controls {
+  display: flex;
+  align-items: center;
+  margin-right: var(--safe-area-inset-right);
+}
+
+/* Enhanced mobile navigation with better safe area support */
+.mobile-nav {
+  padding-bottom: calc(var(--safe-area-inset-bottom) + 10px);
+  padding-top: 15px;
+  height: auto;
+  min-height: 100px; /* Increased for better touch targets */
+  z-index: 100;
+}
+
+.nav-button {
+  padding-top: 0;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80px; /* Fixed height for consistent touch targets */
+}
+
+/* Fix for nav button text cutting off */
+@media (max-width: 428px) {
+  .nav-button {
+    padding: 0 5px;
+  }
+  
+  .nav-button span {
+    font-size: 0.8rem;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.2;
+    margin-top: 8px;
+    padding: 0 2px;
+  }
+  
+  .nav-button .icon {
+    margin-bottom: 8px;
+    font-size: 1.4rem;
+  }
+}
+
+/* ===== Standard Touch Target Sizes for iPhone ===== */
+/* Following Apple's Human Interface Guidelines (minimum 44x44px) */
+.button, .action-button, .add-button, .icon-button, 
+.template-card, .exercise-item, .timeframe-button, .muscle-filter {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Fix for Use Template button cutting off text */
+.template-card .button.primary,
+.template-card .button.secondary {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1rem;
+  white-space: normal;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50px;
+}
+
+@media (max-width: 428px) {
+  .template-cards .button {
+    padding: 12px 8px;
+  }
+}
+
+/* Add proper spacing between touch targets */
+.card-actions, .form-actions, .template-actions {
+  gap: 12px;
+}
+
+/* Make checkboxes and radio buttons easier to tap */
+input[type="checkbox"] + label, 
+input[type="radio"] + label {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+}
+
+/* ===== Enhanced Text Sizing for Retina Displays ===== */
+/* Use relative units instead of fixed pixel sizes */
+@media (max-width: 428px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3, .section-title {
+    font-size: 1.3rem;
+  }
+  
+  .card-title, .screen-title {
+    font-size: 1.2rem;
+  }
+  
+  .form-group label {
+    font-size: 1rem;
+  }
+  
+  .form-hint, .meta-info {
+    font-size: 0.85rem;
+  }
+}
+
+/* ===== Prevent iOS Text Zoom ===== */
+body {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* ===== Responsive Layout Adjustments for iPhone ===== */
+/* iPhone SE / Small iPhones (320px-375px) */
+@media (max-width: 375px) {
+  .card, .template-card {
+    padding: 16px;
+  }
+  
+  .template-cards, .start-options {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  
+  .pics-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .form-group {
+    width: 100%;
+  }
+  
+  .button, .action-button {
+    padding: 10px 16px;
+  }
+  
+  .history-stat {
+    font-size: 0.9rem;
+  }
+}
+
+/* iPhone 12/13/14 Standard (376px-428px) */
+@media (min-width: 376px) and (max-width: 428px) {
+  .template-cards, .start-options {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .comparison-view {
+    grid-template-columns: 1fr; /* Stack comparison images on smaller screens */
+  }
+}
+
+/* Stats page specific fixes for iPhone */
+@media (max-width: 428px) {
+  /* Force stats grid to always be 2x2 on mobile */
+  .stats-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+  
+  /* Fix for chart containers */
+  .workout-distribution-chart,
+  .exercise-frequency-chart,
+  .progress-chart-container,
+  .chart-container {
+    width: 100% !important;
+    min-height: 300px;
+    margin-bottom: 24px;
+    overflow: visible;
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  /* Ensure chart canvases are sized correctly */
+  .chart-container canvas,
+  #workout-distribution-chart,
+  #exercise-frequency-chart,
+  #progress-chart {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 250px !important;
+    max-height: 300px;
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  /* Additional fix to ensure D3 charts are visible */
+  svg.d3-chart {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 250px;
+    display: block !important;
+  }
+  
+  /* Size stat cards appropriately */
+  .stat-card {
+    padding: 12px;
+  }
+  
+  .stat-value {
+    font-size: 1.3rem;
+  }
+  
+  .stat-label {
+    font-size: 0.8rem;
+  }
+}
+
+/* Landscape mode adjustments */
+@media (max-height: 428px) and (orientation: landscape) {
+  .template-cards, .start-options {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  
+  .mobile-nav {
+    padding-bottom: max(10px, var(--safe-area-inset-bottom));
+  }
+}
+
+/* ===== Input Enhancements for iOS ===== */
+/* Prevent iOS zoom on input focus by ensuring font size >= 16px */
+input[type="text"], input[type="email"], input[type="password"],
+input[type="number"], input[type="search"], input[type="tel"],
+input[type="url"], select, textarea {
+  font-size: 16px; 
+}
+
+/* Improve the appearance of inputs on iOS */
+input, select, textarea {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: var(--md-sys-shape-corner-medium);
+}
+
+/* Fix for iOS date inputs */
+input[type="date"] {
+  min-height: 44px;
+  line-height: 44px;
+}
+
+/* ===== Fix for Modal Scrolling on iOS ===== */
+.modal-content {
+  max-height: calc(100vh - 60px - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Tab content adjustments for bottom navigation */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .tab-content {
+    padding-bottom: calc(95px + var(--safe-area-inset-bottom));
+  }
+  
+  /* Ensure space for the bottom nav icons */
+  .nav-button .icon {
+    margin-bottom: 4px;
+  }
+  
+  .nav-button span {
+    margin-top: 4px;
+  }
+}
+
+/* ===== iOS PWA enhancements ===== */
+/* Prevent text highlighting and callouts when tapping elements */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Make action buttons more prominent on iOS */
+@media (max-width: 428px) {
+  .action-button {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* ===== Swipe Navigation Visual Indicators ===== */
+.swipe-indicator {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background-color: rgba(var(--md-primary-rgb), 0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: swipeIndicatorFade 0.5s ease-out forwards;
+  pointer-events: none;
+}
+
+.swipe-indicator::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-top: 3px solid #fff;
+  border-right: 3px solid #fff;
+  position: absolute;
+}
+
+.swipe-left {
+  left: 20px;
+}
+
+.swipe-left::before {
+  transform: rotate(-135deg);
+  margin-left: 4px;
+}
+
+.swipe-right {
+  right: 20px;
+}
+
+.swipe-right::before {
+  transform: rotate(45deg);
+  margin-right: 4px;
+}
+
+@keyframes swipeIndicatorFade {
+  0% {
+    opacity: 0.8;
+    transform: translateY(-50%) scale(0.5);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateY(-50%) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50%) scale(1);
+  }
+}

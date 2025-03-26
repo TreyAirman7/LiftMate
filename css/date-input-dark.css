@@ -1,0 +1,5 @@
+/* Dark mode override for date inputs */
+.dark-mode input[type="date"] {
+  background-color: rgba(var(--md-primary-rgb), 0.15) !important;
+  color: var(--text-primary-color) !important;
+}

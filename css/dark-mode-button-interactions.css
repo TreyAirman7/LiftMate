@@ -1,0 +1,203 @@
+/* LiftMate - Dark Mode Button Interactions */
+
+/* IMPORTANT: These styles ONLY apply to dark mode (when dark-mode class is present) */
+
+/* ===== Dark Mode Specific Button Styles ===== */
+
+/* Primary buttons - dark mode specific styling */
+.dark-mode .button.primary {
+  background-color: var(--md-primary);
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 
+              0 0 10px rgba(var(--md-primary-rgb), 0.4);
+  border: none;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.dark-mode .button.primary:hover {
+  background-color: var(--md-primary-lighter);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 
+              0 0 15px rgba(var(--md-primary-rgb), 0.5);
+  transform: translateY(-2px);
+}
+
+.dark-mode .button.primary:active {
+  background-color: var(--md-primary);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25), 
+              inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  transform: scale(0.95) translateY(1px);
+}
+
+/* 1. Ripple Effect - Dark mode specific (glowing ripple) */
+.dark-mode .button::after,
+.dark-mode .action-button::after,
+.dark-mode .add-button::after,
+.dark-mode .nav-button::after,
+.dark-mode .icon-button::after,
+.dark-mode .muscle-filter::after,
+.dark-mode .timeframe-button::after,
+.dark-mode .text-button::after {
+  background: rgba(var(--md-primary-rgb), 0.6); /* More colorful for dark mode */
+  mix-blend-mode: screen; /* Gives a glowing effect in dark mode */
+}
+
+/* Secondary buttons - dark mode specific */
+.dark-mode .button.secondary {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--md-primary-container);
+  border: 1px solid rgba(var(--md-primary-rgb), 0.3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2), 
+              0 0 8px rgba(var(--md-primary-rgb), 0.1);
+}
+
+.dark-mode .button.secondary:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(var(--md-primary-rgb), 0.5);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25), 
+              0 0 12px rgba(var(--md-primary-rgb), 0.2);
+  transform: translateY(-2px);
+}
+
+.dark-mode .button.secondary:active {
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2),
+              inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  transform: scale(0.95) translateY(1px);
+}
+
+/* Action buttons (floating) - dark mode specific */
+.dark-mode .action-button {
+  background-color: var(--md-primary);
+  color: white;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3), 
+              0 0 15px rgba(var(--md-primary-rgb), 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.dark-mode .action-button:hover {
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.4), 
+              0 0 20px rgba(var(--md-primary-rgb), 0.6);
+  transform: translateY(-3px) scale(1.03);
+  background-color: var(--md-primary-lighter);
+}
+
+.dark-mode .action-button:active {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3),
+              inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  transform: scale(0.95) translateY(1px);
+}
+
+/* Icon buttons - dark mode specific */
+.dark-mode .icon-button {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--md-on-surface-variant);
+  border-radius: var(--md-sys-shape-corner-full);
+}
+
+.dark-mode .icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--md-primary-container);
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(var(--md-primary-rgb), 0.3);
+}
+
+.dark-mode .icon-button:active {
+  background-color: rgba(255, 255, 255, 0.07);
+  transform: scale(0.92);
+}
+
+/* 2. Scale transform for dark mode - slightly more dramatic for visual feedback */
+.dark-mode .button:active,
+.dark-mode .action-button:active,
+.dark-mode .icon-button:active {
+  transform: scale(0.93) translateY(1px);
+}
+
+/* 3. 3D Press Effect - Dark mode specific with stronger shadows */
+.dark-mode .button:active,
+.dark-mode .action-button:active,
+.dark-mode .add-button:active,
+.dark-mode .icon-button:active {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Stronger inner shadow for dark mode */
+}
+
+/* Nav buttons - dark mode specific */
+.dark-mode .nav-button {
+  color: var(--md-on-surface-variant);
+  transition: all 0.3s ease;
+}
+
+.dark-mode .nav-button:hover {
+  color: var(--md-primary-container);
+  transform: translateY(-1px);
+}
+
+.dark-mode .nav-button:active {
+  transform: scale(0.95);
+}
+
+.dark-mode .nav-button.active {
+  color: var(--md-primary-container);
+}
+
+/* Filter/toggle buttons - dark mode specific */
+.dark-mode .muscle-filter,
+.dark-mode .timeframe-button {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(var(--md-primary-rgb), 0.2);
+  color: var(--md-on-surface-variant);
+}
+
+.dark-mode .muscle-filter:hover,
+.dark-mode .timeframe-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(var(--md-primary-rgb), 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 0 8px rgba(var(--md-primary-rgb), 0.2);
+}
+
+.dark-mode .muscle-filter.active,
+.dark-mode .timeframe-button.active {
+  background-color: rgba(var(--md-primary-rgb), 0.2);
+  border-color: rgba(var(--md-primary-rgb), 0.4);
+  color: var(--md-primary-container);
+  box-shadow: 0 0 10px rgba(var(--md-primary-rgb), 0.3);
+}
+
+/* Text buttons - dark mode specific */
+.dark-mode .text-button {
+  color: var(--md-primary-container);
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: var(--md-sys-shape-corner-medium);
+}
+
+.dark-mode .text-button:hover {
+  background-color: rgba(255, 255, 255, 0.07);
+}
+
+.dark-mode .text-button:active {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* Add button - dark mode specific */
+.dark-mode .add-button {
+  background-color: var(--md-primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3),
+              0 0 12px rgba(var(--md-primary-rgb), 0.4);
+}
+
+.dark-mode .add-button:hover {
+  background-color: var(--md-primary-lighter);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35),
+              0 0 16px rgba(var(--md-primary-rgb), 0.5);
+  transform: translateY(-2px);
+}
+
+.dark-mode .add-button:active {
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25),
+              inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}

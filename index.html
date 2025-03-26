@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<!--
+NOTE: For best experience, serve this app through a local web server to avoid CORS issues.
+You can use Python's built-in server: python -m http.server
+Or Node.js: npx serve
+Then open in your browser at: http://localhost:8000 or the appropriate port
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6750A4" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1C1B1F" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LiftMate">
+    <link rel="apple-touch-icon" href="LiftMate.png">
+    <link rel="apple-touch-startup-image" href="LiftMate.png">
+    <link rel="manifest" href="manifest.json">
+    <title>LiftMate: Gym Tracking Tool</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/light-mode.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/light-mode-animations.css">
+    <link rel="stylesheet" href="css/micro-interactions.css">
+    <link rel="stylesheet" href="css/light-mode-micro-interactions.css">
+    <link rel="stylesheet" href="css/button-interactions.css">
+    <link rel="stylesheet" href="css/light-mode-button-interactions.css">
+    <link rel="stylesheet" href="css/dark-mode-button-interactions.css">
+    <link rel="stylesheet" href="css/icons.css">
+    <link rel="stylesheet" href="css/ios-fixes.css">
+    <link rel="stylesheet" href="css/active-workout.css">
+    <link rel="stylesheet" href="css/date-input-dark.css">
+    <link rel="stylesheet" href="css/d3-charts.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Chart legend styling */
+        .chartjs-legend li span, 
+        canvas + ul li span,
+        ul.chart-legend li span {
+            display: inline-block !important;
+            padding: 3px 6px !important;
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            border-radius: 3px !important;
+            margin: 2px !important;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.3) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Material Design App Bar -->
+        <div class="app-header">
+            <div class="header-content">
+                <h1><i class="fas fa-dumbbell"></i> <span class="typing-text">LiftMate</span></h1>
+                <div class="theme-controls">
+                    <button id="theme-toggle" class="theme-toggle" title="Change theme color">
+                        <i class="fas fa-palette"></i>
+                    </button>
+                    <button id="dark-mode-toggle" class="theme-toggle" title="Toggle dark mode">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button id="storage-info-toggle" class="theme-toggle" title="View storage usage">
+                        <i class="fas fa-database"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Theme Selection Panel -->
+            <div id="theme-panel" class="theme-panel">
+                <div class="theme-option" data-theme="default">
+                    <div class="color-preview purple"></div>
+                    <span>Purple</span>
+                </div>
+                <div class="theme-option" data-theme="blue">
+                    <div class="color-preview blue"></div>
+                    <span>Blue</span>
+                </div>
+                <div class="theme-option" data-theme="green">
+                    <div class="color-preview green"></div>
+                    <span>Green</span>
+                </div>
+                <div class="theme-option" data-theme="orange">
+                    <div class="color-preview orange"></div>
+                    <span>Orange</span>
+                </div>
+                <div class="theme-option" data-theme="red">
+                    <div class="color-preview red"></div>
+                    <span>Red</span>
+                </div>
+                <div class="theme-option" data-theme="teal">
+                    <div class="color-preview teal"></div>
+                    <span>Teal</span>
+                </div>
+                <div class="theme-option" data-theme="pink">
+                    <div class="color-preview pink"></div>
+                    <span>Pink</span>
+                </div>
+                <div class="theme-option" data-theme="indigo">
+                    <div class="color-preview indigo"></div>
+                    <span>Indigo</span>
+                </div>
+                <div class="theme-option" data-theme="amber">
+                    <div class="color-preview amber"></div>
+                    <span>Amber</span>
+                </div>
+                <div class="theme-option" data-theme="cyan">
+                    <div class="color-preview cyan"></div>
+                    <span>Cyan</span>
+                </div>
+            </div>
+            
+            
+            <!-- Storage Info Panel -->
+            <div id="storage-info-panel" class="storage-info-panel">
+                <h3>Storage Usage</h3>
+                <div class="storage-info-section">
+                    <h4>Local Storage</h4>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="local-storage-bar"></div>
+                    </div>
+                    <div class="storage-details">
+                        <span id="local-storage-percent">0%</span>
+                        <span id="local-storage-usage">0 KB / 5 MB</span>
+                    </div>
+                </div>
+                
+                <div class="storage-info-section">
+                    <h4>IndexedDB (Images)</h4>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="indexeddb-bar"></div>
+                    </div>
+                    <div class="storage-details">
+                        <span id="indexeddb-percent">0%</span>
+                        <span id="indexeddb-usage">0 KB / 50 MB</span>
+                    </div>
+                </div>
+                
+                <div class="storage-info-note">
+                    <p>Note: Storage limits vary by browser.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab Container for elastic transitions -->
+        <div class="tab-container">
+        
+        <!-- Current Workout Tab -->
+        <div class="tab-content active" id="current-workout">
+            <div class="container">
+                <div class="section-header">
+                    <div class="title-wrapper">
+                        <div class="title-icon"><i class="fas fa-dumbbell"></i></div>
+                        <h2>Current Workout</h2>
+                    </div>
+                </div>
+                
+                <div class="start-options-container">
+                    <div class="start-option" id="template-workout">
+                        <div class="option-icon"><i class="fas fa-clipboard-list"></i></div>
+                        <h3>Template Workout</h3>
+                        <p>Use a saved workout template</p>
+                        <button class="action-button" id="use-template">Use Template <i class="fas fa-play"></i></button>
+                    </div>
+                </div>
+                
+                <div class="templates-section">
+                    <div class="section-header">
+                        <div class="title-wrapper">
+                            <div class="title-icon"><i class="fas fa-clipboard-list"></i></div>
+                            <h2>My Templates</h2>
+                        </div>
+                        <button class="add-button" id="create-template">
+                            <i class="fas fa-plus"></i> New Template
+                        </button>
+                    </div>
+                    
+                    <div class="templates-container" id="templates-list">
+                        <!-- Templates will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistics Tab -->
+        <div class="tab-content" id="statistics">
+            <div class="container">
+                <div class="section-header">
+                    <div class="title-wrapper">
+                        <div class="title-icon"><i class="fas fa-chart-line"></i></div>
+                        <h2>Statistics & Analytics</h2>
+                    </div>
+                </div>
+                
+                <div class="timeframe-selector">
+                    <button class="timeframe-button active" data-timeframe="week">This Week</button>
+                    <button class="timeframe-button" data-timeframe="month">This Month</button>
+                    <button class="timeframe-button" data-timeframe="year">This Year</button>
+                    <button class="timeframe-button" data-timeframe="all">All Time</button>
+                </div>
+                
+                <div class="stats-summary">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-dumbbell"></i></div>
+                        <div class="stat-content">
+                            <h3>Total Workouts</h3>
+                            <p class="stat-value" id="total-workouts">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-content">
+                            <h3>Total Duration</h3>
+                            <p class="stat-value" id="total-duration">0 hrs</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                        <div class="stat-content">
+                            <h3>Weekly Average</h3>
+                            <p class="stat-value" id="avg-per-week">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-weight-hanging"></i></div>
+                        <div class="stat-content">
+                            <h3>Total Weight Lifted</h3>
+                            <p class="stat-value" id="total-weight-lifted">0 lbs</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <div class="title-wrapper">
+                        <div class="title-icon"><i class="fas fa-chart-pie"></i></div>
+                        <h2>Workout Analytics</h2>
+                    </div>
+                </div>
+                
+                <div class="stats-dashboard">
+                    <!-- Charts will be placed here by D3ChartsManager -->
+                </div>
+                
+                
+                <div class="one-rep-max-calculator">
+                    <div class="section-header">
+                        <div class="title-wrapper">
+                            <div class="title-icon"><i class="fas fa-calculator"></i></div>
+                            <h2>One Rep Max Calculator</h2>
+                        </div>
+                    </div>
+                    <div class="orm-container">
+                        <div class="orm-input">
+                            <label for="orm-exercise-select">Select Exercise:</label>
+                            <select id="orm-exercise-select">
+                                <option value="">Select an exercise</option>
+                                <!-- Exercises will be added here dynamically -->
+                            </select>
+                        </div>
+                        <div class="orm-output">
+                            <div class="orm-result-label">Estimated 1RM:</div>
+                            <div class="orm-result" id="orm-result">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="personal-records">
+                    <div class="section-header">
+                        <div class="title-wrapper">
+                            <div class="title-icon"><i class="fas fa-trophy"></i></div>
+                            <h2>Personal Records</h2>
+                        </div>
+                    </div>
+                    <div class="records-container" id="personal-records-list">
+                        <!-- Personal records will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress Tab -->
+        <div class="tab-content" id="progress">
+            <div class="container">
+                <div class="section-header">
+                    <div class="title-wrapper">
+                        <div class="title-icon"><i class="fas fa-chart-bar"></i></div>
+                        <h2>Progress Tracker</h2>
+                    </div>
+                </div>
+                
+                <div class="progress-chart-container">
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label for="exercise-select">Exercise:</label>
+                            <select id="exercise-select">
+                                <option value="">Select Exercise</option>
+                                <!-- Exercises will be added here dynamically -->
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="rep-range-select">Rep Range:</label>
+                            <select id="rep-range-select">
+                                <option value="all">All</option>
+                                <option value="1-5">1-5 (Strength)</option>
+                                <option value="6-12">6-12 (Hypertrophy)</option>
+                                <option value="13+">13+ (Endurance)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <canvas id="progress-chart"></canvas>
+                </div>
+                
+                <div class="weight-tracker">
+                    <div class="section-header">
+                        <div class="title-wrapper">
+                            <div class="title-icon"><i class="fas fa-weight"></i></div>
+                            <h2>Body Weight Tracker</h2>
+                        </div>
+                        <button class="add-button" id="add-weight">
+                            <i class="fas fa-plus"></i> Add Entry
+                        </button>
+                    </div>
+                    
+                    <div class="weight-chart-container">
+                        <canvas id="weight-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Exercises Tab -->
+        <div class="tab-content" id="exercises">
+            <div class="container">
+                <div class="section-header">
+                    <div class="title-wrapper">
+                        <div class="title-icon"><i class="fas fa-dumbbell"></i></div>
+                        <h2>Exercise Library</h2>
+                    </div>
+                    <button class="add-button" id="add-exercise">
+                        <i class="fas fa-plus"></i> Add Exercise
+                    </button>
+                </div>
+                
+                <div class="exercise-filters">
+                    <input type="text" id="exercise-search" placeholder="Search exercises...">
+                    <div class="muscle-filters" id="muscle-filters">
+                        <button class="muscle-filter active" data-muscle="all">All</button>
+                        <button class="muscle-filter" data-muscle="chest">Chest</button>
+                        <button class="muscle-filter" data-muscle="back">Back</button>
+                        <button class="muscle-filter" data-muscle="shoulders">Shoulders</button>
+                        <button class="muscle-filter" data-muscle="biceps">Biceps</button>
+                        <button class="muscle-filter" data-muscle="triceps">Triceps</button>
+                        <button class="muscle-filter" data-muscle="forearms">Forearms</button>
+                        <button class="muscle-filter" data-muscle="abs">Abs</button>
+                        <button class="muscle-filter" data-muscle="legs">Legs</button>
+                        <button class="muscle-filter" data-muscle="quads">Quads</button>
+                        <button class="muscle-filter" data-muscle="hamstrings">Hamstrings</button>
+                        <button class="muscle-filter" data-muscle="glutes">Glutes</button>
+                        <button class="muscle-filter" data-muscle="calves">Calves</button>
+                        <button class="muscle-filter" data-muscle="traps">Traps</button>
+                        <button class="muscle-filter" data-muscle="obliques">Obliques</button>
+                        <button class="muscle-filter" data-muscle="neck">Neck</button>
+                    </div>
+                </div>
+                
+                <div class="exercises-container" id="exercises-list">
+                    <!-- Exercises will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- History Tab -->
+        <div class="tab-content" id="history">
+            <div class="container">
+                <div class="section-header">
+                    <div class="title-wrapper">
+                        <div class="title-icon"><i class="fas fa-history"></i></div>
+                        <h2>Workout History</h2>
+                    </div>
+                </div>
+                
+                <div class="history-filters">
+                    <div class="date-filter">
+                        <button class="date-filter-button active" data-filter="all">All Time</button>
+                        <button class="date-filter-button" data-filter="week">This Week</button>
+                        <button class="date-filter-button" data-filter="month">This Month</button>
+                        <button class="date-filter-button" data-filter="year">This Year</button>
+                    </div>
+                </div>
+                
+                <div class="history-list" id="workout-history">
+                    <!-- Workout history items will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Goals Tab -->
+        <div class="tab-content" id="goals">
+            <div class="container">
+                <div class="section-header">
+                    <div class="title-wrapper">
+                        <div class="title-icon"><i class="fas fa-bullseye"></i></div>
+                        <h2>Goals</h2>
+                    </div>
+                </div>
+                
+                <!-- Exercise Goals Section -->
+                <div class="goals-section">
+                    <div class="section-header">
+                        <div class="title-wrapper">
+                            <div class="title-icon"><i class="fas fa-dumbbell"></i></div>
+                            <h3>Exercise Weight Goals (PRs)</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="goal-form">
+                        <form id="exercise-goal-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <select id="goal-exercise-select" required>
+                                        <option value="">Select Exercise</option>
+                                        <!-- Exercises will be added here dynamically -->
+                                    </select>
+                                    <label for="goal-exercise-select">Exercise</label>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <input type="number" id="goal-exercise-weight" min="0" step="2.5" required>
+                                    <label for="goal-exercise-weight">Target Weight (lbs)</label>
+                                </div>
+                                
+                                <button type="submit" class="button primary">Set Goal</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="goals-list" id="exercise-goals-list">
+                        <!-- Exercise goals will be added here dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Gym Visits Goals Section -->
+                <div class="goals-section">
+                    <div class="section-header">
+                        <div class="title-wrapper">
+                            <div class="title-icon"><i class="fas fa-calendar-check"></i></div>
+                            <h3>Gym Visits Goals</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="goal-form">
+                        <form id="gym-visits-goal-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <select id="goal-visits-timeframe" required>
+                                        <option value="">Select Timeframe</option>
+                                        <option value="weekly">Weekly</option>
+                                        <option value="monthly">Monthly</option>
+                                    </select>
+                                    <label for="goal-visits-timeframe">Timeframe</label>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <input type="number" id="goal-visits-count" min="1" required>
+                                    <label for="goal-visits-count">Target Visits</label>
+                                </div>
+                                
+                                <button type="submit" class="button primary">Set Goal</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="goals-list" id="gym-visits-goals-list">
+                        <!-- Gym visits goals will be added here dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Bodyweight Goals Section -->
+                <div class="goals-section">
+                    <div class="section-header">
+                        <div class="title-wrapper">
+                            <div class="title-icon"><i class="fas fa-weight"></i></div>
+                            <h3>Bodyweight Goal</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="goal-form">
+                        <form id="bodyweight-goal-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <input type="number" id="goal-bodyweight-target" min="0" step="0.5" required>
+                                    <label for="goal-bodyweight-target">Target Weight (lbs)</label>
+                                </div>
+                                
+                                <button type="submit" class="button primary">Set Goal</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="goals-list" id="bodyweight-goals-list">
+                        <!-- Bodyweight goals will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress Pics Tab -->
+        <div class="tab-content" id="progress-pics">
+            <div class="container">
+                <div class="section-header">
+                    <div class="title-wrapper">
+                        <div class="title-icon"><i class="fas fa-camera"></i></div>
+                        <h2>Progress Pictures</h2>
+                    </div>
+                    <button class="add-button" id="add-progress-pic">
+                        <i class="fas fa-plus"></i> Add Photo
+                    </button>
+                </div>
+                
+                <div class="progress-pics-container">
+                    <div class="date-filter">
+                        <button class="date-filter-button active" data-filter="all">All Time</button>
+                        <button class="date-filter-button" data-filter="week">This Week</button>
+                        <button class="date-filter-button" data-filter="month">This Month</button>
+                        <button class="date-filter-button" data-filter="year">This Year</button>
+                    </div>
+                    
+                    <div class="pics-grid" id="progress-pics-grid">
+                        <!-- Progress pics will be added here dynamically -->
+                    </div>
+                    
+                    <div class="empty-state hidden" id="no-pics-message">
+                        <i class="fas fa-camera empty-icon"></i>
+                        <p>No progress pictures yet. Add your first photo to start tracking your visual progress!</p>
+                    </div>
+                </div>
+                
+                <!-- Before & After Comparison section removed as per requirement -->
+            </div>
+        </div>
+        </div> <!-- End of tab-container -->
+        
+        <!-- Material Design Bottom Navigation -->
+        <div class="mobile-nav">
+            <button class="nav-button active" data-tab="current-workout">
+                <span class="nav-indicator"></span>
+                <span class="nav-text">Workout</span>
+            </button>
+            <button class="nav-button" data-tab="statistics">
+                <span class="nav-indicator"></span>
+                <span class="nav-text">Stats</span>
+            </button>
+            <button class="nav-button" data-tab="progress">
+                <span class="nav-indicator"></span>
+                <span class="nav-text">Progress</span>
+            </button>
+            <button class="nav-button" data-tab="exercises">
+                <span class="nav-indicator"></span>
+                <span class="nav-text">Exercises</span>
+            </button>
+            <button class="nav-button" data-tab="history">
+                <span class="nav-indicator"></span>
+                <span class="nav-text">History</span>
+            </button>
+            <button class="nav-button" data-tab="goals">
+                <span class="nav-indicator"></span>
+                <span class="nav-text">Goals</span>
+            </button>
+            <button class="nav-button" data-tab="progress-pics">
+                <span class="nav-indicator"></span>
+                <span class="nav-text">Pics</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <!-- Template Selector Modal - Material Design Dialog -->
+    <div class="modal" id="template-selector-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Select Workout Template</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="templates-grid" id="template-selector-list">
+                    <!-- Templates will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Template Creator Modal - Material Design Dialog -->
+    <div class="modal" id="template-creator-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="template-creator-title">Create New Template</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="template-form">
+                    <div class="form-group">
+                        <input type="text" id="template-name" placeholder="E.g., Push Day, Leg Day, Full Body" required>
+                        <label for="template-name">Template Name</label>
+                    </div>
+                    
+                    <div class="template-exercises">
+                        <h3>Exercises</h3>
+                        <div id="template-exercises-list">
+                            <!-- Exercises will be added here dynamically -->
+                        </div>
+                        
+                        <div class="add-exercise-container">
+                            <button type="button" class="add-exercise-button" id="add-template-exercise">
+                                <i class="fas fa-plus"></i> Add Exercise
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="button secondary" id="cancel-template">CANCEL</button>
+                        <button type="submit" class="button primary" id="save-template">SAVE</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Exercise to Template Modal -->
+    <div class="modal" id="add-template-exercise-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Exercise to Template</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="template-exercise-search" placeholder="Search exercises...">
+                    <label for="template-exercise-search">Search Exercise</label>
+                </div>
+                
+                <div class="exercise-list" id="template-exercise-list">
+                    <!-- Exercises will be added here dynamically -->
+                </div>
+                
+                <div id="template-exercise-details" class="hidden">
+                    <h3 id="template-exercise-name"></h3>
+                    
+                    <div class="sets-container">
+                        <h4>Sets</h4>
+                        <div id="template-sets-list">
+                            <!-- Sets will be added here dynamically -->
+                            <div class="set-item">
+                                <div class="set-header">
+                                    <span>Set 1</span>
+                                    <button type="button" class="remove-set-button hidden">×</button>
+                                </div>
+                                <div class="set-inputs">
+                                    <div class="form-group">
+                                        <label for="set-1-reps">Target Reps</label>
+                                        <input type="number" id="set-1-reps" class="set-reps" min="1" value="10">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="set-1-rest">Rest Time (seconds)</label>
+                                        <input type="number" id="set-1-rest" class="set-rest" min="0" value="60">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="add-set-button" id="add-template-set">
+                            <i class="fas fa-plus"></i> Add Another Set
+                        </button>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="button secondary" id="back-to-exercises">Back</button>
+                        <button type="button" class="button primary" id="add-exercise-to-template">Add to Template</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Exercise Modal -->
+    <div class="modal" id="exercise-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Exercise</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="exercise-form">
+                    <div class="form-group">
+                        <input type="text" id="exercise-name" placeholder="E.g., Bench Press, Squat, Deadlift" required>
+                        <label for="exercise-name">Exercise Name</label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="position: relative; top: -5px;">Target Muscles</label>
+                        <div class="muscle-checkboxes">
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-chest" value="chest">
+                                <label for="muscle-chest" style="position: relative; top: -1px; margin-left: -16px;">Chest</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-back" value="back">
+                                <label for="muscle-back" style="position: relative; top: -1px; margin-left: -16px;">Back</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-shoulders" value="shoulders">
+                                <label for="muscle-shoulders" style="position: relative; top: -1px; margin-left: -16px;">Shoulders</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-biceps" value="biceps">
+                                <label for="muscle-biceps" style="position: relative; top: -1px; margin-left: -16px;">Biceps</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-triceps" value="triceps">
+                                <label for="muscle-triceps" style="position: relative; top: -1px; margin-left: -16px;">Triceps</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-forearms" value="forearms">
+                                <label for="muscle-forearms" style="position: relative; top: -1px; margin-left: -16px;">Forearms</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-abs" value="abs">
+                                <label for="muscle-abs" style="position: relative; top: -1px; margin-left: -16px;">Abs</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-legs" value="legs">
+                                <label for="muscle-legs" style="position: relative; top: -1px; margin-left: -16px;">Legs</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-quads" value="quads">
+                                <label for="muscle-quads" style="position: relative; top: -1px; margin-left: -16px;">Quads</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-hamstrings" value="hamstrings">
+                                <label for="muscle-hamstrings" style="position: relative; top: -1px; margin-left: -16px;">Hamstrings</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-glutes" value="glutes">
+                                <label for="muscle-glutes" style="position: relative; top: -1px; margin-left: -16px;">Glutes</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-calves" value="calves">
+                                <label for="muscle-calves" style="position: relative; top: -1px; margin-left: -16px;">Calves</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-traps" value="traps">
+                                <label for="muscle-traps" style="position: relative; top: -1px; margin-left: -16px;">Traps</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-obliques" value="obliques">
+                                <label for="muscle-obliques" style="position: relative; top: -1px; margin-left: -16px;">Obliques</label>
+                            </div>
+                            <div class="muscle-checkbox">
+                                <input type="checkbox" id="muscle-neck" value="neck">
+                                <label for="muscle-neck" style="position: relative; top: -1px; margin-left: -16px;">Neck</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="button secondary" id="cancel-exercise">Cancel</button>
+                        <button type="submit" class="button primary" id="save-exercise">Save Exercise</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Exercise Detail Modal -->
+    <div class="modal" id="exercise-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="detail-exercise-name">Exercise Name</h2>
+                <div class="modal-actions">
+                    <button class="icon-button" id="edit-exercise">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                    <button class="icon-button" id="delete-exercise">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="close-modal">&times;</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="exercise-detail-section">
+                    <h3 style="position: relative; top: -5px;">Target Muscles</h3>
+                    <div class="muscle-tags" id="detail-muscles">
+                        <!-- Muscle tags will be added here dynamically -->
+                    </div>
+                </div>
+                
+                <div class="exercise-detail-section">
+                    <h3>Personal Records</h3>
+                    <div class="exercise-records" id="exercise-records">
+                        <!-- Records will be added here dynamically -->
+                    </div>
+                </div>
+                
+                <button class="button secondary full-width" id="back-to-exercise-list">Back to Exercises</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Active Template Modal -->
+    <div class="modal" id="active-template-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="active-template-name">Template Name</h2>
+                <button id="cancel-active-workout" class="icon-button">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="workout-progress">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="workout-progress-bar"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="completed-exercises">0</span>/<span id="total-exercises">0</span> Exercises
+                    </div>
+                </div>
+                
+                <div class="active-exercise" id="active-exercise-container">
+                    <h3 id="active-exercise-name">Exercise Name</h3>
+                    
+                    <div class="set-progress" id="set-progress">
+                        <!-- Set numbers will be added here dynamically -->
+                    </div>
+                    
+                    <div class="current-set" id="current-set">
+                        <h4 id="current-set-number">Set 1 - </h4>
+                        <h4 id="target-reps-container"><span id="target-reps">10</span> reps</h4>
+                        
+                        <form id="set-form">
+                            <div class="set-form-inputs">
+                                <div class="form-group">
+                                    <label for="weight-input">Weight (lbs)</label>
+                                    <input type="number" id="weight-input" min="0" step="2.5" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="reps-input">Reps Completed</label>
+                                    <input type="number" id="reps-input" min="0" required>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="button primary full-width">
+                                <i class="fas fa-check-circle"></i> Complete Set
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="rest-timer hidden" id="rest-timer">
+                        <div class="timer-icon">
+                            <i class="fas fa-stopwatch"></i>
+                        </div>
+                        <h4>Rest Time</h4>
+                        <div class="timer-time" id="timer-display">00:60</div>
+                        <button class="button secondary full-width" id="skip-rest">
+                            <i class="fas fa-forward"></i> Skip Rest
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="workout-complete hidden" id="workout-complete">
+                    <div class="complete-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Workout Completed! 💪</h3>
+                    <p class="completion-message">Great job! You've finished your workout.</p>
+                    <button class="button primary full-width" id="finish-workout">
+                        <i class="fas fa-flag-checkered"></i> Finish Workout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Weight Entry Modal -->
+    <div class="modal" id="add-weight-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Weight Entry</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="weight-form">
+                    <div class="form-group">
+                        <input type="number" id="weight-value" min="0" step="0.1" required>
+                        <label for="weight-value">Weight (lbs)</label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="date" id="weight-date" required>
+                        <label for="weight-date">Date</label>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="button secondary" id="cancel-weight">CANCEL</button>
+                        <button type="submit" class="button primary" id="save-weight">SAVE</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="confirmation-title">Confirm Action</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmation-message">Are you sure you want to perform this action?</p>
+                
+                <div class="form-actions">
+                    <button type="button" class="button secondary" id="cancel-confirmation">CANCEL</button>
+                    <button type="button" class="button primary" id="confirm-action">CONFIRM</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Pic Modal -->
+    <div class="modal" id="progress-pic-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Progress Picture</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="progress-pic-form">
+                    <div class="form-group">
+                        <input type="date" id="pic-date" required>
+                        <label for="pic-date">Date</label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <select id="pic-category" required>
+                            <option value="front">Front View</option>
+                            <option value="back">Back View</option>
+                            <option value="side">Side View</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <label for="pic-category">Category</label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <textarea id="pic-notes" placeholder="Add any notes about this picture..."></textarea>
+                        <label for="pic-notes">Notes (optional)</label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pic-upload">Upload Picture</label>
+                        <input type="file" id="pic-upload" accept="image/*" capture="user" required>
+                        <div class="upload-preview">
+                            <img id="upload-preview-img" src="" alt="Preview" class="hidden">
+                            <div id="upload-placeholder" class="upload-placeholder">
+                                <i class="fas fa-camera"></i>
+                                <p>Click here to take a photo or select from your device</p>
+                            </div>
+                        </div>
+                        <div class="form-hint">Click on the box above to select an image</div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="button secondary" id="cancel-progress-pic">CANCEL</button>
+                        <button type="button" class="button primary" id="save-progress-pic">SAVE</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Pic Detail Modal -->
+    <div class="modal" id="pic-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="pic-detail-date">Date</h2>
+                <div class="modal-actions">
+                    <button class="icon-button" id="delete-pic">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="close-modal">&times;</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="pic-detail-image">
+                    <img id="pic-detail-img" src="" alt="Progress Picture">
+                </div>
+                
+                <div class="pic-detail-info">
+                    <div class="info-item">
+                        <span class="info-label">Category:</span>
+                        <span id="pic-detail-category">Front View</span>
+                    </div>
+                    
+                    <div class="info-item" id="pic-detail-notes-container">
+                        <span class="info-label">Notes:</span>
+                        <p id="pic-detail-notes"></p>
+                    </div>
+                </div>
+                
+                <button type="button" class="button secondary full-width" id="back-to-pics">Back to All Pictures</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- D3.js for data visualization -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        // Make sure D3.js is loaded before continuing
+        if (!window.d3) {
+            console.error('D3.js failed to load!');
+        } else {
+            console.log('D3.js loaded successfully');
+        }
+    </script>
+    
+    <!-- Keep Chart.js for backward compatibility -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    
+    <!-- Application JavaScript - Ensure proper load order for dependencies -->
+    <!-- Core modules - These need to load first -->
+    <script src="js/data.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/animations.js"></script>
+    
+    <!-- Feature modules - These can load after core modules -->
+    <script src="js/templates.js"></script>
+    <script src="js/exercises.js"></script>
+    <script src="js/workout.js"></script>
+    <script src="js/workout-animations.js"></script>
+    <script src="js/d3-charts.js"></script>
+    <script src="js/stats.js"></script>
+    <script src="js/progress.js"></script>
+    <script src="js/history.js"></script>
+    <script src="js/weight.js"></script>
+    <script src="js/progress-pics.js"></script>
+    <script src="js/goals.js"></script>
+    <script src="js/visualizations.js"></script>
+<script src="js/button-interactions.js"></script>
+<script src="js/swipe-navigation.js"></script>
+    
+    <!-- Main application - Loads after all modules are available -->
+    <script src="js/app.js"></script>
+</body>
+</html>

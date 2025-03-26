@@ -1,0 +1,317 @@
+/**
+ * D3.js Charts Styles for LiftMate
+ */
+
+/* Chart containers */
+.progress-chart-container,
+.weight-chart-container,
+.workout-distribution-container,
+.exercise-distribution-container {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  margin-bottom: 20px;
+}
+
+/* Stats summary container for the 4 stat cards */
+.stats-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 0 5px; /* Add a slight padding to the container */
+  gap: 20px; /* Consistent gap between cards */
+}
+
+/* Make all stat cards the same fixed size */
+.stats-summary .stat-card {
+  flex: 1 1 calc(25% - 20px); /* Equal width accounting for gap */
+  min-width: 220px; /* Minimum width for smaller screens */
+  max-width: calc(25% - 20px); /* Fixed maximum width */
+  height: 140px; /* Fixed height */
+  box-sizing: border-box; /* Include padding and border in the width */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  border-radius: 10px; /* Consistent rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Consistent shadow */
+}
+
+/* Style stat card contents for consistency */
+.stats-summary .stat-content {
+  flex: 1;
+  text-align: center;
+}
+
+.stats-summary .stat-icon {
+  margin-right: 15px;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stats-summary .stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+/* Stack workout and exercise distribution charts vertically with proper width */
+.stats-dashboard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  margin-top: 30px; /* Add spacing between summary and charts */
+  margin-bottom: 30px;
+  border-top: 1px solid var(--md-outline); /* Add visual separator */
+  padding-top: 30px;
+}
+
+.workout-distribution-container,
+.exercise-distribution-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Chart container styling */
+.d3-chart {
+  position: relative;
+  overflow: visible;
+}
+
+.d3-chart-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: visible;
+}
+
+/* Axis styling */
+.domain {
+  stroke-width: 1.5px;
+}
+
+.tick line {
+  stroke-width: 1px;
+}
+
+.tick text {
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+}
+
+/* Card styling for stats dashboard charts */
+.workout-distribution-container.card,
+.exercise-distribution-container.card {
+  background-color: var(--md-surface);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 15px 0;
+  transition: all 0.3s ease;
+  width: 100% !important;
+}
+
+.dark-mode .workout-distribution-container.card,
+.dark-mode .exercise-distribution-container.card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Tooltip styling */
+.d3-tooltip {
+  z-index: 100;
+  transition: opacity 0.3s, transform 0.2s;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  max-width: 250px;
+  line-height: 1.5;
+  border-radius: 8px !important;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+/* Chart elements */
+.line {
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  transition: all 0.3s ease;
+}
+
+.line-shadow {
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.area {
+  opacity: 0.4;
+  transition: opacity 0.5s ease;
+}
+
+.dark-mode .area {
+  opacity: 0.3;
+}
+
+.dot {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.bar {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.bar:hover {
+  filter: brightness(1.1);
+}
+
+.bar-label {
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.reference-line {
+  stroke-width: 1.5px;
+}
+
+.reference-label {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.chart-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.chart-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-style: italic;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.chart-insight {
+  font-family: 'Poppins', sans-serif;
+  font-style: italic;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* Stats card styling */
+.stats-card rect {
+  transition: all 0.3s ease;
+}
+
+.stats-card text {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Dark mode specific styles */
+.dark-mode .d3-chart text {
+  fill: #FFFFFF;
+}
+
+.dark-mode .d3-chart .domain,
+.dark-mode .d3-chart .tick line {
+  stroke: rgba(255, 255, 255, 0.15);
+}
+
+.dark-mode .d3-chart .grid line {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.dark-mode .stats-card rect {
+  opacity: 0.85;
+}
+
+.dark-mode .chart-title,
+.dark-mode .chart-subtitle,
+.dark-mode .reference-label,
+.dark-mode .legend text,
+.dark-mode .dot-label {
+  fill: #FFFFFF;
+}
+
+/* Data point label styling */
+.dot-label {
+  pointer-events: none; /* Make labels non-interactive */
+  text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.5); /* Light mode text shadow for better visibility */
+}
+
+.dark-mode .dot-label {
+  text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.7); /* Dark mode text shadow for better visibility */
+}
+
+/* Animation keyframes */
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+.pulse {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.float {
+  animation: float 3s infinite ease-in-out;
+}
+
+/* Small screen adaptations */
+@media (max-width: 600px) {
+  .tick text {
+    font-size: 10px;
+  }
+  
+  .chart-title {
+    font-size: 14px !important;
+  }
+  
+  .x-axis-label, .y-axis-label {
+    font-size: 10px !important;
+  }
+  
+  .reference-label {
+    font-size: 10px !important;
+  }
+}
+
+/* Empty state styling */
+.empty-chart-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+  color: var(--md-on-surface-variant);
+  background-color: var(--md-surface);
+  border-radius: 8px;
+  border: 1px dashed var(--md-on-surface-variant);
+}
+
+.empty-chart-message i {
+  font-size: 32px;
+  margin-bottom: 10px;
+  opacity: 0.5;
+}
+
+.empty-chart-message p {
+  margin: 5px 0;
+}
