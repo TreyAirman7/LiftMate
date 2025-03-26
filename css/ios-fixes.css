@@ -23,46 +23,9 @@
   z-index: 100;
 }
 
-/* iPhone-specific header size increase (25%) */
+/* Enhanced header for iPhone */
 @media (max-width: 428px) {
-  .app-header {
-    padding-top: calc(20px + var(--safe-area-inset-top));
-    padding-bottom: 8px;
-  }
-  
-  .app-header h1 {
-    font-size: 2.25rem; /* 25% larger */
-  }
-  
-  .app-header .fa-dumbbell {
-    font-size: 1.75rem; /* 25% larger */
-    margin-right: 8px;
-  }
-  
-  .app-header .theme-toggle {
-    width: 40px; /* 25% larger */
-    height: 40px; /* 25% larger */
-    font-size: 1.25rem; /* 25% larger */
-  }
-  
-  /* Increase the colored strip on the banner */
-  .app-header:after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 4px; /* make the strip thicker */
-    background-color: var(--primary-color);
-    z-index: 101;
-  }
-  
-  /* Also increase spacing between elements */
-  .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  /* No size changes - reverted to original */
 }
 
 /* Adjust the theme toggle buttons positioning */

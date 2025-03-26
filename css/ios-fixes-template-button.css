@@ -1,11 +1,10 @@
-/* Special file to target template buttons on iPhone */
+/* Special file to target Start Workout buttons on iPhone */
 
 @media (max-width: 428px) {
-  /* Target the template buttons specifically */
-  .template-card button.start-template.button.primary,
-  .template-card button.button.primary.full-width.start-template,
-  [class*="start-template"],
-  button[data-template-id] {
+  /* Target only the Start Workout buttons specifically */
+  .template-card .button.primary.full-width.start-template,
+  .template-card .button.primary.start-template,
+  button.button.primary.full-width.start-template {
     background-color: var(--primary-color) !important;
     color: white !important;
     border-radius: 12px !important;
@@ -27,12 +26,24 @@
     z-index: 10 !important;
   }
 
-  /* Style the icon in the button */
-  .template-card button.start-template i,
-  .template-card button.button i,
-  [class*="start-template"] i,
-  button[data-template-id] i {
+  /* Style the icon in the start button only */
+  .template-card .button.primary.start-template i,
+  .template-card .button.primary.full-width.start-template i,
+  button.button.primary.full-width.start-template i {
     font-size: 1.3rem !important;
     margin-right: 10px !important;
+  }
+  
+  /* Do not affect edit/delete buttons */
+  .template-card .icon-button,
+  .template-card .edit-template,
+  .template-card .delete-template {
+    /* Reset any styles that might have been applied */
+    height: auto !important;
+    width: auto !important;
+    min-height: initial !important;
+    max-height: initial !important;
+    padding: initial !important;
+    margin: initial !important;
   }
 }
