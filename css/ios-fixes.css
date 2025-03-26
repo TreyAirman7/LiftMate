@@ -20,7 +20,8 @@
   
   /* Adjust header for standalone mode */
   .app-header {
-    padding-top: env(safe-area-inset-top) !important;
+    padding-top: calc(env(safe-area-inset-top) + 10px) !important;
+    height: calc(74px + env(safe-area-inset-top)) !important; /* Increased height to prevent cutoff */
   }
   
   /* Fix bottom nav in standalone mode */
@@ -201,8 +202,8 @@
     .mobile-nav {
       /* Add padding for home indicator in standalone mode */
       padding-bottom: env(safe-area-inset-bottom);
-      /* Adjust height to avoid extra space */
-      height: calc(30px + env(safe-area-inset-bottom));
+      /* Adjust height to avoid extra space but ensure enough room for icons */
+      height: calc(45px + env(safe-area-inset-bottom));
     }
   }
   
@@ -213,14 +214,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 30px; /* Reduced to match new height */
+    height: 45px; /* Increased for better touch targets */
     position: relative;
     transition: all 0.2s ease;
   }
   
   /* iOS-style navigation icons */
   .nav-button .nav-icon {
-    font-size: 22px; /* iOS standard tab icon size */
+    font-size: 26px; /* Increased icon size for better visibility */
     color: var(--text-secondary-color);
     opacity: 0.75;
     transition: all 0.2s ease;
@@ -271,7 +272,8 @@
   /* PWA standalone mode tab content adjustments */
   @media all and (display-mode: standalone) {
     .tab-content {
-      padding-bottom: calc(30px + env(safe-area-inset-bottom)); /* Account for home indicator */
+      padding-bottom: calc(45px + env(safe-area-inset-bottom)); /* Updated to match new nav height */
+      padding-top: 10px; /* Add some spacing at the top */
     }
   }
   
