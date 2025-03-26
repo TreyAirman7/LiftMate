@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LiftMate Icon Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      margin: 10px;
+    }
+    .controls {
+      margin: 20px 0;
+    }
+    .icon-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>LiftMate Icon Generator</h1>
+  <div class="controls">
+    <button id="generate">Generate Icons</button>
+    <button id="download">Download All Icons</button>
+  </div>
+  <div class="icon-container" id="icons"></div>
+  
+  <script>
+    // Sizes needed for PWA icons
+    const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+    
+    // Function to create a single icon
+    function createIcon(size) {
+      // Create canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      canvas.id = `icon-${size}`;
+      
+      // Get context
+      const ctx = canvas.getContext('2d');
+      
+      // Background
+      ctx.fillStyle = '#6750A4'; // Purple color from LiftMate theme
+      ctx.fillRect(0, 0, size, size);
+      
+      // Add text
+      ctx.fillStyle = 'white';
+      ctx.font = `bold ${size/3}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('LM', size/2, size/2);
+      
+      // Add to page
+      document.getElementById('icons').appendChild(canvas);
+      
+      return canvas;
+    }
+    
+    // Generate all icons
+    document.getElementById('generate').addEventListener('click', () => {
+      document.getElementById('icons').innerHTML = '';
+      sizes.forEach(size => createIcon(size));
+    });
+    
+    // Download icons
+    document.getElementById('download').addEventListener('click', () => {
+      sizes.forEach(size => {
+        const canvas = document.getElementById(`icon-${size}`);
+        if (canvas) {
+          const a = document.createElement('a');
+          a.href = canvas.toDataURL('image/png');
+          a.download = `icon-${size}x${size}.png`;
+          a.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

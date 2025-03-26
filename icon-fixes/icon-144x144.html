@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create 144x144 Icon</title>
+</head>
+<body>
+  <canvas id="iconCanvas" width="144" height="144"></canvas>
+  <script>
+    const canvas = document.getElementById('iconCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Fill background with LiftMate purple
+    ctx.fillStyle = '#6750A4';
+    ctx.fillRect(0, 0, 144, 144);
+    
+    // Add text
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 48px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('LM', 72, 72);
+    
+    // Show the data URL
+    console.log(canvas.toDataURL('image/png'));
+  </script>
+  <div>
+    <p>Open your browser console to see the Data URL.</p>
+    <p>Right-click on the canvas and select "Save Image As..." to save the icon.</p>
+  </div>
+</body>
+</html>
