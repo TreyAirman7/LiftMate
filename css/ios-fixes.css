@@ -23,34 +23,35 @@
   z-index: 100;
 }
 
-/* Enhanced header for iPhone - MUCH larger */
+/* Enhanced header for iPhone - adjusted size */
 @media (max-width: 428px) {
-  /* Make the header much larger */
+  /* Make the header larger but still fit properly */
   .app-header {
-    padding-top: calc(30px + var(--safe-area-inset-top));
-    padding-bottom: 20px;
+    padding-top: calc(15px + var(--safe-area-inset-top));
+    padding-bottom: 10px;
     position: relative;
   }
   
-  /* Greatly increase title size */
+  /* Increase title size but keep it fitting */
   .app-header h1 {
-    font-size: 3.2rem; /* MUCH larger */
+    font-size: 2.4rem; /* Slightly larger but fits */
     margin: 0;
-    padding: 10px 0;
+    padding: 5px 0;
+    white-space: nowrap; /* Prevent wrapping */
   }
   
-  /* Increase logo icon size */
+  /* Adjust logo icon size */
   .app-header .fa-dumbbell {
-    font-size: 2.5rem; /* MUCH larger */
-    margin-right: 12px;
+    font-size: 1.8rem; /* Balanced size */
+    margin-right: 8px;
   }
   
-  /* Increase control buttons size */
+  /* Adjust control buttons size */
   .app-header .theme-toggle {
-    width: 50px; /* MUCH larger */
-    height: 50px; /* MUCH larger */
-    font-size: 1.8rem; /* MUCH larger */
-    margin-left: 10px;
+    width: 40px; /* Balanced size */
+    height: 40px; /* Balanced size */
+    font-size: 1.4rem;
+    margin-left: 6px;
   }
   
   /* Add colored bottom border for visual emphasis */
@@ -60,7 +61,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 5px;
+    height: 4px;
     background-color: var(--primary-color);
     z-index: 101;
   }
@@ -70,6 +71,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    overflow: hidden; /* Prevent overflow */
   }
 }
 
@@ -105,7 +107,8 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    min-height: 80px;
+    min-height: 60px; /* Reduced height */
+    height: 60px; /* Fixed smaller height */
     width: 100%;
     max-width: 100%;
     position: fixed;
@@ -116,6 +119,8 @@
     background-color: var(--background-color);
     box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
     box-sizing: border-box;
+    padding-top: 0; /* Remove top padding */
+    padding-bottom: calc(var(--safe-area-inset-bottom)); /* Only inset padding at bottom */
   }
   
   .nav-button {
@@ -125,14 +130,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 70px;
+    height: 60px; /* Match nav height */
     position: relative;
   }
   
   /* Style icons */
   .nav-button .nav-icon {
     font-size: 1.6rem;
-    margin-bottom: 5px;
+    margin-bottom: 0; /* Remove bottom margin */
     color: var(--text-secondary-color);
   }
   
@@ -148,11 +153,11 @@
   /* Style the indicator dot for active tab */
   .nav-button .nav-indicator {
     position: absolute;
-    bottom: 10px;
+    bottom: 8px; /* Position closer to bottom */
     left: 50%;
     transform: translateX(-50%);
-    width: 6px;
-    height: 6px;
+    width: 4px; /* Smaller dot */
+    height: 4px; /* Smaller dot */
     border-radius: 50%;
     background-color: var(--primary-color);
     opacity: 0;
@@ -165,7 +170,7 @@
   
   /* Ensure the content area adjusts for fixed navigation */
   .tab-content {
-    padding-bottom: 90px;
+    padding-bottom: 70px; /* Reduced to match smaller nav */
   }
 }
 
