@@ -27,7 +27,7 @@
 @media (max-width: 428px) {
   /* Compact, iOS-style header */
   .app-header {
-    padding-top: calc(8px + var(--safe-area-inset-top));
+    padding-top: calc(20px + var(--safe-area-inset-top)); /* Increased from 8px to 20px */
     padding-bottom: 0; /* Removed bottom padding */
     padding-left: 16px;
     padding-right: 16px;
@@ -152,7 +152,7 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 49px; /* iOS standard tab bar height */
+    height: 30px; /* Reduced from 49px to 30px */
     width: 100%;
     max-width: 100%;
     position: fixed;
@@ -176,7 +176,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 49px; /* Match iOS standard */
+    height: 30px; /* Reduced to match new height */
     position: relative;
     transition: all 0.2s ease;
   }
@@ -226,7 +226,7 @@
   
   /* Ensure the content area adjusts for fixed navigation - no extra space */
   .tab-content {
-    padding-bottom: 49px; /* Only tab bar height, no extra */
+    padding-bottom: 30px; /* Reduced to match new nav height */
     margin-bottom: 0;
     position: relative;
   }
@@ -375,7 +375,7 @@ body {
   touch-action: pan-y; /* Allow vertical scrolling but keep horizontal swiping */
   padding-bottom: 0;
   margin-bottom: 0;
-  max-height: calc(100vh - 49px); /* Ensure content doesn't go below navbar */
+  max-height: calc(100vh - 30px); /* Ensure content doesn't go below navbar */
 }
 
 /* Fix container sizes to prevent horizontal overflow and remove bottom space */
