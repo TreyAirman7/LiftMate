@@ -9,6 +9,26 @@
   --vh: 1vh; /* Will be set by JS for correct viewport height */
 }
 
+/* Specific fixes for standalone mode (Add to Home Screen) */
+@media all and (display-mode: standalone) {
+  body {
+    /* Ensure the body takes full height in standalone mode */
+    height: 100vh;
+    height: -webkit-fill-available;
+    overflow: hidden;
+  }
+  
+  /* Adjust header for standalone mode */
+  .app-header {
+    padding-top: env(safe-area-inset-top) !important;
+  }
+  
+  /* Fix bottom nav in standalone mode */
+  .mobile-nav {
+    padding-bottom: env(safe-area-inset-bottom) !important;
+  }
+}
+
 /* Apply safe area padding to container */
 .app-container {
   padding-left: var(--safe-area-inset-left);
@@ -35,6 +55,13 @@
     background-color: var(--background-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     z-index: 200;
+  }
+  
+  /* Special adjustments for PWA mode */
+  @media all and (display-mode: standalone) {
+    .app-header {
+      padding-top: max(20px, env(safe-area-inset-top)); /* Use larger of the two values */
+    }
   }
   
   /* iOS-style app title */
@@ -169,6 +196,16 @@
     margin: 0;
   }
   
+  /* PWA mode specific adjustments for bottom bar */
+  @media all and (display-mode: standalone) {
+    .mobile-nav {
+      /* Add padding for home indicator in standalone mode */
+      padding-bottom: env(safe-area-inset-bottom);
+      /* Adjust height to avoid extra space */
+      height: calc(30px + env(safe-area-inset-bottom));
+    }
+  }
+  
   .nav-button {
     flex: 1;
     padding: 0;
@@ -229,6 +266,13 @@
     padding-bottom: 30px; /* Reduced to match new nav height */
     margin-bottom: 0;
     position: relative;
+  }
+  
+  /* PWA standalone mode tab content adjustments */
+  @media all and (display-mode: standalone) {
+    .tab-content {
+      padding-bottom: calc(30px + env(safe-area-inset-bottom)); /* Account for home indicator */
+    }
   }
   
   /* Dark mode adjustments for tab bar */
@@ -362,6 +406,21 @@ body {
   -webkit-overflow-scrolling: touch;
   margin-bottom: 0;
   padding-bottom: 0;
+}
+
+/* Standalone PWA app-container adjustments */
+@media all and (display-mode: standalone) {
+  .app-container {
+    height: 100%;
+    height: -webkit-fill-available;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 /* Make sure all tab content is contained but keeps swipe functionality - no bottom space */
