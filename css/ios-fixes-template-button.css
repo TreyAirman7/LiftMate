@@ -1,0 +1,38 @@
+/* Special file to target template buttons on iPhone */
+
+@media (max-width: 428px) {
+  /* Target the template buttons specifically */
+  .template-card button.start-template.button.primary,
+  .template-card button.button.primary.full-width.start-template,
+  [class*="start-template"],
+  button[data-template-id] {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    border-radius: 12px !important;
+    padding: 15px 20px !important;
+    height: 60px !important;
+    min-height: 60px !important;
+    max-height: 60px !important;
+    width: 100% !important;
+    margin-top: 12px !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    z-index: 10 !important;
+  }
+
+  /* Style the icon in the button */
+  .template-card button.start-template i,
+  .template-card button.button i,
+  [class*="start-template"] i,
+  button[data-template-id] i {
+    font-size: 1.3rem !important;
+    margin-right: 10px !important;
+  }
+}
