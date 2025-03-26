@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!tabId) return;
         
         // Find the corresponding nav button
-        const navButton = document.querySelector(`.nav-button[data-target="${tabId}"]`);
+        const navButton = document.querySelector(`.nav-button[data-tab="${tabId}"]`);
         if (navButton) {
             navButton.click();
             
