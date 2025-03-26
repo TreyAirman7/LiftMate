@@ -26,7 +26,7 @@
   
   /* Fix bottom nav in standalone mode */
   .mobile-nav {
-    padding-bottom: env(safe-area-inset-bottom) !important;
+    padding-bottom: 0 !important;
   }
 }
 
@@ -157,11 +157,21 @@
 
 /* Enhanced mobile navigation with better safe area support */
 .mobile-nav {
-  padding-bottom: calc(var(--safe-area-inset-bottom) + 10px);
   padding-top: 15px;
   height: auto;
   min-height: 100px; /* Increased for better touch targets */
   z-index: 100;
+}
+
+/* Override safe area insets for fullscreen mode */
+@media all and (display-mode: standalone) {
+  .mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-bottom: 0;
+  }
 }
 
 .nav-button {
@@ -200,10 +210,10 @@
   /* PWA mode specific adjustments for bottom bar */
   @media all and (display-mode: standalone) {
     .mobile-nav {
-      /* Add padding for home indicator in standalone mode */
-      padding-bottom: env(safe-area-inset-bottom);
-      /* Adjust height to avoid extra space but ensure enough room for icons */
-      height: calc(45px + env(safe-area-inset-bottom));
+      /* Remove extra padding for home indicator in standalone mode */
+      padding-bottom: 0;
+      /* Fixed height for navigation bar */
+      height: 45px;
     }
   }
   
@@ -272,7 +282,7 @@
   /* PWA standalone mode tab content adjustments */
   @media all and (display-mode: standalone) {
     .tab-content {
-      padding-bottom: calc(45px + env(safe-area-inset-bottom)); /* Updated to match new nav height */
+      padding-bottom: 45px; /* Fixed padding for nav bar without home indicator space */
       padding-top: 10px; /* Add some spacing at the top */
     }
   }
@@ -336,6 +346,35 @@
   .start-template i {
     font-size: 1.5rem !important;
     margin-right: 10px !important;
+  }
+  
+  /* Replace "Use Template" with "START" in fullscreen mode */
+  @media all and (display-mode: standalone) {
+    #use-template {
+      font-size: 0 !important; /* Hide original text */
+      width: 100% !important;
+      height: 60px !important;
+      min-height: 60px !important;
+      padding: 14px !important;
+      margin-top: 10px !important;
+      border-radius: 12px !important;
+      background-color: var(--primary-color) !important;
+      color: white !important;
+      font-weight: 600 !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+    }
+    
+    #use-template::after {
+      content: "START" !important;
+      font-size: 1.5rem !important;
+      font-weight: 600 !important;
+    }
+    
+    #use-template i {
+      font-size: 1.5rem !important;
+      margin-right: 10px !important;
+      display: inline-block !important;
+    }
   }
 }
 
