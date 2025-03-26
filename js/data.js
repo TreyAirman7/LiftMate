@@ -13,7 +13,8 @@ const DataManager = (() => {
         PROGRESS_PICS: 'liftmate-progress-pics',
         PROGRESS_PICS_META: 'liftmate-progress-pics-meta',
         SETTINGS: 'liftmate-settings',
-        GOALS: 'liftmate-goals'
+        GOALS: 'liftmate-goals',
+        USER_PROFILE: 'liftmate-user-profile'
     };
     
     // Default muscle groups
@@ -49,6 +50,496 @@ const DataManager = (() => {
             id: 'ex5',
             name: 'Shoulder Press',
             muscles: ['Shoulders', 'Triceps']
+        },
+        {
+            id: 'ex6',
+            name: 'Back Squat',
+            muscles: ['Quads', 'Hamstrings', 'Glutes', 'Legs']
+        },
+        {
+            id: 'ex7',
+            name: 'Front Squat',
+            muscles: ['Quads', 'Abs', 'Legs']
+        },
+        {
+            id: 'ex8',
+            name: 'Conventional Deadlift',
+            muscles: ['Back', 'Hamstrings', 'Glutes', 'Traps', 'Forearms']
+        },
+        {
+            id: 'ex9',
+            name: 'Sumo Deadlift',
+            muscles: ['Quads', 'Hamstrings', 'Glutes', 'Back', 'Forearms']
+        },
+        {
+            id: 'ex10',
+            name: 'Incline Bench Press',
+            muscles: ['Chest', 'Shoulders', 'Triceps']
+        },
+        {
+            id: 'ex11',
+            name: 'Decline Bench Press',
+            muscles: ['Chest', 'Triceps']
+        },
+        {
+            id: 'ex12',
+            name: 'Overhead Press',
+            muscles: ['Shoulders', 'Triceps']
+        },
+        {
+            id: 'ex13',
+            name: 'Push Press',
+            muscles: ['Shoulders', 'Triceps', 'Legs']
+        },
+        {
+            id: 'ex14',
+            name: 'Barbell Row',
+            muscles: ['Back', 'Biceps', 'Forearms', 'Traps']
+        },
+        {
+            id: 'ex15',
+            name: 'Pendlay Row',
+            muscles: ['Back', 'Biceps', 'Forearms']
+        },
+        {
+            id: 'ex16',
+            name: 'Clean and Jerk',
+            muscles: ['Quads', 'Hamstrings', 'Glutes', 'Back', 'Shoulders', 'Triceps']
+        },
+        {
+            id: 'ex17',
+            name: 'Snatch',
+            muscles: ['Quads', 'Hamstrings', 'Glutes', 'Back', 'Shoulders', 'Triceps']
+        },
+        {
+            id: 'ex18',
+            name: 'Romanian Deadlift',
+            muscles: ['Hamstrings', 'Glutes', 'Back', 'Forearms']
+        },
+        {
+            id: 'ex19',
+            name: 'Stiff-Legged Deadlift',
+            muscles: ['Hamstrings', 'Glutes', 'Back']
+        },
+        {
+            id: 'ex20',
+            name: 'Good Morning',
+            muscles: ['Hamstrings', 'Glutes', 'Back']
+        },
+        {
+            id: 'ex21',
+            name: 'Rack Pull',
+            muscles: ['Back', 'Traps', 'Glutes', 'Forearms']
+        },
+        {
+            id: 'ex22',
+            name: 'Dumbbell Bench Press',
+            muscles: ['Chest', 'Shoulders', 'Triceps']
+        },
+        {
+            id: 'ex23',
+            name: 'Incline Dumbbell Press',
+            muscles: ['Chest', 'Shoulders', 'Triceps']
+        },
+        {
+            id: 'ex24',
+            name: 'Decline Dumbbell Press',
+            muscles: ['Chest', 'Triceps']
+        },
+        {
+            id: 'ex25',
+            name: 'Dumbbell Shoulder Press',
+            muscles: ['Shoulders', 'Triceps']
+        },
+        {
+            id: 'ex26',
+            name: 'Arnold Press',
+            muscles: ['Shoulders', 'Triceps']
+        },
+        {
+            id: 'ex27',
+            name: 'Dumbbell Row',
+            muscles: ['Back', 'Biceps', 'Forearms']
+        },
+        {
+            id: 'ex28',
+            name: 'Chin-up',
+            muscles: ['Back', 'Biceps', 'Forearms']
+        },
+        {
+            id: 'ex29',
+            name: 'Lat Pulldown',
+            muscles: ['Back', 'Biceps', 'Forearms']
+        },
+        {
+            id: 'ex30',
+            name: 'Seated Cable Row',
+            muscles: ['Back', 'Biceps', 'Forearms']
+        },
+        {
+            id: 'ex31',
+            name: 'Leg Press',
+            muscles: ['Quads', 'Hamstrings', 'Glutes']
+        },
+        {
+            id: 'ex32',
+            name: 'Leg Extension',
+            muscles: ['Quads']
+        },
+        {
+            id: 'ex33',
+            name: 'Lying Hamstring Curl',
+            muscles: ['Hamstrings']
+        },
+        {
+            id: 'ex34',
+            name: 'Seated Hamstring Curl',
+            muscles: ['Hamstrings']
+        },
+        {
+            id: 'ex35',
+            name: 'Standing Calf Raise',
+            muscles: ['Calves']
+        },
+        {
+            id: 'ex36',
+            name: 'Seated Calf Raise',
+            muscles: ['Calves']
+        },
+        {
+            id: 'ex37',
+            name: 'Glute Bridge',
+            muscles: ['Glutes', 'Hamstrings']
+        },
+        {
+            id: 'ex38',
+            name: 'Barbell Hip Thrust',
+            muscles: ['Glutes', 'Hamstrings']
+        },
+        {
+            id: 'ex39',
+            name: 'Walking Lunge',
+            muscles: ['Quads', 'Hamstrings', 'Glutes']
+        },
+        {
+            id: 'ex40',
+            name: 'Reverse Lunge',
+            muscles: ['Quads', 'Hamstrings', 'Glutes']
+        },
+        {
+            id: 'ex41',
+            name: 'Bulgarian Split Squat',
+            muscles: ['Quads', 'Hamstrings', 'Glutes']
+        },
+        {
+            id: 'ex42',
+            name: 'Goblet Squat',
+            muscles: ['Quads', 'Hamstrings', 'Glutes', 'Legs']
+        },
+        {
+            id: 'ex43',
+            name: 'Dumbbell Fly',
+            muscles: ['Chest', 'Shoulders']
+        },
+        {
+            id: 'ex44',
+            name: 'Incline Dumbbell Fly',
+            muscles: ['Chest', 'Shoulders']
+        },
+        {
+            id: 'ex45',
+            name: 'Cable Crossover',
+            muscles: ['Chest']
+        },
+        {
+            id: 'ex46',
+            name: 'Pec Deck Machine',
+            muscles: ['Chest']
+        },
+        {
+            id: 'ex47',
+            name: 'Chest Dips',
+            muscles: ['Chest', 'Triceps', 'Shoulders']
+        },
+        {
+            id: 'ex48',
+            name: 'Weighted Push-up',
+            muscles: ['Chest', 'Triceps', 'Shoulders']
+        },
+        {
+            id: 'ex49',
+            name: 'Lateral Raise',
+            muscles: ['Shoulders']
+        },
+        {
+            id: 'ex50',
+            name: 'Front Raise',
+            muscles: ['Shoulders']
+        },
+        {
+            id: 'ex51',
+            name: 'Rear Delt Fly',
+            muscles: ['Shoulders']
+        },
+        {
+            id: 'ex52',
+            name: 'Barbell Shrug',
+            muscles: ['Traps']
+        },
+        {
+            id: 'ex53',
+            name: 'Dumbbell Shrug',
+            muscles: ['Traps']
+        },
+        {
+            id: 'ex54',
+            name: 'Face Pull',
+            muscles: ['Shoulders', 'Traps']
+        },
+        {
+            id: 'ex55',
+            name: 'Back Extension',
+            muscles: ['Back', 'Hamstrings', 'Glutes']
+        },
+        {
+            id: 'ex56',
+            name: 'Dumbbell Pullover',
+            muscles: ['Chest', 'Back', 'Lats']
+        },
+        {
+            id: 'ex57',
+            name: 'Barbell Curl',
+            muscles: ['Biceps', 'Forearms']
+        },
+        {
+            id: 'ex58',
+            name: 'Dumbbell Curl',
+            muscles: ['Biceps', 'Forearms']
+        },
+        {
+            id: 'ex59',
+            name: 'Hammer Curl',
+            muscles: ['Biceps', 'Forearms']
+        },
+        {
+            id: 'ex60',
+            name: 'Concentration Curl',
+            muscles: ['Biceps']
+        },
+        {
+            id: 'ex61',
+            name: 'Preacher Curl',
+            muscles: ['Biceps']
+        },
+        {
+            id: 'ex62',
+            name: 'Cable Curl',
+            muscles: ['Biceps']
+        },
+        {
+            id: 'ex63',
+            name: 'Rope Triceps Pushdown',
+            muscles: ['Triceps']
+        },
+        {
+            id: 'ex64',
+            name: 'Bar Triceps Pushdown',
+            muscles: ['Triceps']
+        },
+        {
+            id: 'ex65',
+            name: 'Overhead Dumbbell Triceps Extension',
+            muscles: ['Triceps']
+        },
+        {
+            id: 'ex66',
+            name: 'Skullcrusher',
+            muscles: ['Triceps']
+        },
+        {
+            id: 'ex67',
+            name: 'Close-Grip Bench Press',
+            muscles: ['Triceps', 'Chest', 'Shoulders']
+        },
+        {
+            id: 'ex68',
+            name: 'Triceps Dips',
+            muscles: ['Triceps', 'Chest', 'Shoulders']
+        },
+        {
+            id: 'ex69',
+            name: 'Bench Dips',
+            muscles: ['Triceps']
+        },
+        {
+            id: 'ex70',
+            name: 'Wrist Curl',
+            muscles: ['Forearms']
+        },
+        {
+            id: 'ex71',
+            name: 'Reverse Wrist Curl',
+            muscles: ['Forearms']
+        },
+        {
+            id: 'ex72',
+            name: 'Farmer\'s Walk',
+            muscles: ['Forearms', 'Traps', 'Shoulders', 'Legs']
+        },
+        {
+            id: 'ex73',
+            name: 'Weighted Plank',
+            muscles: ['Abs', 'Shoulders']
+        },
+        {
+            id: 'ex74',
+            name: 'Weighted Side Plank',
+            muscles: ['Abs', 'Obliques']
+        },
+        {
+            id: 'ex75',
+            name: 'Hanging Leg Raise',
+            muscles: ['Abs']
+        },
+        {
+            id: 'ex76',
+            name: 'Weighted Russian Twist',
+            muscles: ['Abs', 'Obliques']
+        },
+        {
+            id: 'ex77',
+            name: 'Cable Crunch',
+            muscles: ['Abs']
+        },
+        {
+            id: 'ex78',
+            name: 'Ab Rollout',
+            muscles: ['Abs', 'Shoulders']
+        },
+        {
+            id: 'ex79',
+            name: 'Kettlebell Swing',
+            muscles: ['Glutes', 'Hamstrings', 'Back', 'Shoulders']
+        },
+        {
+            id: 'ex80',
+            name: 'Kettlebell Snatch',
+            muscles: ['Shoulders', 'Traps', 'Hamstrings', 'Glutes']
+        },
+        {
+            id: 'ex81',
+            name: 'Kettlebell Clean',
+            muscles: ['Shoulders', 'Legs', 'Back']
+        },
+        {
+            id: 'ex82',
+            name: 'Power Clean',
+            muscles: ['Back', 'Shoulders', 'Traps', 'Quads', 'Hamstrings', 'Glutes']
+        },
+        {
+            id: 'ex83',
+            name: 'Power Snatch',
+            muscles: ['Back', 'Shoulders', 'Traps', 'Quads', 'Hamstrings', 'Glutes']
+        },
+        {
+            id: 'ex84',
+            name: 'Hang Clean',
+            muscles: ['Back', 'Shoulders', 'Traps', 'Quads', 'Hamstrings', 'Glutes']
+        },
+        {
+            id: 'ex85',
+            name: 'Hang Snatch',
+            muscles: ['Back', 'Shoulders', 'Traps', 'Quads', 'Hamstrings', 'Glutes']
+        },
+        {
+            id: 'ex86',
+            name: 'Split Jerk',
+            muscles: ['Shoulders', 'Triceps', 'Quads', 'Hamstrings']
+        },
+        {
+            id: 'ex87',
+            name: 'T-Bar Row',
+            muscles: ['Back', 'Lats', 'Biceps']
+        },
+        {
+            id: 'ex88',
+            name: 'Hack Squat Machine',
+            muscles: ['Quads', 'Hamstrings', 'Glutes']
+        },
+        {
+            id: 'ex89',
+            name: 'Box Squat',
+            muscles: ['Quads', 'Hamstrings', 'Glutes', 'Back']
+        },
+        {
+            id: 'ex90',
+            name: 'Barbell Floor Press',
+            muscles: ['Chest', 'Triceps']
+        },
+        {
+            id: 'ex91',
+            name: 'Dumbbell Floor Press',
+            muscles: ['Chest', 'Triceps']
+        },
+        {
+            id: 'ex92',
+            name: 'Inverted Row',
+            muscles: ['Back', 'Biceps']
+        },
+        {
+            id: 'ex93',
+            name: 'Close-Grip Lat Pulldown',
+            muscles: ['Back', 'Biceps']
+        },
+        {
+            id: 'ex94',
+            name: 'Neutral-Grip Lat Pulldown',
+            muscles: ['Back', 'Biceps']
+        },
+        {
+            id: 'ex95',
+            name: 'Weighted Step-Up',
+            muscles: ['Quads', 'Hamstrings', 'Glutes']
+        },
+        {
+            id: 'ex96',
+            name: 'Chest Supported Dumbbell Row',
+            muscles: ['Back', 'Biceps']
+        },
+        {
+            id: 'ex97',
+            name: 'Machine Chest Press',
+            muscles: ['Chest', 'Shoulders', 'Triceps']
+        },
+        {
+            id: 'ex98',
+            name: 'Machine Shoulder Press',
+            muscles: ['Shoulders', 'Triceps']
+        },
+        {
+            id: 'ex99',
+            name: 'Machine Row',
+            muscles: ['Back', 'Biceps']
+        },
+        {
+            id: 'ex100',
+            name: 'Hip Abduction Machine',
+            muscles: ['Glutes']
+        },
+        {
+            id: 'ex101',
+            name: 'Hip Adduction Machine',
+            muscles: ['Legs']
+        },
+        {
+            id: 'ex102',
+            name: 'Single Leg RDL',
+            muscles: ['Hamstrings', 'Glutes', 'Back']
+        },
+        {
+            id: 'ex103',
+            name: 'Incline Dumbbell Curl',
+            muscles: ['Biceps']
         }
     ];
     
@@ -125,6 +616,32 @@ const DataManager = (() => {
         // Check if exercises exist, if not add sample data
         if (!localStorage.getItem(STORAGE_KEYS.EXERCISES)) {
             localStorage.setItem(STORAGE_KEYS.EXERCISES, JSON.stringify(SAMPLE_EXERCISES));
+        } else {
+            // For existing users, add new exercises if they don't have them
+            const currentExercises = JSON.parse(localStorage.getItem(STORAGE_KEYS.EXERCISES));
+            const newExercisesToAdd = [];
+            
+            // Check for each sample exercise if the user already has it
+            SAMPLE_EXERCISES.forEach(sampleExercise => {
+                // Check if this exercise name already exists
+                const exists = currentExercises.some(ex => 
+                    ex.name.toLowerCase() === sampleExercise.name.toLowerCase());
+                
+                if (!exists) {
+                    // Generate a new ID for the exercise to avoid conflicts
+                    const newExercise = {
+                        ...sampleExercise,
+                        id: generateId()
+                    };
+                    newExercisesToAdd.push(newExercise);
+                }
+            });
+            
+            // If new exercises were found, add them
+            if (newExercisesToAdd.length > 0) {
+                const updatedExercises = [...currentExercises, ...newExercisesToAdd];
+                localStorage.setItem(STORAGE_KEYS.EXERCISES, JSON.stringify(updatedExercises));
+            }
         }
         
         // Check if templates exist, if not add sample data
@@ -743,6 +1260,25 @@ const DataManager = (() => {
         return goals;
     };
     
+    /**
+     * Get user profile information
+     * @returns {Object} - User profile object
+     */
+    const getUserProfile = () => {
+        const profile = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
+        return profile ? JSON.parse(profile) : null;
+    };
+    
+    /**
+     * Save user profile information
+     * @param {Object} profile - User profile object to save
+     * @returns {Object} - Saved profile object
+     */
+    const saveUserProfile = (profile) => {
+        localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(profile));
+        return profile;
+    };
+    
         /**
      * Get storage usage and capacity information
      * @returns {Promise<Object>} - Object containing storage usage info
@@ -888,6 +1424,8 @@ const DataManager = (() => {
         getExerciseProgress,
         getGoals,
         saveGoals,
+        getUserProfile,
+        saveUserProfile,
         generateId,
         getStorageInfo
     };

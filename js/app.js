@@ -14,47 +14,69 @@ const initializeApp = () => {
     }
     
     try {
+        console.log('Starting application initialization...');
+        
         // Initialize UI first
         UI.initialize();
+        console.log('UI initialized');
         
-        // Initialize D3 charts manager
-        if (typeof D3ChartsManager !== 'undefined') {
-            console.log('Initializing D3 charts manager...');
-            D3ChartsManager.initialize();
-        } else {
-            console.warn('D3ChartsManager not found. D3 charts will not be available.');
-        }
+        // Initialize user greeting
+        updateUserGreeting();
         
-        // Initialize feature modules in the correct order to avoid dependency issues
-        if (typeof ExerciseManager !== 'undefined') ExerciseManager.initialize();
-        if (typeof TemplateManager !== 'undefined') TemplateManager.initialize();
-        if (typeof WorkoutManager !== 'undefined') WorkoutManager.initialize();
-        if (typeof StatsManager !== 'undefined') StatsManager.initialize();
-        if (typeof ProgressManager !== 'undefined') ProgressManager.initialize();
-        if (typeof HistoryManager !== 'undefined') HistoryManager.initialize();
-        if (typeof WeightManager !== 'undefined') WeightManager.initialize();
-        if (typeof ProgressPicsManager !== 'undefined') ProgressPicsManager.initialize();
-        if (typeof GoalsManager !== 'undefined') GoalsManager.initialize();
-        
-        // Initialize enhanced visualizations before animations
-        if (typeof VisualizationManager !== 'undefined') {
-            console.log('Initializing visualization manager...');
-            VisualizationManager.initialize();
-        } else {
-            console.warn('VisualizationManager not found. Enhanced visualizations will not be available.');
-        }
-        
-        // Initialize animations module last (after all other modules and visualizations)
+        // Initialize core modules first, with small delay between critical modules
         setTimeout(() => {
-            if (typeof Animations !== 'undefined') {
-                console.log('Initializing animations and micro-interactions...');
-                Animations.initialize();
-            } else {
-                console.warn('Animations module not found. Enhanced animations will not be available.');
-            }
-        }, 1000); // Delay to ensure all DOM is ready and rendered
-        
-        console.log('Application initialized successfully!');
+            // Initialize feature modules in the correct order to avoid dependency issues
+            console.log('Initializing core modules...');
+            if (typeof ExerciseManager !== 'undefined') ExerciseManager.initialize();
+            
+            // Initialize additional modules with a slight delay to ensure DOM has settled
+            setTimeout(() => {
+                // After UI and core modules are ready, initialize onboarding as a priority
+                if (typeof OnboardingManager !== 'undefined') {
+                    console.log('Initializing OnboardingManager...');
+                    OnboardingManager.initialize();
+                }
+                
+                // Continue with other modules
+                if (typeof D3ChartsManager !== 'undefined') {
+                    console.log('Initializing D3 charts manager...');
+                    D3ChartsManager.initialize();
+                } else {
+                    console.warn('D3ChartsManager not found. D3 charts will not be available.');
+                }
+                
+                // Initialize remaining modules
+                if (typeof TemplateManager !== 'undefined') TemplateManager.initialize();
+                if (typeof WorkoutManager !== 'undefined') WorkoutManager.initialize();
+                if (typeof StatsManager !== 'undefined') StatsManager.initialize();
+                if (typeof ProgressManager !== 'undefined') ProgressManager.initialize();
+                if (typeof HistoryManager !== 'undefined') HistoryManager.initialize();
+                if (typeof WeightManager !== 'undefined') WeightManager.initialize();
+                if (typeof ProgressPicsManager !== 'undefined') ProgressPicsManager.initialize();
+                if (typeof GoalsManager !== 'undefined') GoalsManager.initialize();
+                
+                // Initialize enhanced visualizations before animations
+                if (typeof VisualizationManager !== 'undefined') {
+                    console.log('Initializing visualization manager...');
+                    VisualizationManager.initialize();
+                } else {
+                    console.warn('VisualizationManager not found. Enhanced visualizations will not be available.');
+                }
+                
+                // Initialize animations module last (after all other modules and visualizations)
+                setTimeout(() => {
+                    if (typeof Animations !== 'undefined') {
+                        console.log('Initializing animations and micro-interactions...');
+                        Animations.initialize();
+                    } else {
+                        console.warn('Animations module not found. Enhanced animations will not be available.');
+                    }
+                }, 500); // Delay to ensure all DOM is ready and rendered
+                
+                console.log('Application initialized successfully!');
+            }, 300); // Delay to ensure DOM is fully ready for onboarding modals
+            
+        }, 100); // Small delay for core modules
         
         // Add CSS for weight stats and other elements (wasn't included in the main CSS)
         addDynamicStyles();
@@ -203,6 +225,69 @@ const addDynamicStyles = () => {
                     console.log('Service Worker registration failed:', error);
                 });
         });
+    }
+};
+
+/**
+ * Updates user greeting elements with the user's name
+ */
+const updateUserGreeting = () => {
+    // Get user profile
+    const userProfile = DataManager.getUserProfile();
+    const userName = userProfile && userProfile.name ? userProfile.name : 'Champion';
+    
+    // Update the header (without the Hi, Name text)
+    const headerElement = document.querySelector('.header-content h1');
+    if (headerElement) {
+        // Set the original header contents - no greeting
+        headerElement.innerHTML = '<i class="fas fa-dumbbell"></i> <span class="typing-text">LiftMate</span>';
+    }
+    
+    // Add styles for workout greeting
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Current workout greeting */
+        .workout-greeting {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            background: linear-gradient(to right, var(--primary-light-color), var(--primary-color));
+            color: white;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .workout-greeting h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 500;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Add a greeting to the current workout tab
+    const workoutContainer = document.querySelector('#current-workout .container');
+    if (workoutContainer) {
+        // Create the greeting element
+        const greetingDiv = document.createElement('div');
+        greetingDiv.className = 'workout-greeting';
+        
+        // Get time of day to personalize greeting
+        const hour = new Date().getHours();
+        let timeGreeting = 'Good day';
+        if (hour < 12) timeGreeting = 'Good morning';
+        else if (hour < 17) timeGreeting = 'Good afternoon';
+        else timeGreeting = 'Good evening';
+        
+        greetingDiv.innerHTML = `<h3>${timeGreeting}, ${userName}! Ready for your workout?</h3>`;
+        
+        // Insert at the beginning of the container, after the header
+        const sectionHeader = workoutContainer.querySelector('.section-header');
+        if (sectionHeader && sectionHeader.nextSibling) {
+            workoutContainer.insertBefore(greetingDiv, sectionHeader.nextSibling);
+        } else {
+            workoutContainer.appendChild(greetingDiv);
+        }
     }
 };
 

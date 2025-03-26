@@ -549,7 +549,23 @@ const WorkoutManager = (() => {
     const showWorkoutComplete = () => {
         // Hide exercise UI, show completion
         document.getElementById('active-exercise-container').classList.add('hidden');
-        document.getElementById('workout-complete').classList.remove('hidden');
+        const workoutCompleteEl = document.getElementById('workout-complete');
+        workoutCompleteEl.classList.remove('hidden');
+        
+        // Personalize the completion message with user's name
+        const userProfile = DataManager.getUserProfile();
+        const userName = userProfile && userProfile.name ? userProfile.name : 'Champion';
+        
+        // Update heading and message with user's name
+        const heading = workoutCompleteEl.querySelector('h3');
+        if (heading) {
+            heading.textContent = `Workout Completed, ${userName}! 💪`;
+        }
+        
+        const message = workoutCompleteEl.querySelector('.completion-message');
+        if (message) {
+            message.textContent = `Outstanding work, ${userName}! You've crushed today's workout.`;
+        }
         
         // Dispatch workout completed event for animations
         document.dispatchEvent(new CustomEvent('workoutCompleted', {
@@ -561,9 +577,13 @@ const WorkoutManager = (() => {
      * Prompt to cancel the current workout
      */
     const promptCancelWorkout = () => {
+        // Get user profile for personalized message
+        const userProfile = DataManager.getUserProfile();
+        const userName = userProfile && userProfile.name ? userProfile.name : '';
+        
         UI.showConfirmation(
             'Cancel Workout',
-            'Are you sure you want to cancel this workout? Your progress will be lost.',
+            `${userName ? userName + ', are' : 'Are'} you sure you want to cancel this workout? Your progress will be lost.`,
             () => {
                 cancelWorkout();
             }
@@ -609,7 +629,10 @@ const WorkoutManager = (() => {
         const savedWorkout = DataManager.saveWorkout(activeWorkout);
         
         if (savedWorkout) {
-            UI.showToast('Workout saved successfully!', 'success');
+            // Personalized success message
+            const userProfile = DataManager.getUserProfile();
+            const userName = userProfile && userProfile.name ? userProfile.name : 'Champion';
+            UI.showToast(`Great job, ${userName}! Workout saved successfully!`, 'success');
             
             // Close modal
             UI.closeModal(document.getElementById('active-template-modal'));

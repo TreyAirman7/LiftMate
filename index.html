@@ -51,10 +51,102 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
             margin: 2px !important;
             box-shadow: 0 0 3px rgba(0, 0, 0, 0.3) !important;
         }
+        
+        /* Welcome Back Modal Styles */
+        .welcome-message {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .welcome-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: block;
+        }
+        
+        #welcome-user-name {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        /* Fix for modal on iPhone fullscreen */
+        @media screen and (max-width: 812px) and (orientation: landscape), 
+               screen and (max-width: 428px) and (orientation: portrait) {
+            .modal .modal-content {
+                max-height: 85vh;
+                position: relative;
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+            
+            .modal-body {
+                max-height: calc(80vh - 80px);
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
+        <!-- Onboarding Modal for First-Time Users -->
+        <div class="modal" id="onboarding-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Welcome to LiftMate!</h2>
+                </div>
+                <div class="modal-body">
+                    <p>Let's get to know you a bit better to personalize your experience.</p>
+                    <form id="onboarding-form">
+                        <div class="form-group">
+                            <input type="text" id="user-name" placeholder="Your Name" required>
+                            <label for="user-name">Your Name</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <select id="user-sex" required>
+                                <option value="">Select</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                                <option value="prefer-not-to-say">Prefer not to say</option>
+                            </select>
+                            <label for="user-sex">Gender</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="number" id="user-age" min="13" max="120" placeholder="Your Age" required>
+                            <label for="user-age">Age</label>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="button primary full-width" id="save-onboarding">Get Started</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome Back Modal -->
+        <div class="modal" id="welcome-back-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Welcome Back!</h2>
+                    <button class="close-modal"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="welcome-message">
+                        <i class="fas fa-dumbbell welcome-icon"></i>
+                        <h3 id="welcome-user-name">User</h3>
+                        <p>Ready to crush your workout today?</p>
+                    </div>
+                    <button class="button primary full-width" id="welcome-continue">Let's Go!</button>
+                </div>
+            </div>
+        </div>
         <!-- Material Design App Bar -->
         <div class="app-header">
             <div class="header-content">
@@ -1063,8 +1155,9 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     <script src="js/progress-pics.js"></script>
     <script src="js/goals.js"></script>
     <script src="js/visualizations.js"></script>
-<script src="js/button-interactions.js"></script>
-<script src="js/swipe-navigation.js"></script>
+    <script src="js/onboarding.js"></script>
+    <script src="js/button-interactions.js"></script>
+    <script src="js/swipe-navigation.js"></script>
     
     <!-- Main application - Loads after all modules are available -->
     <script src="js/app.js"></script>
