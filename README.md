@@ -1,119 +1,115 @@
-# LiftMate Workout Tracker
+# LiftMate
 
-LiftMate is a web-based workout tracking application with a custom Material Design 3 UI, enhanced data visualizations, and micro-interactions.
+![LiftMate Logo](LiftMate.png)
+
+A comprehensive mobile-first workout tracking Progressive Web App (PWA) designed to help fitness enthusiasts track their gym progress.
+
+## Overview
+
+LiftMate is a feature-rich gym companion that allows users to create custom workouts, track progress, set goals, and visualize fitness journeys. Built as a PWA, it works offline and can be installed on mobile devices for a native app-like experience.
 
 ## Features
 
-- **Workout Templates**: Create and manage custom workout templates
-- **Exercise Library**: Track exercises with target muscle groups
-- **Workout History**: View past workouts and analyze progress
-- **Stats Dashboard**: Visualize workout trends and personal records
-- **Progress Tracking**: Track weights, reps, and progress over time
-- **Body Weight Tracker**: Monitor body weight changes
-- **Progress Photos**: Store and compare progress pictures
-- **Goal Setting**: Set and track fitness goals
+- **Workout Management**
+  - Create and save custom workout templates
+  - Track active workouts with sets, reps, and weights
+  - Rest timer functionality
+  - One-rep max calculations
 
-## Custom Icon System
+- **Exercise Library**
+  - Custom exercise creation with muscle group targeting
+  - Personal records tracking
+  - Filter exercises by muscle groups
 
-LiftMate includes a comprehensive custom icon system designed to create a unique brand identity while improving user understanding of different workout types and functions.
+- **Progress Tracking**
+  - Visual strength progression charts
+  - Body weight tracking
+  - Progress photo storage and comparisons
 
-### Using Custom Icons
+- **Statistics & Analytics**
+  - Comprehensive workout statistics
+  - Total volume, duration, and frequency metrics
+  - Performance trends over time
 
-1. **Include the CSS file**
-   Make sure `icons.css` is linked in your HTML:
+- **Goal Setting**
+  - Exercise weight targets
+  - Gym frequency goals
+  - Body weight goals
+  - Visual progress indicators
 
-   ```html
-   <link rel="stylesheet" href="css/icons.css">
-   ```
+## Technology
 
-2. **Basic Icon Usage**
-   To use an icon, use the following structure:
+- Pure JavaScript (no frameworks)
+- LocalStorage for data persistence
+- IndexedDB for image storage
+- Service Worker for offline capability
+- Responsive design with custom CSS
 
-   ```html
-   <span class="icon">
-     <!-- SVG icon code here -->
-   </span>
-   ```
+## Installation
 
-3. **Icon Sizes**
-   Control icon size with these classes:
-   - `icon-sm`: 18px × 18px
-   - `icon-md`: 24px × 24px (default)
-   - `icon-lg`: 32px × 32px
-   - `icon-xl`: 48px × 48px
+### Mobile (iOS)
 
-4. **Icon Colors**
-   Icon colors inherit from the parent by default. Use these classes for specific colors:
-   - `icon-primary`
-   - `icon-secondary`
-   - `icon-tertiary`
-   - `icon-surface`
-   - `icon-error`
+1. Open Safari and navigate to the LiftMate GitHub Pages URL
+2. Tap the Share icon (box with arrow)
+3. Select "Add to Home Screen"
+4. Name the app and tap "Add"
+5. The app will appear on your home screen with full offline capability
 
-5. **Icon Buttons**
-   Create clickable icons with:
+### Mobile (Android)
 
-   ```html
-   <button class="icon-button">
-     <span class="icon">
-       <!-- SVG icon code here -->
-     </span>
-   </button>
-   ```
+1. Open Chrome and navigate to the LiftMate GitHub Pages URL
+2. Tap the menu (⋮)
+3. Select "Add to Home screen"
+4. The app will appear on your home screen with full offline capability
 
-### Viewing the Icon Demo
+### Desktop
 
-Open `icon-demo.html` in your browser to see all available icons and examples of their usage.
+- Use Chrome or Edge and look for the install icon in the address bar
+- Alternatively, use the browser's menu to install
 
-## Directory Structure
+## Data Privacy
 
-```
-/
-├── assets/                # Assets directory
-│   ├── icons/             # SVG icons organized by category
-│   │   ├── actions/       # Action icons (add, edit, delete, etc.)
-│   │   ├── achievements/  # Achievement icons (PR badge, streak, etc.)
-│   │   ├── equipment/     # Equipment icons (dumbbells, barbells, etc.)
-│   │   ├── muscle-groups/ # Muscle group icons (chest, back, etc.)
-│   │   ├── navigation/    # Navigation tab icons
-│   │   └── workout-types/ # Workout type icons (strength, cardio, etc.)
-│   └── illustrations/     # Larger illustrations for UI states
-│
-├── css/                   # CSS stylesheets
-│   ├── animations.css     # Animation definitions
-│   ├── icons.css          # Custom icon system styles
-│   ├── micro-interactions.css  # Micro-interaction styles
-│   └── styles.css         # Main stylesheet
-│
-├── js/                    # JavaScript modules
-│   ├── animations.js      # Animation handlers
-│   ├── app.js             # Main application module
-│   ├── data.js            # Data management module
-│   ├── exercises.js       # Exercise management
-│   ├── goals.js           # Goal tracking
-│   ├── history.js         # Workout history
-│   ├── progress-pics.js   # Progress pictures
-│   ├── progress.js        # Progress tracking
-│   ├── stats.js           # Statistics and analytics
-│   ├── templates.js       # Workout templates
-│   ├── ui.js              # UI utilities
-│   ├── visualizations.js  # Enhanced data visualizations
-│   ├── weight.js          # Weight tracking
-│   └── workout.js         # Active workout handler
-│
-├── index.html             # Main application HTML
-├── icon-demo.html         # Icon system demonstration
-└── manifest.json          # Web app manifest
+All user data is stored locally on your device. No information is transmitted to external servers.
+
+## GitHub Pages Deployment
+
+This project is designed to be deployed on GitHub Pages for easy access across devices. The deployed version can be accessed directly from any browser and installed as a PWA.
+
+## Development & Running Locally
+
+Due to browser security restrictions, this application should be served through a local web server rather than opened directly as files. This prevents CORS (Cross-Origin Resource Sharing) errors when accessing local resources like the manifest.json file.
+
+### Option 1: Using Python's built-in server
+
+If you have Python installed:
+
+```bash
+# Navigate to the application directory
+cd /path/to/LiftMate
+
+# Start a simple HTTP server on port 8000
+python -m http.server
 ```
 
-## Development
+Then open your browser and navigate to: http://localhost:8000
 
-1. Clone the repository
-2. Open `index.html` in your browser
-3. To view the custom icon system, open `icon-demo.html`
+### Option 2: Using Node.js
 
-## Accessibility
+If you have Node.js installed:
 
-All icons that convey meaning include appropriate ARIA attributes:
-- `aria-hidden="true"` when used with text
-- Appropriate `aria-label` when used standalone
+```bash
+# Navigate to the application directory  
+cd /path/to/LiftMate
+
+# Install serve if you don't have it
+npm install -g serve
+
+# OR use npx to run it without installing
+npx serve
+```
+
+Then open your browser and navigate to the URL shown in the terminal (typically http://localhost:3000 or http://localhost:5000).
+
+## License
+
+MIT License

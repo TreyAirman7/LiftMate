@@ -1,0 +1,716 @@
+/**
+ * LiftMate - Workout Module
+ * Handles active workout management, timers, and workout completion
+ */
+
+const WorkoutManager = (() => {
+    // Module state
+    let activeWorkout = null;
+    let activeTemplate = null;
+    let currentExerciseIndex = 0;
+    let currentSetIndex = 0;
+    let completedExercises = 0;
+    let workoutStartTime = null;
+    let restTimer = null;
+    let timerInterval = null;
+    
+    /**
+     * Initialize workout manager functionality
+     */
+    const initialize = () => {
+        // Setup event listeners
+        setupEventListeners();
+    };
+    
+    /**
+     * Setup all event listeners for workout functionality
+     */
+    const setupEventListeners = () => {
+        // Active workout form - use direct button click instead of form submit
+        try {
+            // First try to attach to the form submit event
+            const setForm = document.getElementById('set-form');
+            if (setForm) {
+                setForm.addEventListener('submit', completeSet);
+                console.log('Set form submit listener added');
+            } else {
+                console.error('Set form element not found during initialization');
+            }
+            
+            // Also attach directly to the Complete Set button as a backup
+            // This ensures the button works even if form submission is blocked
+            document.addEventListener('click', (e) => {
+                // Find the submit button within the set form
+                if (e.target && (
+                    e.target.matches('#set-form button[type="submit"]') || 
+                    e.target.closest('#set-form button[type="submit"]')
+                )) {
+                    // Prevent default to avoid double submission
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Complete Set button clicked directly');
+                    completeSet(e);
+                }
+            });
+            
+            console.log('Backup button click listener added');
+        } catch (error) {
+            console.error('Error setting up set form listener:', error);
+        }
+        
+        // Rest timer skip button
+        document.getElementById('skip-rest').addEventListener('click', skipRest);
+        
+        // Cancel workout button
+        document.getElementById('cancel-active-workout').addEventListener('click', promptCancelWorkout);
+        
+        // Finish workout button
+        document.getElementById('finish-workout').addEventListener('click', finishWorkout);
+    };
+    
+    /**
+     * Start a workout from a template
+     * @param {Object} template - Template object to use for the workout
+     */
+    const startTemplateWorkout = (template) => {
+        console.log('WorkoutManager.startTemplateWorkout called with template:', template);
+        
+        // Validate template
+        if (!template) {
+            UI.showToast('Invalid template', 'error');
+            return;
+        }
+        
+        // Validate template has exercises
+        if (!template.exercises || template.exercises.length === 0) {
+            UI.showToast('This template has no exercises. Please add exercises to the template first.', 'error');
+            return;
+        }
+        
+        // Validate that each exercise has sets
+        for (const exercise of template.exercises) {
+            if (!exercise.sets || exercise.sets.length === 0) {
+                UI.showToast(`Exercise "${exercise.exerciseName}" has no sets defined. Please edit the template.`, 'error');
+                return;
+            }
+        }
+        
+        // Set up new workout
+        activeTemplate = template;
+        
+        try {
+            // Create the workout object
+            activeWorkout = {
+                templateId: template.id,
+                templateName: template.name,
+                date: new Date().toISOString(),
+                duration: 0,
+                exercises: template.exercises.map(exercise => ({
+                    exerciseId: exercise.exerciseId,
+                    exerciseName: exercise.exerciseName,
+                    sets: exercise.sets.map(set => ({
+                        targetReps: set.targetReps,
+                        restTime: set.restTime,
+                        weight: null,
+                        reps: null,
+                        completed: false
+                    }))
+                }))
+            };
+            
+            // Reset state
+            currentExerciseIndex = 0;
+            currentSetIndex = 0;
+            completedExercises = 0;
+            workoutStartTime = new Date();
+            
+            console.log('Workout object created:', activeWorkout);
+            console.log('Opening active-template-modal');
+            
+            // Make sure template modal element exists
+            const templateName = document.getElementById('active-template-name');
+            if (!templateName) {
+                console.error('Template name element not found');
+                UI.showToast('Error starting workout: UI elements not found', 'error');
+                return;
+            }
+            
+            // Set the template name in the modal
+            templateName.textContent = template.name;
+            
+            // Open active template modal
+            const modalOpened = UI.openModal('active-template-modal');
+            
+            if (!modalOpened) {
+                console.error('Failed to open active template modal');
+                UI.showToast('Error starting workout: Could not open workout interface', 'error');
+                return;
+            }
+            
+            console.log('Modal opened successfully');
+            
+            // Debug DOM structure of the modal
+            console.log('Modal structure after opening:');
+            const modal = document.getElementById('active-template-modal');
+            if (modal) {
+                console.log('Modal found:', modal);
+                const modalContent = modal.querySelector('.modal-content');
+                if (modalContent) {
+                    console.log('Modal content found:', modalContent);
+                    const modalBody = modalContent.querySelector('.modal-body');
+                    if (modalBody) {
+                        console.log('Modal body found:', modalBody);
+                        console.log('Modal body HTML:', modalBody.innerHTML);
+                    } else {
+                        console.error('Modal body not found');
+                    }
+                } else {
+                    console.error('Modal content not found');
+                }
+            } else {
+                console.error('Modal not found after opening');
+            }
+            
+            // We'll use a longer delay with multiple attempts to ensure UI is ready
+            let attempts = 0;
+            const maxAttempts = 3;
+            const checkAndInitialize = () => {
+                attempts++;
+                console.log(`Attempt ${attempts} to initialize workout UI`);
+                
+                // Check all critical elements that must exist
+                const criticalElements = [
+                    'workout-progress-bar', 'completed-exercises', 'total-exercises',
+                    'active-exercise-name', 'set-progress', 'current-set-number',
+                    'target-reps', 'target-reps-container', 'current-set', 
+                    'rest-timer', 'workout-complete', 'weight-input', 'reps-input'
+                ];
+                
+                const missingElements = [];
+                criticalElements.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (!element) {
+                        missingElements.push(id);
+                        console.error(`Critical element missing: ${id}`);
+                    } else {
+                        console.log(`Found critical element: ${id}`, element);
+                    }
+                });
+                
+                if (missingElements.length > 0) {
+                    console.error('Missing critical elements:', missingElements);
+                    if (attempts < maxAttempts) {
+                        // Try again after a delay
+                        setTimeout(checkAndInitialize, 500);
+                    } else {
+                        console.error('Max attempts reached. These elements are required but not found in the DOM');
+                        UI.showToast(`Error: Missing UI elements: ${missingElements.join(', ')}. Please try again.`, 'error');
+                    }
+                    return;
+                }
+                
+                // If all elements exist, update the UI
+                console.log('All critical elements found, updating UI...');
+                updateWorkoutProgress();
+                renderActiveExercise();
+            };
+            
+            // Start the initialization process
+            setTimeout(checkAndInitialize, 300);
+            
+        } catch (e) {
+            console.error('Error starting workout:', e);
+            UI.showToast('Error starting workout', 'error');
+        }
+    };
+    
+    /**
+     * Update the workout progress UI
+     */
+    const updateWorkoutProgress = () => {
+        // Check if activeWorkout is valid
+        if (!activeWorkout || !activeWorkout.exercises) {
+            console.error('Active workout is not properly initialized in updateWorkoutProgress');
+            return;
+        }
+        
+        // Get required DOM elements
+        const progressBar = document.getElementById('workout-progress-bar');
+        const completedEl = document.getElementById('completed-exercises');
+        const totalEl = document.getElementById('total-exercises');
+        
+        // Check if elements exist
+        if (!progressBar || !completedEl || !totalEl) {
+            console.error('Required progress elements not found');
+            return;
+        }
+        
+        // Update progress bar
+        const totalExercises = activeWorkout.exercises.length;
+        const progressPercent = (completedExercises / totalExercises) * 100;
+        progressBar.style.width = `${progressPercent}%`;
+        
+        // Update exercise count text
+        completedEl.textContent = completedExercises;
+        totalEl.textContent = totalExercises;
+    };
+    
+    /**
+     * Render the current active exercise
+     */
+    const renderActiveExercise = () => {
+        // Make sure the active workout and current exercise index are valid
+        if (!activeWorkout || !activeWorkout.exercises || activeWorkout.exercises.length === 0) {
+            console.error('Active workout is not properly initialized');
+            return;
+        }
+        
+        const exercise = activeWorkout.exercises[currentExerciseIndex];
+        
+        if (!exercise) {
+            console.error('Current exercise not found at index:', currentExerciseIndex);
+            return;
+        }
+        
+        // Get all required DOM elements and check if they exist
+        const elements = {
+            exerciseName: document.getElementById('active-exercise-name'),
+            setProgress: document.getElementById('set-progress'),
+            currentSetNumber: document.getElementById('current-set-number'),
+            currentSet: document.getElementById('current-set'),
+            restTimer: document.getElementById('rest-timer'),
+            workoutComplete: document.getElementById('workout-complete')
+        };
+        
+        // Direct access to target-reps element since we've restructured the HTML
+        elements.targetReps = document.getElementById('target-reps');
+        
+        // Verify all elements exist
+        for (const [key, element] of Object.entries(elements)) {
+            if (!element) {
+                console.error(`Element not found: ${key}`);
+                return;
+            }
+        }
+        
+        // Set exercise name
+        elements.exerciseName.textContent = exercise.exerciseName;
+        
+        // Generate set numbers
+        elements.setProgress.innerHTML = '';
+        
+        exercise.sets.forEach((set, index) => {
+            const setNumber = document.createElement('div');
+            setNumber.className = 'set-number';
+            setNumber.textContent = index + 1;
+            
+            if (index === currentSetIndex) {
+                setNumber.classList.add('current-set');
+            } else if (set.completed) {
+                setNumber.classList.add('completed-set');
+            }
+            
+            elements.setProgress.appendChild(setNumber);
+        });
+        
+        // Set current set info
+        const currentSet = exercise.sets[currentSetIndex];
+        if (!currentSet) {
+            console.error('Current set not found at index:', currentSetIndex);
+            return;
+        }
+        
+        // Safely set text content with error handling
+        try {
+            // Set the set number
+            elements.currentSetNumber.textContent = `Set ${currentSetIndex + 1}`;
+            
+            // Set target reps
+            if (elements.targetReps) {
+                elements.targetReps.textContent = currentSet.targetReps;
+            } else {
+                console.error('targetReps element not found or not accessible');
+                
+                // Try to find it again directly
+                const targetRepsElement = document.getElementById('target-reps');
+                if (targetRepsElement) {
+                    targetRepsElement.textContent = currentSet.targetReps;
+                }
+            }
+        } catch (e) {
+            console.error('Error setting set information:', e);
+        }
+        
+        // Show set form, hide rest timer and completion
+        elements.currentSet.classList.remove('hidden');
+        elements.restTimer.classList.add('hidden');
+        elements.workoutComplete.classList.add('hidden');
+        
+        // Clear and focus weight input
+        const weightInput = document.getElementById('weight-input');
+        const repsInput = document.getElementById('reps-input');
+        
+        if (!weightInput || !repsInput) {
+            console.error('Weight or reps input element not found');
+            return;
+        }
+        
+        // If there's a previous set, use its weight as default
+        let defaultWeight = '';
+        if (currentSetIndex > 0 && exercise.sets[currentSetIndex - 1].weight) {
+            defaultWeight = exercise.sets[currentSetIndex - 1].weight;
+        } else if (currentExerciseIndex > 0) {
+            // Look in previous exercises for the same exercise
+            for (let i = currentExerciseIndex - 1; i >= 0; i--) {
+                const prevExercise = activeWorkout.exercises[i];
+                if (prevExercise && prevExercise.exerciseId === exercise.exerciseId) {
+                    const lastSet = prevExercise.sets.find(set => set && set.weight);
+                    if (lastSet) {
+                        defaultWeight = lastSet.weight;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        weightInput.value = defaultWeight;
+        repsInput.value = '';
+        
+        // Focus the weight input if empty, otherwise the reps input
+        try {
+            if (!weightInput.value) {
+                weightInput.focus();
+            } else {
+                repsInput.focus();
+            }
+        } catch (e) {
+            console.error('Error focusing input fields:', e);
+        }
+    };
+    
+    /**
+     * Handle set completion
+     * @param {Event} e - Form submit event
+     */
+    const completeSet = (e) => {
+        e.preventDefault();
+        
+        // Get form values
+        const weight = parseFloat(document.getElementById('weight-input').value);
+        const reps = parseInt(document.getElementById('reps-input').value);
+        
+        // Validate inputs
+        if (isNaN(weight) || weight < 0) {
+            UI.showToast('Please enter a valid weight', 'error');
+            return;
+        }
+        
+        if (isNaN(reps) || reps < 0) {
+            UI.showToast('Please enter valid reps', 'error');
+            return;
+        }
+        
+        // Update set data
+        const exercise = activeWorkout.exercises[currentExerciseIndex];
+        exercise.sets[currentSetIndex].weight = weight;
+        exercise.sets[currentSetIndex].reps = reps;
+        exercise.sets[currentSetIndex].completed = true;
+        
+        // Check for personal record and trigger animation if needed
+        const exerciseData = DataManager.getExercises(); // Fixed: use getExercises instead of getExerciseData
+        const exerciseItem = exerciseData.find(ex => ex.id === exercise.exerciseId);
+        if (exerciseItem) {
+            // Check if this is a PR for this rep range
+            const isPersonalRecord = checkForPersonalRecord(exerciseItem, weight, reps);
+            if (isPersonalRecord) {
+                // Dispatch personal record event for animations
+                document.dispatchEvent(new CustomEvent('personalRecord', {
+                    detail: { 
+                        exerciseName: exercise.exerciseName,
+                        weight: weight,
+                        reps: reps,
+                        element: document.querySelector('.set-number.current-set')
+                    }
+                }));
+            }
+        }
+        
+        // Check if we need to move to next set or exercise
+        if (currentSetIndex < exercise.sets.length - 1) {
+            // Move to next set
+            currentSetIndex++;
+            
+            // Start rest timer
+            const restTime = exercise.sets[currentSetIndex - 1].restTime;
+            startRestTimer(restTime);
+        } else {
+            // Complete this exercise
+            completedExercises++;
+            updateWorkoutProgress();
+            
+            // Check if we need to move to next exercise
+            if (currentExerciseIndex < activeWorkout.exercises.length - 1) {
+                // Move to next exercise
+                currentExerciseIndex++;
+                currentSetIndex = 0;
+                renderActiveExercise();
+            } else {
+                // Workout is complete
+                showWorkoutComplete();
+            }
+        }
+    };
+    
+    /**
+     * Start the rest timer
+     * @param {number} seconds - Rest time in seconds
+     */
+    const startRestTimer = (seconds) => {
+        // Only start timer if there's a rest time
+        if (!seconds || seconds <= 0) {
+            renderActiveExercise();
+            return;
+        }
+        
+        // Set up timer
+        restTimer = seconds;
+        clearInterval(timerInterval);
+        
+        // Update UI
+        document.getElementById('current-set').classList.add('hidden');
+        
+        // Make sure the rest timer is visible and properly initialized
+        const restTimerElement = document.getElementById('rest-timer');
+        const timerDisplayElement = document.getElementById('timer-display');
+        const skipRestButton = document.getElementById('skip-rest');
+        
+        if (!restTimerElement || !timerDisplayElement || !skipRestButton) {
+            console.error('One or more timer elements not found', {
+                restTimerElement, timerDisplayElement, skipRestButton
+            });
+            // Fallback - just continue to next exercise
+            renderActiveExercise();
+            return;
+        }
+        
+        // Ensure the timer elements are visible
+        restTimerElement.classList.remove('hidden');
+        skipRestButton.style.display = 'inline-block';
+        
+        // Set initial time display
+        timerDisplayElement.textContent = UI.formatTime(restTimer);
+        
+        // For debugging
+        console.log('Rest timer started with', seconds, 'seconds');
+        console.log('Timer elements:', {
+            restTimerElement, timerDisplayElement, skipRestButton
+        });
+        
+        // Start timer interval
+        timerInterval = setInterval(() => {
+            restTimer--;
+            
+            // Update timer display
+            timerDisplayElement.textContent = UI.formatTime(restTimer);
+            console.log('Timer tick:', restTimer);
+            
+            if (restTimer <= 0) {
+                // Timer complete
+                clearInterval(timerInterval);
+                renderActiveExercise();
+            }
+        }, 1000);
+    };
+    
+    /**
+     * Skip the rest period
+     */
+    const skipRest = () => {
+        console.log('Skip rest button clicked');
+        clearInterval(timerInterval);
+        
+        // Ensure we reset the timer state
+        timerInterval = null;
+        restTimer = 0;
+        
+        // Make sure the rest timer is hidden
+        const restTimerElement = document.getElementById('rest-timer');
+        if (restTimerElement) {
+            restTimerElement.classList.add('hidden');
+        }
+        
+        // Continue to next exercise
+        renderActiveExercise();
+    };
+    
+    /**
+     * Show workout complete screen
+     */
+    const showWorkoutComplete = () => {
+        // Hide exercise UI, show completion
+        document.getElementById('active-exercise-container').classList.add('hidden');
+        document.getElementById('workout-complete').classList.remove('hidden');
+        
+        // Dispatch workout completed event for animations
+        document.dispatchEvent(new CustomEvent('workoutCompleted', {
+            detail: { workoutName: activeWorkout.templateName }
+        }));
+    };
+    
+    /**
+     * Prompt to cancel the current workout
+     */
+    const promptCancelWorkout = () => {
+        UI.showConfirmation(
+            'Cancel Workout',
+            'Are you sure you want to cancel this workout? Your progress will be lost.',
+            () => {
+                cancelWorkout();
+            }
+        );
+    };
+    
+    /**
+     * Cancel the current workout
+     */
+    const cancelWorkout = () => {
+        // Clear timer if running
+        clearInterval(timerInterval);
+        
+        // Reset state
+        activeWorkout = null;
+        activeTemplate = null;
+        
+        // Close modal
+        UI.closeModal(document.getElementById('active-template-modal'));
+        
+        // Reset UI
+        document.getElementById('active-exercise-container').classList.remove('hidden');
+        document.getElementById('workout-complete').classList.add('hidden');
+    };
+    
+    /**
+     * Finish and save the current workout
+     */
+    const finishWorkout = () => {
+        if (!activeWorkout) {
+            return;
+        }
+        
+        // Calculate workout duration
+        const endTime = new Date();
+        const durationMs = endTime - workoutStartTime;
+        const durationMinutes = Math.round(durationMs / (1000 * 60));
+        
+        // Update workout data
+        activeWorkout.duration = durationMinutes;
+        
+        // Save workout
+        const savedWorkout = DataManager.saveWorkout(activeWorkout);
+        
+        if (savedWorkout) {
+            UI.showToast('Workout saved successfully!', 'success');
+            
+            // Close modal
+            UI.closeModal(document.getElementById('active-template-modal'));
+            
+            // Reset state
+            activeWorkout = null;
+            activeTemplate = null;
+            
+            // Reset UI
+            document.getElementById('active-exercise-container').classList.remove('hidden');
+            document.getElementById('workout-complete').classList.add('hidden');
+            
+            // Refresh stats and history
+            if (typeof StatsManager !== 'undefined' && StatsManager.renderStats) {
+                StatsManager.renderStats();
+            }
+            
+            if (typeof HistoryManager !== 'undefined' && HistoryManager.renderHistory) {
+                HistoryManager.renderHistory();
+            }
+            
+            if (typeof ProgressManager !== 'undefined' && ProgressManager.renderExerciseSelect) {
+                ProgressManager.renderExerciseSelect();
+            }
+        } else {
+            UI.showToast('Failed to save workout', 'error');
+        }
+    };
+    
+    /**
+     * Check if a set is a personal record for the exercise
+     * @param {Object} exercise - Exercise data object
+     * @param {number} weight - Weight lifted
+     * @param {number} reps - Reps completed
+     * @returns {boolean} - Whether it's a personal record
+     */
+    const checkForPersonalRecord = (exercise, weight, reps) => {
+        // No records to compare against
+        if (!exercise.records) {
+            return true; // First record is always a PR
+        }
+        
+        // Check 1RM first
+        const estimatedOneRM = calculateOneRepMax(weight, reps);
+        
+        // If we have a 1RM record, compare against it
+        if (exercise.records.oneRM) {
+            if (estimatedOneRM > exercise.records.oneRM) {
+                return true;
+            }
+        } else if (estimatedOneRM > 0) {
+            return true; // First 1RM
+        }
+        
+        // Check rep range PRs
+        const repRangeKey = getRepRangeKey(reps);
+        if (repRangeKey && exercise.records[repRangeKey]) {
+            if (weight > exercise.records[repRangeKey]) {
+                return true;
+            }
+        } else if (repRangeKey && weight > 0) {
+            return true; // First record for this rep range
+        }
+        
+        return false;
+    };
+    
+    /**
+     * Calculate estimated one-rep max
+     * @param {number} weight - Weight lifted
+     * @param {number} reps - Reps completed
+     * @returns {number} - Estimated 1RM
+     */
+    const calculateOneRepMax = (weight, reps) => {
+        if (reps === 1) return weight;
+        if (reps < 1 || reps > 15) return 0; // Outside reliable estimation range
+        
+        // Brzycki formula
+        return weight * (36 / (37 - reps));
+    };
+    
+    /**
+     * Get the rep range key for recording PRs
+     * @param {number} reps - Number of reps
+     * @returns {string|null} - Rep range key
+     */
+    const getRepRangeKey = (reps) => {
+        if (reps <= 0) return null;
+        
+        if (reps <= 5) {
+            return 'strength';
+        } else if (reps <= 12) {
+            return 'hypertrophy';
+        } else {
+            return 'endurance';
+        }
+    };
+    
+    // Public API
+    return {
+        initialize,
+        startTemplateWorkout
+    };
+})();
