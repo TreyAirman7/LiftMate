@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#6750A4" rx="100" ry="100" />
+  <text x="256" y="300" font-family="Arial Black, sans-serif" font-size="120" text-anchor="middle" fill="white">LM</text>
+  <path d="M176 136 L336 136 L336 156 L316 156 L316 356 L336 356 L336 376 L176 376 L176 356 L196 356 L196 156 L176 156 Z" fill="white" fill-opacity="0.3"/>
+</svg>

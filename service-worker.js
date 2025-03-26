@@ -55,6 +55,11 @@ self.addEventListener('activate', event => {
 
 // Fetch event - serve from cache or network
 self.addEventListener('fetch', event => {
+    // Skip non-HTTP(S) requests
+    if (!event.request.url.startsWith('http')) {
+        return;
+    }
+    
     event.respondWith(
         caches.match(event.request)
             .then(response => {
@@ -76,7 +81,11 @@ self.addEventListener('fetch', event => {
                         
                         caches.open(CACHE_NAME)
                             .then(cache => {
-                                cache.put(event.request, responseToCache);
+                                try {
+                                    cache.put(event.request, responseToCache);
+                                } catch (e) {
+                                    console.error('Cache put error:', e);
+                                }
                             });
                         
                         return response;
@@ -84,7 +93,7 @@ self.addEventListener('fetch', event => {
                     .catch(() => {
                         // If network request fails, try to return a fallback page
                         if (event.request.url.indexOf('.html') > -1) {
-                            return caches.match('/index.html');
+                            return caches.match('./index.html');
                         }
                     });
             })
