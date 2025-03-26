@@ -11,22 +11,35 @@
 
 /* Specific fixes for standalone mode (Add to Home Screen) */
 @media all and (display-mode: standalone) {
-  body {
+  html, body {
     /* Ensure the body takes full height in standalone mode */
-    height: 100vh;
+    height: 100%;
     height: -webkit-fill-available;
+    width: 100%;
+    position: fixed; /* Fix for momentum scrolling issues */
     overflow: hidden;
+    overscroll-behavior: none; /* Prevent bounce effect */
   }
   
   /* Adjust header for standalone mode */
   .app-header {
     padding-top: calc(env(safe-area-inset-top) + 10px) !important;
     height: calc(74px + env(safe-area-inset-top)) !important; /* Increased height to prevent cutoff */
+    z-index: 1000; /* Ensure header stays on top */
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
   }
   
   /* Fix bottom nav in standalone mode */
   .mobile-nav {
     padding-bottom: 0 !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
   }
 }
 
@@ -284,6 +297,11 @@
     .tab-content {
       padding-bottom: 45px; /* Fixed padding for nav bar without home indicator space */
       padding-top: 10px; /* Add some spacing at the top */
+      height: auto;
+      overflow-y: visible; /* Let the app-container handle scrolling */
+      overflow-x: hidden;
+      position: relative; /* Not fixed or absolute */
+      max-height: none; /* Remove max-height constraint */
     }
   }
   
@@ -375,6 +393,52 @@
       margin-right: 10px !important;
       display: inline-block !important;
     }
+    
+    /* Fix template edit/delete buttons that get smooshed together */
+    .template-actions {
+      display: flex !important;
+      gap: 15px !important;
+      align-items: center !important;
+      justify-content: flex-end !important;
+      margin-right: 5px !important;
+    }
+    
+    .template-card-header {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      padding: 16px !important;
+    }
+    
+    .template-card .icon-button,
+    .icon-button.edit-template,
+    .icon-button.delete-template {
+      width: 44px !important;
+      height: 44px !important;
+      min-width: 44px !important;
+      min-height: 44px !important;
+      border-radius: 50% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background-color: rgba(var(--md-primary-rgb), 0.1) !important;
+      margin: 0 !important;
+      position: relative !important;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    }
+    
+    .icon-button.edit-template i,
+    .icon-button.delete-template i {
+      font-size: 18px !important;
+      color: var(--primary-color) !important;
+    }
+    
+    /* Add active state for the buttons */
+    .icon-button.edit-template:active,
+    .icon-button.delete-template:active {
+      background-color: rgba(var(--md-primary-rgb), 0.2) !important;
+      transform: scale(0.95) !important;
+    }
   }
 }
 
@@ -460,7 +524,11 @@ body {
     right: 0;
     bottom: 0;
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none; /* Prevent pull-to-refresh and bounce */
+    padding-top: calc(74px + env(safe-area-inset-top)); /* Adjust for fixed header */
+    padding-bottom: 45px; /* Adjust for fixed navigation */
   }
 }
 
