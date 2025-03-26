@@ -28,7 +28,7 @@
   /* Compact, iOS-style header */
   .app-header {
     padding-top: calc(8px + var(--safe-area-inset-top));
-    padding-bottom: 8px;
+    padding-bottom: 0; /* Removed bottom padding */
     padding-left: 16px;
     padding-right: 16px;
     position: relative;
@@ -54,21 +54,31 @@
     opacity: 0.9;
   }
   
-  /* iOS-style header controls */
+  /* iOS-style header controls with white icons */
   .app-header .theme-toggle {
     width: 36px;
     height: 36px;
     font-size: 1.2rem;
     margin-left: 8px;
     border-radius: 50%;
-    background-color: rgba(var(--md-primary-rgb), 0.08);
-    color: var(--primary-color);
+    background-color: var(--primary-color);
+    color: white !important;
     transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .app-header .theme-toggle:active {
-    background-color: rgba(var(--md-primary-rgb), 0.15);
+    background-color: var(--primary-color);
+    opacity: 0.8;
     transform: scale(0.95);
+  }
+  
+  /* Same white icons for both light and dark mode */
+  .dark-mode .app-header .theme-toggle {
+    background-color: var(--primary-color);
+    color: white !important;
   }
   
   /* Modern header layout */
@@ -76,7 +86,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 44px; /* iOS standard header height */
+    height: 70px; /* Increased to 70px */
   }
   
   /* Add subtle bottom border for iOS style */
@@ -149,8 +159,8 @@
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 -0.5px 0 rgba(0,0,0,0.2); /* Subtle iOS-style top border */
     box-sizing: border-box;
-    padding-top: 0;
-    padding-bottom: calc(var(--safe-area-inset-bottom)); /* Account for home indicator */
+    padding: 0;
+    margin: 0;
   }
   
   .nav-button {
@@ -208,9 +218,10 @@
     opacity: 0.7;
   }
   
-  /* Ensure the content area adjusts for fixed navigation */
+  /* Ensure the content area adjusts for fixed navigation - no extra space */
   .tab-content {
-    padding-bottom: calc(49px + var(--safe-area-inset-bottom)); /* iOS height + safe area */
+    padding-bottom: 49px; /* Only tab bar height, no extra */
+    margin-bottom: 0;
     position: relative;
   }
   
@@ -242,7 +253,7 @@
     padding: 14px !important;
     margin-top: 12px !important;
     box-sizing: border-box !important;
-    font-size: 1.1rem !important;
+    font-size: 1.3rem !important;
     font-weight: 600 !important;
     display: flex !important;
     justify-content: center !important;
@@ -255,7 +266,23 @@
   
   .template-card .button i,
   .start-template i {
-    font-size: 1.3rem !important;
+    font-size: 1.5rem !important;
+    margin-right: 10px !important;
+  }
+  
+  /* Change button text from "Start Workout" to "Start" */
+  .start-template::after {
+    content: "Start" !important;
+  }
+  
+  /* Hide the original button text */
+  .start-template {
+    font-size: 0 !important;
+  }
+  
+  /* But keep the icon visible */
+  .start-template i {
+    font-size: 1.5rem !important;
     margin-right: 10px !important;
   }
 }
@@ -315,21 +342,23 @@ body {
   height: 100%;
 }
 
-/* Fix content positioning for full-height scroll */
+/* Fix content positioning for full-height scroll - no bottom space */
 .app-container {
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
   position: absolute;
   top: 0;
-  bottom: 0;
+  bottom: 0; /* Extend fully to bottom */
   left: 0;
   right: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
-/* Make sure all tab content is contained but keeps swipe functionality */
+/* Make sure all tab content is contained but keeps swipe functionality - no bottom space */
 .tab-content {
   width: 100%;
   max-width: 100%;
@@ -338,14 +367,19 @@ body {
   box-sizing: border-box;
   position: relative;
   touch-action: pan-y; /* Allow vertical scrolling but keep horizontal swiping */
+  padding-bottom: 0;
+  margin-bottom: 0;
+  max-height: calc(100vh - 49px); /* Ensure content doesn't go below navbar */
 }
 
-/* Fix container sizes to prevent horizontal overflow */
+/* Fix container sizes to prevent horizontal overflow and remove bottom space */
 .container {
   width: 100%;
   max-width: 100%;
   padding-left: 10px;
   padding-right: 10px;
+  padding-bottom: 0; /* No bottom padding */
+  margin-bottom: 0; /* No bottom margin */
   box-sizing: border-box;
   overflow-x: hidden;
 }
