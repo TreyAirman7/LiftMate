@@ -23,6 +23,36 @@
   z-index: 100;
 }
 
+/* iPhone-specific header size increase */
+@media (max-width: 428px) {
+  .app-header {
+    padding-top: calc(24px + var(--safe-area-inset-top));
+    padding-bottom: 12px;
+  }
+  
+  .app-header h1 {
+    font-size: 2.7rem; /* 50% larger */
+  }
+  
+  .app-header .fa-dumbbell {
+    font-size: 2.1rem; /* 50% larger */
+    margin-right: 8px;
+  }
+  
+  .app-header .theme-toggle {
+    width: 48px; /* 50% larger */
+    height: 48px; /* 50% larger */
+    font-size: 1.5rem; /* 50% larger */
+  }
+  
+  /* Also increase spacing between elements */
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
 /* Adjust the theme toggle buttons positioning */
 .theme-controls {
   display: flex;
@@ -112,40 +142,34 @@
   min-width: 44px;
 }
 
-/* Fix for Use Template button - consistent across devices */
-.template-card .button.primary,
-.template-card .button.secondary {
-  width: 100%;
-  padding: 16px;
-  font-size: 1rem;
-  white-space: normal;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60px;
-  min-height: 60px;
-  max-height: 60px;
-  margin-top: 12px;
-  border-radius: 12px;
-  box-sizing: border-box;
-}
-
-/* Keep button sizing and font consistent across all devices */
+/* iPhone-specific overrides for template buttons */
 @media (max-width: 428px) {
+  /* Use !important to override any conflicting styles */
   .template-card .button.primary,
-  .template-card .button.secondary {
-    /* Same exact dimensions as desktop version */
-    height: 60px;
-    min-height: 60px;
-    max-height: 60px;
-    padding: 16px;
-    font-size: 1rem;
-    font-weight: 600;
+  .template-card .button.secondary,
+  .start-template {
+    width: 100% !important;
+    height: 60px !important;
+    min-height: 60px !important;
+    max-height: 60px !important;
+    padding: 14px !important;
+    margin-top: 12px !important;
+    box-sizing: border-box !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    border-radius: 12px !important;
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
   }
   
-  .template-card .button i {
-    font-size: 1.2rem;
-    margin-right: 8px;
+  .template-card .button i,
+  .start-template i {
+    font-size: 1.3rem !important;
+    margin-right: 10px !important;
   }
 }
 
@@ -265,6 +289,36 @@ body {
     gap: 12px !important;
   }
   
+  /* Make stat cards narrower and smaller to fit in 2x2 layout */
+  .stat-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Ensure all workout stat cards are the correct size for 2x2 layout */
+  .workout-stat {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 calc(50% - 6px) !important;
+    margin: 0 !important;
+    padding: 12px !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Adjust the stats row to be a 2x2 grid */
+  .stats-row, 
+  .workout-stats {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+  
   /* Fix for chart containers */
   .workout-distribution-chart,
   .exercise-frequency-chart,
@@ -300,16 +354,12 @@ body {
   }
   
   /* Size stat cards appropriately */
-  .stat-card {
-    padding: 12px;
-  }
-  
   .stat-value {
-    font-size: 1.3rem;
+    font-size: 1.1rem !important;
   }
   
   .stat-label {
-    font-size: 0.8rem;
+    font-size: 0.75rem !important;
   }
 }
 
