@@ -1,0 +1,34 @@
+/* 
+ * App Title Spacing Fix
+ * Increases spacing between app icon and "LiftMate" text in header
+ */
+
+/* Increase spacing between app icon and text */
+.app-header h1 span:first-child {
+    margin-right: 20px !important; /* Large gap between icon and text */
+    display: inline-block !important;
+}
+
+/* Ensure inline style doesn't override this - in case Unicode emoji is used instead of icon */
+.app-header h1 span[style*="color: white"]:first-child {
+    margin-right: 20px !important;
+}
+
+/* If a Font Awesome icon is used */
+.app-header h1 i.fas.fa-dumbbell,
+.app-header h1 i.fa-dumbbell,
+.app-header h1 i:first-child {
+    margin-right: 20px !important;
+}
+
+/* If SVG icon is used */
+.app-header h1 .svg-icon,
+.app-header h1 svg {
+    margin-right: 20px !important;
+}
+
+/* Ensure all elements align properly */
+.app-header h1 {
+    display: flex !important;
+    align-items: center !important;
+}

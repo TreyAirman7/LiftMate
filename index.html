@@ -45,49 +45,9 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     <link rel="stylesheet" href="css/force-center-icons.css">
     <link rel="stylesheet" href="css/fa-icon-color-fix.css">
     <link rel="stylesheet" href="css/title-icon-fa-position-fix.css">
-    <link rel="stylesheet" href="css/edit-delete-icon-fix.css">
+    <link rel="stylesheet" href="css/app-title-spacing-fix.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     
-    <!-- Direct icon size override for edit/delete icons -->
-    <style>
-        /* EXTREME OVERRIDE for edit and delete icons */
-        .icon-button i.fas.fa-pencil-alt,
-        .icon-button i.fas.fa-edit,
-        .icon-button i.fas.fa-trash,
-        .icon-button i.fas.fa-trash-alt,
-        button[id*="edit"] i.fas,
-        button[id*="delete"] i.fas,
-        button[class*="edit"] i.fas,
-        button[class*="delete"] i.fas {
-            font-size: 28px !important;
-            transform: scale(1.5) !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            width: 100% !important;
-            height: 100% !important;
-        }
-        
-        /* Make ALL edit/delete buttons bigger */
-        .icon-button,
-        button[id*="edit"],
-        button[id*="delete"],
-        button[class*="edit"],
-        button[class*="delete"],
-        .modal-actions .icon-button,
-        .pic-detail-actions .icon-button,
-        .exercise-detail-actions .icon-button,
-        .template-actions .icon-button {
-            min-width: 40px !important;
-            min-height: 40px !important;
-            width: 40px !important;
-            height: 40px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            position: relative !important;
-        }
-    </style>
     
     <!-- Force white icons in header and set top icons size -->
     <style>
@@ -364,7 +324,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
             <div class="header-content">
                 <h1 style="color: white !important;">
                     <!-- Use Unicode character instead of Font Awesome for maximum compatibility -->
-                    <span style="color: white;">💪</span> 
+                    <span style="color: white; margin-right: 15px;">💪</span> 
                     <span class="typing-text" style="color: white !important;">LiftMate</span>
                 </h1>
                 <div class="theme-controls">
@@ -1109,11 +1069,11 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
             <div class="modal-header">
                 <h2 id="detail-exercise-name">Exercise Name</h2>
                 <div class="modal-actions">
-                    <button class="icon-button" id="edit-exercise" style="width:40px; height:40px;">
-                        <i class="fas fa-pencil-alt" style="font-size:28px;"></i>
+                    <button class="icon-button" id="edit-exercise">
+                        <i class="fas fa-pencil-alt"></i>
                     </button>
-                    <button class="icon-button" id="delete-exercise" style="width:40px; height:40px;">
-                        <i class="fas fa-trash" style="font-size:28px;"></i>
+                    <button class="icon-button" id="delete-exercise">
+                        <i class="fas fa-trash"></i>
                     </button>
                     <button class="close-modal">&times;</button>
                 </div>

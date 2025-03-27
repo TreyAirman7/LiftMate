@@ -321,7 +321,7 @@
 
 .body-outline {
   fill: none;
-  stroke: #ccc;
+  stroke: #000;
   stroke-width: 1.5;
 }
 
@@ -335,7 +335,7 @@
 }
 
 .dark-mode .body-outline {
-  stroke: #444;
+  stroke: #fff;
 }
 
 .dark-mode .muscle-area {

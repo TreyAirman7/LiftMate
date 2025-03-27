@@ -516,6 +516,12 @@ const WorkoutGraphics = (() => {
             </div>
         `;
         
+        // Remove the canvas chart element if it exists
+        const canvasChart = document.getElementById('volume-distribution-chart');
+        if (canvasChart) {
+            canvasChart.remove();
+        }
+        
         // Create volume stats container
         const volumeStats = document.createElement('div');
         volumeStats.className = 'muscle-volume-stats';
