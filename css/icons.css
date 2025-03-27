@@ -10,6 +10,36 @@
     transition: transform 0.2s ease, color 0.2s ease;
 }
 
+/* Make all Font Awesome icons black in light mode (except header) */
+html:not(.dark-mode) .fa,
+html:not(.dark-mode) .fas,
+html:not(.dark-mode) .far,
+html:not(.dark-mode) .fab {
+    color: black !important;
+}
+
+/* Make all Font Awesome icons white in dark mode (except header) */
+.dark-mode .fa,
+.dark-mode .fas,
+.dark-mode .far,
+.dark-mode .fab {
+    color: white !important;
+}
+
+/* Exclude header icons from the above rules */
+.app-header .fa,
+.app-header .fas,
+.app-header .far,
+.app-header .fab,
+#theme-toggle .fa,
+#theme-toggle .fas,
+#dark-mode-toggle .fa,
+#dark-mode-toggle .fas,
+#storage-info-toggle .fa,
+#storage-info-toggle .fas {
+    color: white !important;
+}
+
 /* Button icons */
 .button .icon, 
 .action-button .icon {

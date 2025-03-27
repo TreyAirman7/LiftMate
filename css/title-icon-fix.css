@@ -134,13 +134,22 @@ body:not(.dark-mode) .title-icon .custom-icon {
     margin-top: 0 !important;
 }
 
-/* Fix horizontal icon positioning for these sections */
-#exercises .title-icon,
+/* Move ONLY the progress-pics tab title-icon down 25px and right 60px */
 #progress-pics .title-icon {
     margin: 0 15px 0 0 !important;
     height: 72px !important;
     position: relative !important;
-    top: 0 !important;
+    top: 25px !important; /* Moved down 25px */
+    left: 60px !important; /* Moved right 60px */
+}
+
+/* Move ONLY the exercises tab title-icon down 25px and right 60px */
+#exercises .title-icon {
+    margin: 0 15px 0 0 !important;
+    height: 72px !important;
+    position: relative !important;
+    top: 25px !important; /* Moved down 25px (20px + 5px more) */
+    left: 60px !important; /* Moved right 60px (40px + 20px more) */
 }
 
 /* Fix button positioning */

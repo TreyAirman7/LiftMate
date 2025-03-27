@@ -1,0 +1,47 @@
+/* 
+ * Force center all title icons
+ * !important rules with max specificity to override everything
+ */
+
+html body .title-icon .svg-icon,
+html body .title-icon .custom-icon {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, calc(-50% - 24px)) !important;
+    margin: 0 !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+
+html body .title-icon i.fas,
+html body .title-icon i.fa, 
+html body .title-icon i.far,
+html body .title-icon i.fab,
+html body .title-icon i {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, calc(-50% - 24px)) !important;
+    margin: 0 !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+
+/* Ensure identical transforms in both light and dark mode */
+html body.dark-mode .title-icon .svg-icon,
+html body.dark-mode .title-icon .custom-icon,
+html body.dark-mode .title-icon i,
+html body:not(.dark-mode) .title-icon .svg-icon,
+html body:not(.dark-mode) .title-icon .custom-icon,
+html body:not(.dark-mode) .title-icon i {
+    transform: translate(-50%, calc(-50% - 24px)) !important;
+    left: 50% !important;
+}
+
+/* Ensure container is properly centered */
+html body .title-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}

@@ -1,0 +1,48 @@
+/* 
+ * Font Awesome Title Icon Position Fix
+ * Moves ONLY Font Awesome title icons up by 30px (10px + additional 20px)
+ * Does not affect any other icons
+ */
+
+/* Target all Font Awesome icons in title-icon containers */
+.title-icon i.fa,
+.title-icon i.fas, 
+.title-icon i.far,
+.title-icon i.fab {
+    /* Move up 30px from their original position */
+    transform: translate(-50%, calc(-50% - 30px)) !important;
+}
+
+/* Dark mode specific positioning - needs to be adjusted as well */
+.dark-mode .title-icon i.fa,
+.dark-mode .title-icon i.fas,
+.dark-mode .title-icon i.far,
+.dark-mode .title-icon i.fab {
+    /* Move up 30px from their original position while maintaining dark mode adjustments */
+    top: calc(50% - 42px) !important; /* Original was calc(50% - 12px), then -22px, now -42px */
+}
+
+/* Light mode specific positioning - adjust as needed */
+body:not(.dark-mode) .title-icon i.fa,
+body:not(.dark-mode) .title-icon i.fas,
+body:not(.dark-mode) .title-icon i.far,
+body:not(.dark-mode) .title-icon i.fab {
+    /* Move up 30px while maintaining light mode specifics */
+    transform: translate(-50%, calc(-52% - 30px)) !important;
+}
+
+/* Specific targeting for certain icon types to ensure they all move up */
+.title-icon i.fa-dumbbell,
+.title-icon i.fa-chart-line,
+.title-icon i.fa-chart-bar,
+.title-icon i.fa-running,
+.title-icon i.fa-history,
+.title-icon i.fa-bullseye,
+.title-icon i.fa-camera,
+.title-icon i.fa-clipboard-list,
+.title-icon i.fa-weight,
+.title-icon i.fa-chart-pie {
+    top: calc(50% - 42px) !important; /* Original was calc(50% - 12px), then -22px, now -42px */
+}
+
+/* NOTE: This css file MUST be loaded AFTER title-icon-fix.css and other icon styling files */

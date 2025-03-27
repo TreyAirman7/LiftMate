@@ -42,7 +42,52 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     <link rel="stylesheet" href="css/app-icon-fix.css">
     <link rel="stylesheet" href="css/title-icon-fix.css">
     <link rel="stylesheet" href="css/title-icon-center-fix.css">
+    <link rel="stylesheet" href="css/force-center-icons.css">
+    <link rel="stylesheet" href="css/fa-icon-color-fix.css">
+    <link rel="stylesheet" href="css/title-icon-fa-position-fix.css">
+    <link rel="stylesheet" href="css/edit-delete-icon-fix.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    
+    <!-- Direct icon size override for edit/delete icons -->
+    <style>
+        /* EXTREME OVERRIDE for edit and delete icons */
+        .icon-button i.fas.fa-pencil-alt,
+        .icon-button i.fas.fa-edit,
+        .icon-button i.fas.fa-trash,
+        .icon-button i.fas.fa-trash-alt,
+        button[id*="edit"] i.fas,
+        button[id*="delete"] i.fas,
+        button[class*="edit"] i.fas,
+        button[class*="delete"] i.fas {
+            font-size: 28px !important;
+            transform: scale(1.5) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        /* Make ALL edit/delete buttons bigger */
+        .icon-button,
+        button[id*="edit"],
+        button[id*="delete"],
+        button[class*="edit"],
+        button[class*="delete"],
+        .modal-actions .icon-button,
+        .pic-detail-actions .icon-button,
+        .exercise-detail-actions .icon-button,
+        .template-actions .icon-button {
+            min-width: 40px !important;
+            min-height: 40px !important;
+            width: 40px !important;
+            height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: relative !important;
+        }
+    </style>
     
     <!-- Force white icons in header and set top icons size -->
     <style>
@@ -169,20 +214,37 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Force Font Awesome icons to be white in header -->
+    <!-- Force Font Awesome icons to be white in header and correct color mode for others -->
     <style>
+        /* GLOBAL ICON COLOR RULES */
+        /* Force all Font Awesome icons to be black in light mode */
+        html:not(.dark-mode) body .fa:not(.app-header *),
+        html:not(.dark-mode) body .fas:not(.app-header *),
+        html:not(.dark-mode) body .far:not(.app-header *),
+        html:not(.dark-mode) body .fab:not(.app-header *) {
+            color: black !important;
+        }
+
+        /* Force all Font Awesome icons to be white in dark mode */
+        html.dark-mode body .fa:not(.app-header *),
+        html.dark-mode body .fas:not(.app-header *),
+        html.dark-mode body .far:not(.app-header *),
+        html.dark-mode body .fab:not(.app-header *) {
+            color: white !important;
+        }
+
         /* Target Font Awesome icons specifically in the header */
-        .app-header .fas,
-        .app-header .fa,
-        .app-header .far,
-        .app-header .fab {
+        html body .app-header .fas,
+        html body .app-header .fa,
+        html body .app-header .far,
+        html body .app-header .fab {
             color: white !important;
         }
         
         /* Target by ID for maximum specificity */
-        #theme-toggle .fas,
-        #dark-mode-toggle .fas,
-        #storage-info-toggle .fas {
+        html body #theme-toggle .fas,
+        html body #dark-mode-toggle .fas,
+        html body #storage-info-toggle .fas {
             color: white !important;
         }
     </style>
@@ -1047,11 +1109,11 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
             <div class="modal-header">
                 <h2 id="detail-exercise-name">Exercise Name</h2>
                 <div class="modal-actions">
-                    <button class="icon-button" id="edit-exercise">
-                        <i class="fas fa-pencil-alt"></i>
+                    <button class="icon-button" id="edit-exercise" style="width:40px; height:40px;">
+                        <i class="fas fa-pencil-alt" style="font-size:28px;"></i>
                     </button>
-                    <button class="icon-button" id="delete-exercise">
-                        <i class="fas fa-trash"></i>
+                    <button class="icon-button" id="delete-exercise" style="width:40px; height:40px;">
+                        <i class="fas fa-trash" style="font-size:28px;"></i>
                     </button>
                     <button class="close-modal">&times;</button>
                 </div>
@@ -1350,5 +1412,22 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     
     <!-- Title icon size fix - ensures title icons are doubled -->
     <script src="js/title-icon-size-fix.js"></script>
+    <!-- Final overrides for title icons centering -->
+    <style>
+        /* Absolute maximum specificity for icon centering */
+        html body .title-icon .svg-icon,
+        html body .title-icon .custom-icon,
+        html body .title-icon i.fas,
+        html body .title-icon i.fa,
+        html body .title-icon i.far,
+        html body .title-icon i.fab,
+        html body .title-icon i {
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, calc(-50% - 24px)) !important;
+            margin: 0 !important;
+        }
+    </style>
 </body>
 </html>

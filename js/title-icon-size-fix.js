@@ -26,12 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
       icon.style.top = '50%';
       icon.style.left = '50%';
       
-      // In light mode, position the icons a bit higher to prevent cutoff
-      if (!document.body.classList.contains('dark-mode')) {
-        icon.style.transform = 'translate(-50%, -40%)';
-      } else {
-        icon.style.transform = 'translate(-50%, -50%)';
-      }
+      // Center horizontally and move up 24px from center
+      icon.style.transform = 'translate(-50%, calc(-50% - 24px))';
     });
     
     // Reduce Font Awesome icons by 50% and ensure proper coloring (centered)
@@ -43,12 +39,13 @@ document.addEventListener('DOMContentLoaded', function() {
       icon.style.top = '50%';
       icon.style.left = '50%';
       
-      // In light mode, position the icons a bit higher to prevent cutoff
+      // Center horizontally and move up 24px from center
+      icon.style.transform = 'translate(-50%, calc(-50% - 24px))';
+      
+      // Set appropriate color based on mode
       if (!document.body.classList.contains('dark-mode')) {
-        icon.style.transform = 'translate(-50%, -40%)';
         icon.style.color = 'black';
       } else {
-        icon.style.transform = 'translate(-50%, -50%)';
         icon.style.color = 'white';
       }
     });

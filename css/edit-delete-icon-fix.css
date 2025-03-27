@@ -1,0 +1,80 @@
+/* 
+ * Edit and Delete Icon Size Fix - EXTREME VERSION
+ * Makes the icons take up much more space in their button containers
+ */
+
+/* Use !important for maximum override */
+.icon-button i.fas.fa-pencil-alt,
+.icon-button i.fas.fa-edit,
+.icon-button i.fas.fa-trash,
+.icon-button i.fas.fa-trash-alt,
+.edit-template i.fas,
+.delete-template i.fas,
+button[id*="edit"] i.fas,
+button[id*="delete"] i.fas,
+button[class*="edit"] i.fas,
+button[class*="delete"] i.fas {
+    font-size: 28px !important; 
+    transform: scale(1.5) !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Make the buttons themselves larger as well */
+.icon-button,
+.edit-template,
+.delete-template,
+button[id*="edit"],
+button[id*="delete"],
+.template-actions button,
+.modal-actions button:not(.close-modal),
+.pic-detail-actions button:not(.close-modal),
+.exercise-detail-actions button:not(.close-modal) {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 4px !important;
+    padding: 0 !important;
+    position: relative !important;
+}
+
+/* Make sure icon takes up full space */
+.icon-button:before,
+.edit-template:before,
+.delete-template:before,
+button[id*="edit"]:before,
+button[id*="delete"]:before {
+    display: none !important;
+}
+
+/* Override any transform on hover */
+.icon-button:hover i.fas,
+.edit-template:hover i.fas,
+.delete-template:hover i.fas,
+button[id*="edit"]:hover i.fas,
+button[id*="delete"]:hover i.fas {
+    transform: scale(1.5) !important;
+}
+
+/* Specific override for template cards */
+.template-actions .icon-button i.fas {
+    font-size: 28px !important;
+    transform: scale(1.5) !important;
+}
+
+/* Extra specificity */
+html body .icon-button i.fas,
+html body .edit-template i.fas,
+html body .delete-template i.fas {
+    font-size: 28px !important;
+    transform: scale(1.5) !important;
+}

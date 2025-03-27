@@ -1,0 +1,40 @@
+/* 
+ * Font Awesome Icon Color Fixes
+ * This file ensures that:
+ * 1. All Font Awesome icons in light mode (outside of header) are BLACK
+ * 2. All Font Awesome icons in dark mode (outside of header) are WHITE
+ * 3. All header Font Awesome icons remain WHITE in both modes
+ */
+
+/* ===== Force all FA icons to be black in light mode ===== */
+html:not(.dark-mode) i.fa,
+html:not(.dark-mode) i.fas,
+html:not(.dark-mode) i.far,
+html:not(.dark-mode) i.fab {
+    color: black !important;
+}
+
+/* ===== Force all FA icons to be white in dark mode ===== */
+html.dark-mode i.fa,
+html.dark-mode i.fas,
+html.dark-mode i.far,
+html.dark-mode i.fab {
+    color: white !important;
+}
+
+/* ===== Override for header icons to ALWAYS be white ===== */
+.app-header i.fa,
+.app-header i.fas,
+.app-header i.far,
+.app-header i.fab,
+#theme-toggle i.fa,
+#theme-toggle i.fas,
+#dark-mode-toggle i.fa,
+#dark-mode-toggle i.fas,
+#storage-info-toggle i.fa,
+#storage-info-toggle i.fas,
+.app-header h1 i,
+.theme-toggle i,
+.header-content i {
+    color: white !important;
+}
