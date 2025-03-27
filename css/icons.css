@@ -5,8 +5,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: 28px; /* Increased from 24px for better visibility */
+    height: 28px; /* Increased from 24px for better visibility */
     transition: transform 0.2s ease, color 0.2s ease;
 }
 
@@ -17,8 +17,9 @@
 }
 
 /* Navigation icons */
-.nav-button .icon {
-    margin-bottom: 4px;
+.nav-button .icon,
+.nav-button .nav-icon {
+    margin-bottom: 8px; /* Increased margin for larger icons */
 }
 
 /* Title icons */
@@ -26,8 +27,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 64px; /* Doubled size (100% increase) */
-    height: 64px; /* Doubled size (100% increase) */
+    width: 144px; /* Doubled from 72px */
+    height: 144px; /* Doubled from 72px */
     background-color: transparent; /* Removed circle */
     margin-right: 12px;
     transition: all 0.3s ease;
@@ -37,10 +38,11 @@
 
 .title-icon i {
     color: var(--md-primary);
-    font-size: 32px; /* Doubled size (100% increase) */
+    font-size: 72px; /* Doubled from 36px */
     position: relative;
-    top: -8px; /* Moved up an additional 1px */
-    left: 20px; /* Moved right an additional 5px */
+    top: -28px; /* Moved up by 12px from -16px */
+    left: 44px;
+    margin-left: -8px; /* Moves icon left by 8px */
 }
 
 /* Title icons in dark mode */
@@ -50,22 +52,44 @@
 
 .dark-mode .title-icon i {
     color: white;
-    font-size: 32px; /* Consistent sizing in dark mode */
+    font-size: 72px; /* Doubled from 36px */
     position: relative;
-    top: -8px; /* Moved up an additional 1px */
-    left: 20px; /* Moved right an additional 5px */
+    top: -28px; /* Moved up by 12px from -16px */
+    left: 44px;
+    margin-left: -8px; /* Moves icon left by 8px */
 }
 
 .dark-mode .title-icon:hover {
     box-shadow: none; /* No shadow since circle is removed */
 }
 
-/* Custom class for title-wrapper to override any existing styles */
+/* Custom class for centered title wrappers */
+.title-wrapper-centered {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    height: auto !important;
+    padding: 0 !important; /* No padding */
+    text-align: center !important;
+    margin: 0 auto !important; /* Center the entire wrapper */
+    width: 100% !important;
+}
+
+/* Return the standard title-wrapper to horizontal layout */
 .title-wrapper {
     display: flex !important;
     align-items: center !important;
+    gap: 12px !important;
     position: relative !important;
-    height: 64px !important; /* Match title-icon height */
+}
+
+/* Pull text headings closer to icons */
+.title-wrapper h2 {
+    margin-top: -15px !important;
+    position: relative !important;
+    z-index: 1 !important;
 }
 
 /* Important styles to ensure they override any other styles */
@@ -78,17 +102,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 48px; /* Increased from 40px for better visibility in cards */
+    height: 48px; /* Increased from 40px for better visibility in cards */
     background-color: rgba(103, 80, 164, 0.15);
     border-radius: 50%;
-    margin-bottom: 8px;
+    margin-bottom: 10px; /* Increased margin for better spacing with new size */
     transition: all 0.3s ease;
 }
 
 .stat-icon i {
     color: var(--md-primary);
-    font-size: 20px;
+    font-size: 24px; /* Increased from 20px to match outer container */
 }
 
 /* Card icons in dark mode */
@@ -109,17 +133,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
-    height: 60px;
+    width: 68px; /* Increased from 60px for better prominence */
+    height: 68px; /* Increased from 60px for better prominence */
     background-color: rgba(103, 80, 164, 0.15);
     border-radius: 50%;
-    margin: 0 auto 16px;
+    margin: 0 auto 18px; /* Slightly increased bottom margin */
     transition: all 0.3s ease;
 }
 
 .option-icon i {
     color: var(--md-primary);
-    font-size: 24px;
+    font-size: 28px; /* Increased from 24px to match container size */
 }
 
 /* Option icons in dark mode */
@@ -137,9 +161,9 @@
 
 /* Empty state icons */
 .empty-icon {
-    font-size: 48px;
+    font-size: 56px; /* Increased from 48px for better visibility in empty states */
     color: var(--md-outline);
-    margin-bottom: 16px;
+    margin-bottom: 20px; /* Increased margin for better visual spacing */
 }
 
 /* Exercise item icons */
@@ -147,16 +171,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 44px; /* Slightly increased from 40px for better visualization */
+    height: 44px; /* Slightly increased from 40px for better visualization */
     background-color: rgba(103, 80, 164, 0.15);
     border-radius: 50%;
-    margin-right: 12px;
+    margin-right: 14px; /* Slightly increased right margin */
     transition: all 0.3s ease;
 }
 
 .exercise-item .exercise-icon i {
     color: var(--md-primary);
+    font-size: 22px; /* Added specific font size for exercise icons */
 }
 
 /* Exercise item icons in dark mode */
@@ -174,21 +199,73 @@
 
 /* Icon size variations */
 .icon-small {
-    width: 16px;
-    height: 16px;
-    font-size: 10px;
+    width: 20px; /* Increased from 16px for better visibility */
+    height: 20px; /* Increased from 16px for better visibility */
+    font-size: 12px; /* Increased from 10px */
 }
 
 .icon-large {
-    width: 32px;
-    height: 32px;
-    font-size: 20px;
+    width: 36px; /* Increased from 32px for better visibility */
+    height: 36px; /* Increased from 32px for better visibility */
+    font-size: 22px; /* Increased from 20px */
 }
 
 .icon-xlarge {
-    width: 48px;
-    height: 48px;
-    font-size: 28px;
+    width: 56px; /* Increased from 48px for better prominence */
+    height: 56px; /* Increased from 48px for better prominence */
+    font-size: 32px; /* Increased from 28px */
+}
+
+/* Improved navigation icons */
+.nav-icon {
+    font-size: 44px !important; /* Increased to 44px */
+    width: 44px !important;
+    height: 44px !important;
+}
+
+/* Specific styling for dumbbell icon to ensure consistency across all locations */
+.fa-dumbbell.nav-icon {
+    font-size: 44px !important; /* Increased to 44px */
+    width: 44px !important;
+    height: 44px !important;
+}
+
+.title-icon .fa-dumbbell {
+    font-size: 72px; /* Doubled from 36px */
+    position: relative;
+    top: -28px; /* Moved up by 12px from -16px */
+    left: 44px;
+    margin-left: -8px; /* Moves icon left by 8px */
+}
+
+.stat-icon .fa-dumbbell {
+    font-size: 24px; /* Match other stat icons */
+}
+
+/* App header icon */
+.app-header h1 i {
+    font-size: 36px; /* Increased to match other title icons */
+    margin-right: 12px; /* Increased spacing */
+    color: white !important; /* Force white icon in header for both light and dark modes */
+}
+
+/* Theme control icons */
+.theme-toggle i {
+    font-size: 20px; /* Appropriate size for theme toggle buttons */
+    color: white !important; /* Force white icons in header for both light and dark modes */
+}
+
+/* Welcome icon */
+.welcome-icon {
+    font-size: 64px; /* Increased for better visibility and consistency */
+    color: var(--md-primary);
+    margin-bottom: 16px;
+    display: block;
+    text-align: center;
+}
+
+.dark-mode .welcome-icon {
+    color: white;
 }
 
 /* Themed icons in dark mode */
@@ -201,8 +278,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px;
-    height: 50px;
+    width: 56px; /* Increased from 50px for better tap targets */
+    height: 56px; /* Increased from 50px for better tap targets */
     background-color: var(--md-primary);
     border-radius: 50%;
     color: white;

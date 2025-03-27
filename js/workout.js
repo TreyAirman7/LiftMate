@@ -20,6 +20,9 @@ const WorkoutManager = (() => {
     const initialize = () => {
         // Setup event listeners
         setupEventListeners();
+        
+        // Check for any active workout that needs to be restored
+        checkForActiveWorkout();
     };
     
     /**
@@ -66,6 +69,65 @@ const WorkoutManager = (() => {
         
         // Finish workout button
         document.getElementById('finish-workout').addEventListener('click', finishWorkout);
+        
+        // Add beforeunload event to save state when app is closed
+        window.addEventListener('beforeunload', () => {
+            if (activeWorkout) {
+                // Save workout state when the user leaves the app
+                saveWorkoutState();
+            }
+        });
+        
+        // Add visibility change event to save state when app goes to background
+        // and update timer when coming back to foreground
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden' && activeWorkout) {
+                // Save workout state when the app is hidden (e.g., switching tabs or minimizing)
+                saveWorkoutState();
+            } else if (document.visibilityState === 'visible' && activeWorkout) {
+                // App has returned to the foreground, check if we need to update timer
+                const savedWorkoutState = DataManager.getActiveWorkout();
+                
+                if (savedWorkoutState && savedWorkoutState.state && 
+                    savedWorkoutState.state.inRestPeriod && 
+                    savedWorkoutState.state.restTimer > 0 &&
+                    savedWorkoutState.state.timerTimestamp) {
+                    
+                    // Calculate elapsed time
+                    const savedTime = new Date(savedWorkoutState.state.timerTimestamp);
+                    const currentTime = new Date();
+                    const elapsedSeconds = Math.floor((currentTime - savedTime) / 1000);
+                    
+                    // Adjust timer based on elapsed time
+                    const adjustedRestTime = Math.max(0, savedWorkoutState.state.restTimer - elapsedSeconds);
+                    
+                    // If timer should have ended while in background
+                    if (adjustedRestTime <= 0) {
+                        // Play the completion sound
+                        try {
+                            if (typeof TimerSound !== 'undefined' && TimerSound.play) {
+                                TimerSound.play();
+                            }
+                        } catch (e) {
+                            console.error('Error playing timer sound:', e);
+                        }
+                        
+                        // Stop current timer and move to next exercise
+                        clearInterval(timerInterval);
+                        restTimer = 0;
+                        renderActiveExercise();
+                        
+                        // Save new state
+                        saveWorkoutState();
+                    } else if (Math.abs(adjustedRestTime - restTimer) > 2) {
+                        // If timer has drifted more than 2 seconds, restart timer with correct time
+                        // (we avoid restarting for small differences to prevent flicker)
+                        clearInterval(timerInterval);
+                        startRestTimer(adjustedRestTime);
+                    }
+                }
+            }
+        });
     };
     
     /**
@@ -123,6 +185,9 @@ const WorkoutManager = (() => {
             currentSetIndex = 0;
             completedExercises = 0;
             workoutStartTime = new Date();
+            
+            // Save initial workout state
+            saveWorkoutState();
             
             console.log('Workout object created:', activeWorkout);
             console.log('Opening active-template-modal');
@@ -355,7 +420,64 @@ const WorkoutManager = (() => {
             return;
         }
         
-        // If there's a previous set, use its weight as default
+        // Get previous workout info
+        const prevWorkoutInfo = document.getElementById('previous-workout-info');
+        const prevWorkoutDate = document.getElementById('prev-workout-date');
+        const prevWorkoutWeight = document.getElementById('prev-workout-weight');
+        const prevWorkoutReps = document.getElementById('prev-workout-reps');
+        
+        // Setup for showing previous workout info
+        try {
+            // Find the last workout with the same template
+            const previousWorkouts = findPreviousWorkouts(activeWorkout.templateId);
+            
+            // If we have a previous workout with this template
+            if (previousWorkouts.length > 0) {
+                const lastWorkout = previousWorkouts[0]; // Most recent first
+                
+                // Find the matching exercise in the previous workout
+                const prevExercise = lastWorkout.exercises.find(ex => 
+                    ex.exerciseId === exercise.exerciseId
+                );
+                
+                if (prevExercise && prevExercise.sets && prevExercise.sets[currentSetIndex]) {
+                    // We found matching exercise and set
+                    const prevSet = prevExercise.sets[currentSetIndex];
+                    
+                    // Check if the previous set has weight and reps data
+                    if (prevSet.weight !== null && prevSet.reps !== null) {
+                        // Format the date (e.g., "Jan 15")
+                        const workoutDate = new Date(lastWorkout.date);
+                        const formattedDate = workoutDate.toLocaleDateString(undefined, { 
+                            month: 'short', 
+                            day: 'numeric' 
+                        });
+                        
+                        // Update previous workout info
+                        prevWorkoutDate.textContent = formattedDate;
+                        prevWorkoutWeight.textContent = prevSet.weight + (DataManager.getSettings().weightUnit || 'lbs');
+                        prevWorkoutReps.textContent = prevSet.reps;
+                        
+                        // Make the previous workout info visible
+                        prevWorkoutInfo.style.display = 'block';
+                    } else {
+                        // No weight/reps data for this set in the previous workout
+                        prevWorkoutInfo.style.display = 'none';
+                    }
+                } else {
+                    // No matching exercise or set in the previous workout
+                    prevWorkoutInfo.style.display = 'none';
+                }
+            } else {
+                // No previous workouts with this template
+                prevWorkoutInfo.style.display = 'none';
+            }
+        } catch (e) {
+            console.error('Error showing previous workout info:', e);
+            prevWorkoutInfo.style.display = 'none';
+        }
+        
+        // If there's a previous set in the current workout, use its weight as default
         let defaultWeight = '';
         if (currentSetIndex > 0 && exercise.sets[currentSetIndex - 1].weight) {
             defaultWeight = exercise.sets[currentSetIndex - 1].weight;
@@ -386,6 +508,9 @@ const WorkoutManager = (() => {
         } catch (e) {
             console.error('Error focusing input fields:', e);
         }
+        
+        // Dispatch event for input mode initialization
+        document.dispatchEvent(new CustomEvent('setFormDisplayed'));
     };
     
     /**
@@ -415,6 +540,9 @@ const WorkoutManager = (() => {
         exercise.sets[currentSetIndex].weight = weight;
         exercise.sets[currentSetIndex].reps = reps;
         exercise.sets[currentSetIndex].completed = true;
+        
+        // Save workout state after completing a set
+        saveWorkoutState();
         
         // Check for personal record and trigger animation if needed
         const exerciseData = DataManager.getExercises(); // Fixed: use getExercises instead of getExerciseData
@@ -506,18 +634,33 @@ const WorkoutManager = (() => {
             restTimerElement, timerDisplayElement, skipRestButton
         });
         
+        // Save the state to ensure we record the timer start
+        saveWorkoutState();
+        
         // Start timer interval
         timerInterval = setInterval(() => {
             restTimer--;
             
             // Update timer display
             timerDisplayElement.textContent = UI.formatTime(restTimer);
-            console.log('Timer tick:', restTimer);
             
             if (restTimer <= 0) {
                 // Timer complete
                 clearInterval(timerInterval);
+                
+                // Play completion sound
+                try {
+                    if (typeof TimerSound !== 'undefined' && TimerSound.play) {
+                        TimerSound.play();
+                    }
+                } catch (e) {
+                    console.error('Error playing timer sound:', e);
+                }
+                
                 renderActiveExercise();
+                
+                // Save workout state after rest timer completes
+                saveWorkoutState();
             }
         }, 1000);
     };
@@ -541,6 +684,9 @@ const WorkoutManager = (() => {
         
         // Continue to next exercise
         renderActiveExercise();
+        
+        // Save workout state after skipping rest
+        saveWorkoutState();
     };
     
     /**
@@ -601,6 +747,9 @@ const WorkoutManager = (() => {
         activeWorkout = null;
         activeTemplate = null;
         
+        // Clear the saved workout state
+        DataManager.clearActiveWorkout();
+        
         // Close modal
         UI.closeModal(document.getElementById('active-template-modal'));
         
@@ -640,6 +789,9 @@ const WorkoutManager = (() => {
             // Reset state
             activeWorkout = null;
             activeTemplate = null;
+            
+            // Clear the saved workout state
+            DataManager.clearActiveWorkout();
             
             // Reset UI
             document.getElementById('active-exercise-container').classList.remove('hidden');
@@ -729,6 +881,215 @@ const WorkoutManager = (() => {
         } else {
             return 'endurance';
         }
+    };
+    
+    /**
+     * Find previous workouts that used the same template
+     * @param {string} templateId - ID of the template to search for
+     * @returns {Array} - Array of workout objects sorted by date (newest first)
+     */
+    const findPreviousWorkouts = (templateId) => {
+        // Get all completed workouts
+        const allWorkouts = DataManager.getWorkouts();
+        
+        // Filter for workouts with the same template ID
+        const matchingWorkouts = allWorkouts.filter(workout => 
+            workout.templateId === templateId
+        );
+        
+        // Sort by date, most recent first
+        matchingWorkouts.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return dateB - dateA; // Descending order
+        });
+        
+        return matchingWorkouts;
+    };
+    
+    /**
+     * Check for and restore an active workout if one exists
+     */
+    const checkForActiveWorkout = () => {
+        // Retrieve any saved active workout
+        const savedWorkoutState = DataManager.getActiveWorkout();
+        
+        if (!savedWorkoutState) {
+            return; // No active workout to restore
+        }
+        
+        // Check if the saved workout is still valid (not too old)
+        const savedTime = new Date(savedWorkoutState.timestamp);
+        const currentTime = new Date();
+        const timeDifference = currentTime - savedTime;
+        const hoursDifference = timeDifference / (1000 * 60 * 60);
+        
+        // If the workout is older than 24 hours, consider it abandoned
+        if (hoursDifference > 24) {
+            console.log('Found abandoned workout from', savedTime, '- clearing it');
+            DataManager.clearActiveWorkout();
+            return;
+        }
+        
+        // Ask the user if they want to resume the workout
+        const userProfile = DataManager.getUserProfile();
+        const userName = userProfile && userProfile.name ? userProfile.name : 'Champion';
+        
+        UI.showConfirmation(
+            'Resume Workout',
+            `${userName}, you have an unfinished workout from ${formatTimeAgo(savedTime)}. Would you like to resume it?`,
+            () => {
+                // User chose to resume
+                restoreWorkoutState(savedWorkoutState);
+            },
+            () => {
+                // User chose not to resume
+                DataManager.clearActiveWorkout();
+            }
+        );
+    };
+    
+    /**
+     * Format a time in a human-readable "time ago" format
+     * @param {Date} date - The date to format
+     * @returns {string} - Formatted time ago string
+     */
+    const formatTimeAgo = (date) => {
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        
+        if (diffMinutes < 1) {
+            return 'just now';
+        } else if (diffMinutes < 60) {
+            return `${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''} ago`;
+        } else if (diffHours < 24) {
+            return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+        } else {
+            // Format as date and time for older workouts
+            return date.toLocaleString();
+        }
+    };
+    
+    /**
+     * Restore a saved workout state
+     * @param {Object} savedWorkoutState - The saved workout state to restore
+     */
+    const restoreWorkoutState = (savedWorkoutState) => {
+        console.log('Restoring workout state:', savedWorkoutState);
+        
+        try {
+            // Restore the workout object
+            activeWorkout = savedWorkoutState.workout;
+            
+            // Get template data if available
+            const templateId = activeWorkout.templateId;
+            const templates = DataManager.getTemplates();
+            activeTemplate = templates.find(t => t.id === templateId) || null;
+            
+            // Restore workout state
+            const state = savedWorkoutState.state;
+            currentExerciseIndex = state.currentExerciseIndex || 0;
+            currentSetIndex = state.currentSetIndex || 0;
+            completedExercises = state.completedExercises || 0;
+            
+            // Restore timer if needed
+            if (state.restTimer > 0) {
+                restTimer = state.restTimer;
+            }
+            
+            // Restore start time (calculate actual duration)
+            workoutStartTime = new Date(savedWorkoutState.timestamp);
+            
+            // Open active template modal
+            const modalOpened = UI.openModal('active-template-modal');
+            
+            if (!modalOpened) {
+                console.error('Failed to open active template modal when restoring workout');
+                UI.showToast('Error restoring workout', 'error');
+                return;
+            }
+            
+            // Set the template name in the modal if available
+            if (activeTemplate) {
+                const templateName = document.getElementById('active-template-name');
+                if (templateName) {
+                    templateName.textContent = activeTemplate.name;
+                }
+            }
+            
+            // Check if rest timer is active
+            if (state.restTimer > 0 && state.inRestPeriod) {
+                // Calculate elapsed time if timestamp exists
+                let adjustedRestTime = state.restTimer;
+                
+                if (state.timerTimestamp) {
+                    const savedTime = new Date(state.timerTimestamp);
+                    const currentTime = new Date();
+                    const elapsedSeconds = Math.floor((currentTime - savedTime) / 1000);
+                    console.log(`Time passed since timer was saved: ${elapsedSeconds} seconds`);
+                    
+                    // Adjust timer based on elapsed time
+                    adjustedRestTime = Math.max(0, state.restTimer - elapsedSeconds);
+                    console.log(`Adjusted rest timer: ${adjustedRestTime} seconds`);
+                    
+                    // If the timer would have ended while away, play the sound
+                    if (adjustedRestTime <= 0 && state.restTimer > 0) {
+                        try {
+                            if (typeof TimerSound !== 'undefined' && TimerSound.play) {
+                                TimerSound.play();
+                            }
+                        } catch (e) {
+                            console.error('Error playing timer sound:', e);
+                        }
+                    }
+                }
+                
+                if (adjustedRestTime > 0) {
+                    // Resume rest timer with adjusted time
+                    startRestTimer(adjustedRestTime);
+                } else {
+                    // Timer would have completed while away, move to next exercise
+                    updateWorkoutProgress();
+                    renderActiveExercise();
+                }
+            } else {
+                // Update UI
+                updateWorkoutProgress();
+                renderActiveExercise();
+            }
+            
+            UI.showToast('Workout restored successfully!', 'success');
+        } catch (error) {
+            console.error('Error restoring workout:', error);
+            UI.showToast('Error restoring workout', 'error');
+            
+            // Clear the active workout if restoration failed
+            DataManager.clearActiveWorkout();
+        }
+    };
+    
+    /**
+     * Save the current workout state
+     */
+    const saveWorkoutState = () => {
+        if (!activeWorkout) return;
+        
+        // Get the current timestamp for timer calculations
+        const currentTime = new Date().toISOString();
+        
+        const workoutState = {
+            currentExerciseIndex,
+            currentSetIndex,
+            completedExercises,
+            restTimer,
+            inRestPeriod: document.getElementById('rest-timer').classList.contains('hidden') === false,
+            timerTimestamp: currentTime // Save the current time for continuing the timer in background
+        };
+        
+        DataManager.saveActiveWorkout(activeWorkout, workoutState);
+        console.log('Workout state saved');
     };
     
     // Public API

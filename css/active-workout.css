@@ -275,11 +275,52 @@
   font-weight: 700;
   color: var(--md-primary);
   text-align: center;
-  margin: 8px 0 24px;
+  margin: 8px 0 16px;
 }
 
 #target-reps {
   font-size: 28px;
+}
+
+/* Previous workout info styles */
+.previous-workout-info {
+  background-color: var(--md-surface-variant);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--md-tertiary);
+  position: relative;
+  font-size: 14px;
+}
+
+.prev-workout-label {
+  font-size: 12px;
+  color: var(--md-on-surface-variant);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.prev-workout-details {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  color: var(--md-on-surface);
+}
+
+.prev-workout-weight, .prev-workout-reps {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.prev-workout-weight i, .prev-workout-reps i {
+  font-size: 12px;
+  color: var(--md-tertiary);
+}
+
+.dark-mode .previous-workout-info {
+  background-color: var(--md-surface-container-high);
+  border-left: 4px solid var(--md-tertiary-container);
 }
 
 .set-form-inputs {

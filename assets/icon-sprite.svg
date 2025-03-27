@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <!-- App Logo -->
+  <symbol id="icon-app-logo" viewBox="0 0 1024 1024">
+    <g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)" fill="currentColor" stroke="none">
+      <path d="M7074 9117 c-129 -57 -210 -134 -277 -263 l-38 -73 0 -125 c1 -135
+      12 -174 75 -274 15 -24 29 -63 32 -91 4 -42 2 -52 -20 -79 -14 -16 -38 -33
+      -53 -37 -16 -4 -80 -31 -143 -61 -134 -64 -179 -69 -287 -33 -128 42 -288 10
+      -421 -84 -84 -60 -150 -169 -201 -331 -21 -68 -45 -121 -80 -171 -76 -113 -85
+      -153 -86 -400 0 -195 2 -215 24 -278 23 -69 88 -174 157 -257 67 -80 316 -320
+      325 -314 5 3 8 1 7 -4 -5 -15 104 -98 159 -122 44 -19 65 -21 130 -17 43 2 88" />
+    </g>
+  </symbol>
+  
+  <!-- Dumbbell -->
+  <symbol id="icon-dumbbell" viewBox="0 0 400 400">
+    <path d="M114.804 99.962 C 109.911 101.283,105.269 104.664,101.526 109.634 C 99.597 112.197,93.815 123.015,93.180 125.251 L 92.943 126.088 91.310 125.300 C 75.489 117.656,60.254 138.925,60.164 168.783 C 60.156 171.559,59.936 172.112,59.115 171.431 C 56.861 169.560,48.646 172.359,44.727 176.334 C 31.295 189.955,42.068 220.853,58.489 215.806 C 59.722 215.427,59.967 216.281,61.134 225.012 C 64.102 247.216,69.719 257.534,80.922 261.361 C 84.510 262.587,89.666 262.771,93.079 261.794 C 96.112 260.926,95.992 260.848,96.863 264.258 C 102.095 284.736,117.804 293.741,129.993 283.249 C 135.613 278.412,137.306 273.354,139.026 256.250 C 139.059 255.928,139.189 245.229,139.315 232.476 L 139.546 209.288 140.964 209.566 C 143.629 210.087,149.410 210.421,153.516 210.289 C 155.771 210.217,167.493 210.087,179.563 210.001 C 191.633 209.915,201.720 209.715,201.977 209.555 C 202.704 209.106,223.384 208.929,242.383 209.210 L 259.570 209.464 259.570 232.955 C 259.570 267.192,260.701 273.207,268.599 280.980 C 281.946 294.116,298.120 285.900,305.108 262.433 C 306.202 258.761,306.192 258.769,308.656 259.611 C 319.029 263.154,329.878 257.247,334.783 245.386 C 335.466 243.734,336.338 241.680,336.720 240.820 C 338.075 237.779,339.924 231.508,340.407 228.320 C 340.537 227.461,340.745 226.431,340.870 226.031 C 340.994 225.631,341.303 223.433,341.555 221.148 L 342.015 216.992 344.382 216.764 C 357.458 215.506,365.663 191.748,357.444 178.940 C 354.694 174.656,350.168 171.930,345.638 171.832 L 343.044 171.776 342.442 169.579 C 342.111 168.371,341.621 166.294,341.354 164.964 C 341.087 163.633,340.770 162.605,340.649 162.679 C 340.528 162.753,340.415 162.259,340.398 161.582 C 340.319 158.534,335.854 143.964,333.422 138.819 C 327.627 126.562,318.088 121.244,309.301 125.375" fill="currentColor"/>
+  </symbol>
+  
+  <!-- Chart Bar -->
+  <symbol id="icon-chart-bar" viewBox="0 0 24 24">
+    <path d="M8 15h2V5H8v10zm4 0h2v-5h-2v5zm4 0h2v-8h-2v8zM4 21h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2z" fill="currentColor"/>
+  </symbol>
+  
+  <!-- Chart Line -->
+  <symbol id="icon-chart-line" viewBox="0 0 24 24">
+    <path d="M3.5 18.5l6-6 4 4L22 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M3 3v18h18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  
+  <!-- Bullseye -->
+  <symbol id="icon-bullseye" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+    <circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="2" fill="none"/>
+    <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+  </symbol>
+  
+  <!-- History -->
+  <symbol id="icon-history" viewBox="0 0 24 24">
+    <path d="M13 3a9 9 0 1 0 9 9h-2a7 7 0 1 1-7-7v2l5-3-5-3v2z" fill="currentColor"/>
+    <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </symbol>
+  
+  <!-- Camera -->
+  <symbol id="icon-camera" viewBox="0 0 24 24">
+    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2v11z" stroke="currentColor" stroke-width="2" fill="none"/>
+    <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+  </symbol>
+  
+  <!-- Clipboard List -->
+  <symbol id="icon-clipboard-list" viewBox="0 0 24 24">
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" stroke="currentColor" stroke-width="2" fill="none"/>
+    <path d="M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z" stroke="currentColor" stroke-width="2" fill="none"/>
+    <path d="M9 12h6M9 16h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  
+  <!-- Database -->
+  <symbol id="icon-database" viewBox="0 0 24 24">
+    <path d="M12 2C6.5 2 2 4 2 7v10c0 3 4.5 5 10 5s10-2 10-5V7c0-3-4.5-5-10-5z" stroke="currentColor" stroke-width="2" fill="none"/>
+    <path d="M22 7c0 3-4.5 5-10 5S2 10 2 7M22 12c0 3-4.5 5-10 5s-10-2-10-5" stroke="currentColor" stroke-width="2" fill="none"/>
+  </symbol>
+
+  <!-- Palette -->
+  <symbol id="icon-palette" viewBox="0 0 24 24">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.67 0 1.19-.5 1.27-1.16.09-.6-.42-1.02-.9-1.24-.42-.19-.65-.74-.39-1.12.27-.38.76-.48 1.24-.58.11-.02.22-.04.33-.08.28-.12.54-.29.72-.51.06-.07-.22-.66-.22-.66s.86-.71.87-.72c.15-.17.27-.38.32-.61.04-.27-.1-.55-.41-.7-.25-.11-.36-.3-.25-.59.1-.31.37-.54.65-.54h1.67c1.85 0 3.35-1.5 3.35-3.35 0-5.52-4.48-10-10-10zm-5.5 11c-.83 0-1.5-.67-1.5-1.5S5.67 10 6.5 10s1.5.67 1.5 1.5S7.33 13 6.5 13zm3-4c-.83 0-1.5-.67-1.5-1.5S8.67 6 9.5 6s1.5.67 1.5 1.5S10.33 9 9.5 9zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 6 14.5 6s1.5.67 1.5 1.5S15.33 9 14.5 9zm3 4c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" fill="currentColor"/>
+  </symbol>
+  
+  <!-- Pencil Alt -->
+  <symbol id="icon-pencil-alt" viewBox="0 0 24 24">
+    <path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  
+  <!-- Trash -->
+  <symbol id="icon-trash" viewBox="0 0 24 24">
+    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</svg>

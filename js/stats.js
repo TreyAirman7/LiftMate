@@ -49,14 +49,20 @@ const StatsManager = (() => {
         renderPersonalRecords();
         renderOneRepMaxCalculator();
         
-        // Render D3.js charts for workout distribution
+        // Render workout graphics instead of D3 charts
         const workouts = DataManager.getWorkouts();
         
-        // Use D3 to create workout distribution chart
-        D3ChartsManager.createWorkoutDistributionChart(workouts, currentTimeframe);
+        // Use WorkoutGraphics to create workout distribution visualization
+        WorkoutGraphics.createWorkoutDistributionGraphic(workouts, currentTimeframe);
         
-        // Use D3 to create exercise distribution chart
-        D3ChartsManager.createExerciseDistributionChart(workouts, currentTimeframe);
+        // Use WorkoutGraphics to create exercise distribution visualization
+        WorkoutGraphics.createExerciseDistributionGraphic(workouts, currentTimeframe);
+        
+        // Add muscle group volume visualization
+        WorkoutGraphics.createMuscleGroupVolumeGraphic(workouts, currentTimeframe);
+        
+        // Add rep ranges visualization
+        WorkoutGraphics.createRepRangesGraphic(workouts, currentTimeframe);
     };
     
     /**

@@ -1,0 +1,47 @@
+/* Force white color for all icons in app header - Light mode fix */
+
+/* Header logo */
+.app-header h1 i.fas.fa-dumbbell {
+    color: white !important;
+}
+
+/* Header text */
+.app-header h1, 
+.app-header h1 span.typing-text {
+    color: white !important;
+}
+
+/* Theme control buttons */
+.theme-toggle i.fas.fa-palette,
+.theme-toggle i.fas.fa-moon,
+.theme-toggle i.fas.fa-database {
+    color: white !important;
+}
+
+/* Apply to all icons in the header for redundancy */
+.header-content i[class*="fa-"] {
+    color: white !important;
+}
+
+/* Target the Font Awesome classes directly */
+.app-header .fas {
+    color: white !important;
+}
+
+/* Target all icons everywhere in the app-header */
+.app-header * i,
+.app-header i {
+    color: white !important;
+}
+
+/* Extremely specific selector for theme toggle buttons */
+button.theme-toggle i {
+    color: white !important;
+}
+
+/* Individual specific buttons */
+#theme-toggle i,
+#dark-mode-toggle i,
+#storage-info-toggle i {
+    color: white !important;
+}

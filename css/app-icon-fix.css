@@ -1,0 +1,35 @@
+/* Force app SVG icons to be white in light mode */
+
+/* Target all SVG icons with black fill */
+svg g[fill="#000000"],
+svg g[fill="#2e2e2e"],
+svg g[fill="#1c1b1b"],
+svg g[fill="#141312"],
+svg g[fill="#232324"] {
+  fill: white !important;
+}
+
+/* Target specific app icon paths */
+.app-header svg path,
+svg#app-icon path,
+.app-logo svg path,
+#app-logo path {
+  fill: white !important;
+  stroke: white !important;
+}
+
+/* Generic rule for all SVGs in the header */
+.app-header svg * {
+  fill: white !important;
+  stroke: white !important;
+}
+
+/* Target all SVG elements directly */
+svg {
+  fill: white !important;
+}
+
+/* Target the specific g transform elements common in the SVG icons */
+svg g[transform*="translate"] {
+  fill: white !important;
+}

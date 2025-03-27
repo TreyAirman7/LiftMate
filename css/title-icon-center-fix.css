@@ -1,0 +1,55 @@
+/**
+ * Title icon centering fix
+ * This ensures all title icons are perfectly centered
+ */
+
+/* Common centering for all icon types in title-icon */
+.title-icon .svg-icon,
+.title-icon .custom-icon,
+.title-icon i,
+.title-icon i.fas,
+.title-icon i.fa,
+.title-icon i.far,
+.title-icon i.fab {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important; /* Remove any margin that might affect centering */
+}
+
+/* SVG and custom icons - doubled size */
+.title-icon .svg-icon,
+.title-icon .custom-icon {
+    width: 72px !important;
+    height: 72px !important;
+}
+
+/* Font Awesome icons - half size */
+.title-icon i,
+.title-icon i.fas,
+.title-icon i.fa,
+.title-icon i.far,
+.title-icon i.fab {
+    font-size: 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+}
+
+/* Dark mode color fixing */
+.dark-mode .title-icon i,
+.dark-mode .title-icon i.fas,
+.dark-mode .title-icon i.fa,
+.dark-mode .title-icon i.far,
+.dark-mode .title-icon i.fab {
+    color: white !important;
+}
+
+/* Light mode color fixing */
+body:not(.dark-mode) .title-icon i,
+body:not(.dark-mode) .title-icon i.fas,
+body:not(.dark-mode) .title-icon i.fa,
+body:not(.dark-mode) .title-icon i.far,
+body:not(.dark-mode) .title-icon i.fab {
+    color: black !important;
+}

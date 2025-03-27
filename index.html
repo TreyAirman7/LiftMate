@@ -33,13 +33,159 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     <link rel="stylesheet" href="css/active-workout.css">
     <link rel="stylesheet" href="css/date-input-dark.css">
     <link rel="stylesheet" href="css/d3-charts.css">
+    <link rel="stylesheet" href="css/workout-graphics.css">
     <link rel="stylesheet" href="css/ios-fixes-template-button.css">
     <link rel="stylesheet" href="css/start-button-fix.css">
+    <link rel="stylesheet" href="css/input-mode-toggle.css">
+    <link rel="stylesheet" href="css/inline-icons.css">
+    <link rel="stylesheet" href="css/header-icon-fix.css">
+    <link rel="stylesheet" href="css/app-icon-fix.css">
+    <link rel="stylesheet" href="css/title-icon-fix.css">
+    <link rel="stylesheet" href="css/title-icon-center-fix.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    
+    <!-- Force white icons in header and set top icons size -->
+    <style>
+        /* Make theme controls 12.5% larger */
+        .theme-toggle {
+            transform: scale(1.125) !important;
+            margin: 0 2px !important;
+        }
+        
+        .theme-controls span {
+            font-size: 22.5px !important;
+        }
+        
+        /* Force all nav icons to be exactly 44px */
+        .nav-icon,
+        .nav-icon.svg-icon,
+        i.nav-icon,
+        .mobile-nav .nav-icon,
+        .mobile-nav i.nav-icon,
+        .mobile-nav .nav-button .nav-icon,
+        .nav-button .nav-icon,
+        .nav-button i.fas.nav-icon {
+            font-size: 44px !important;
+            width: 44px !important;
+            height: 44px !important;
+            min-width: 44px !important;
+            min-height: 44px !important;
+            max-width: 44px !important;
+            max-height: 44px !important;
+        }
+        
+        /* SVG and custom icons sizing - centering handled in title-icon-center-fix.css */
+        .title-icon .svg-icon,
+        .title-icon .custom-icon {
+            font-size: 72px !important;
+            width: 72px !important;
+            height: 72px !important;
+        }
+        
+        /* Font Awesome icons sizing - centering handled in title-icon-center-fix.css */
+        .title-icon i.fas,
+        .title-icon i.fa,
+        .title-icon i.far,
+        .title-icon i.fab {
+            font-size: 36px !important;
+            width: 36px !important;
+            height: 36px !important;
+            color: black !important; /* Black in light mode */
+        }
+        
+        /* Dark mode Font Awesome icons */
+        .dark-mode .title-icon i.fas,
+        .dark-mode .title-icon i.fa,
+        .dark-mode .title-icon i.far,
+        .dark-mode .title-icon i.fab {
+            color: white !important; /* White in dark mode */
+        }
+        
+        /* Force headings to dramatically overlap with icons */
+        .title-wrapper-centered h2,
+        .title-wrapper-centered h3 {
+            margin-top: -40px !important;
+            position: relative !important;
+            z-index: 5 !important;
+        }
+        
+        .title-icon {
+            width: 144px !important;
+            height: 110px !important; /* Further increased height to fully prevent cutoff */
+            margin: 0 auto -25px auto !important; /* Keep negative bottom margin for overlap */
+            top: 20px !important; /* Move down more to prevent cutoff at top */
+            padding-top: 25px !important; /* More top padding for Light Mode */
+        }
+                
+        /* Critical override for header icons */
+        .app-header i,
+        .app-header h1 i.fas.fa-dumbbell,
+        .app-header .theme-toggle i.fas,
+        #theme-toggle i.fas.fa-palette,
+        #dark-mode-toggle i.fas.fa-moon,
+        #storage-info-toggle i.fas.fa-database {
+            color: white !important;
+        }
+        
+        /* Handle SVG icons */
+        .app-header svg,
+        .app-header svg *,
+        .theme-toggle svg,
+        .theme-toggle svg * {
+            fill: white !important;
+            color: white !important;
+        }
+        
+        /* Only app icon in header is white */
+        h1 .svg-icon[data-icon-type="fa-dumbbell"] img {
+            filter: brightness(0) invert(1) !important;
+        }
+        
+        /* Make the 3 control icons in top right 25% larger */
+        #theme-toggle .svg-icon,
+        #dark-mode-toggle .svg-icon,
+        #storage-info-toggle .svg-icon {
+            width: 3.125em !important;
+            height: 3.125em !important;
+            transform: scale(1.875);
+        }
+        
+        /* For the original icons before replacement */
+        #theme-toggle i,
+        #dark-mode-toggle i,
+        #storage-info-toggle i {
+            font-size: 1.25em !important;
+        }
+        
+        /* Force highest specificity override */
+        html body .app-header i,
+        html body .app-header button i.fas,
+        html body .app-header h1 i.fas {
+            color: white !important;
+        }
+    </style>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Force Font Awesome icons to be white in header -->
+    <style>
+        /* Target Font Awesome icons specifically in the header */
+        .app-header .fas,
+        .app-header .fa,
+        .app-header .far,
+        .app-header .fab {
+            color: white !important;
+        }
+        
+        /* Target by ID for maximum specificity */
+        #theme-toggle .fas,
+        #dark-mode-toggle .fas,
+        #storage-info-toggle .fas {
+            color: white !important;
+        }
+    </style>
     <style>
         /* Chart legend styling */
         .chartjs-legend li span, 
@@ -92,6 +238,9 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     </style>
 </head>
 <body>
+    <!-- SVG Icon Sprite - Inline for better compatibility -->
+    <div style="display: none;" aria-hidden="true" id="svg-sprite-container"></div>
+    
     <div class="app-container">
         <!-- Onboarding Modal for First-Time Users -->
         <div class="modal" id="onboarding-modal">
@@ -151,16 +300,23 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
         <!-- Material Design App Bar -->
         <div class="app-header">
             <div class="header-content">
-                <h1><i class="fas fa-dumbbell"></i> <span class="typing-text">LiftMate</span></h1>
+                <h1 style="color: white !important;">
+                    <!-- Use Unicode character instead of Font Awesome for maximum compatibility -->
+                    <span style="color: white;">💪</span> 
+                    <span class="typing-text" style="color: white !important;">LiftMate</span>
+                </h1>
                 <div class="theme-controls">
-                    <button id="theme-toggle" class="theme-toggle" title="Change theme color">
-                        <i class="fas fa-palette"></i>
+                    <button id="theme-toggle" class="theme-toggle" title="Change theme color" style="transform: scale(1.125);">
+                        <!-- Use Unicode character instead of Font Awesome for maximum compatibility -->
+                        <span style="color: white; font-size: 22.5px;">🎨</span>
                     </button>
-                    <button id="dark-mode-toggle" class="theme-toggle" title="Toggle dark mode">
-                        <i class="fas fa-moon"></i>
+                    <button id="dark-mode-toggle" class="theme-toggle" title="Toggle dark mode" style="transform: scale(1.125);">
+                        <!-- Use Unicode character instead of Font Awesome for maximum compatibility -->
+                        <span style="color: white; font-size: 22.5px;">🌙</span>
                     </button>
-                    <button id="storage-info-toggle" class="theme-toggle" title="View storage usage">
-                        <i class="fas fa-database"></i>
+                    <button id="storage-info-toggle" class="theme-toggle" title="View storage usage" style="transform: scale(1.125);">
+                        <!-- Use Unicode character instead of Font Awesome for maximum compatibility -->
+                        <span style="color: white; font-size: 22.5px;">📊</span>
                     </button>
                 </div>
             </div>
@@ -248,8 +404,8 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
         <div class="tab-content active" id="current-workout">
             <div class="container">
                 <div class="section-header">
-                    <div class="title-wrapper">
-                        <div class="title-icon"><i class="fas fa-dumbbell"></i></div>
+                    <div class="title-wrapper title-wrapper-centered">
+                        <div class="title-icon"><i class="fas fa-dumbbell" style="position:relative; left:-4px;"></i></div>
                         <h2>Current Workout</h2>
                     </div>
                 </div>
@@ -265,7 +421,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                 
                 <div class="templates-section">
                     <div class="section-header">
-                        <div class="title-wrapper">
+                        <div class="title-wrapper title-wrapper-centered">
                             <div class="title-icon"><i class="fas fa-clipboard-list"></i></div>
                             <h2>My Templates</h2>
                         </div>
@@ -285,8 +441,8 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
         <div class="tab-content" id="statistics">
             <div class="container">
                 <div class="section-header">
-                    <div class="title-wrapper">
-                        <div class="title-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="title-wrapper title-wrapper-centered">
+                        <div class="title-icon"><i class="fas fa-chart-line" style="position:relative; left:-4px;"></i></div>
                         <h2>Statistics & Analytics</h2>
                     </div>
                 </div>
@@ -333,7 +489,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                 </div>
                 
                 <div class="section-header">
-                    <div class="title-wrapper">
+                    <div class="title-wrapper title-wrapper-centered">
                         <div class="title-icon"><i class="fas fa-chart-pie"></i></div>
                         <h2>Workout Analytics</h2>
                     </div>
@@ -346,7 +502,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                 
                 <div class="one-rep-max-calculator">
                     <div class="section-header">
-                        <div class="title-wrapper">
+                        <div class="title-wrapper title-wrapper-centered">
                             <div class="title-icon"><i class="fas fa-calculator"></i></div>
                             <h2>One Rep Max Calculator</h2>
                         </div>
@@ -368,7 +524,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                 
                 <div class="personal-records">
                     <div class="section-header">
-                        <div class="title-wrapper">
+                        <div class="title-wrapper title-wrapper-centered">
                             <div class="title-icon"><i class="fas fa-trophy"></i></div>
                             <h2>Personal Records</h2>
                         </div>
@@ -384,8 +540,8 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
         <div class="tab-content" id="progress">
             <div class="container">
                 <div class="section-header">
-                    <div class="title-wrapper">
-                        <div class="title-icon"><i class="fas fa-chart-bar"></i></div>
+                    <div class="title-wrapper title-wrapper-centered">
+                        <div class="title-icon"><i class="fas fa-chart-bar" style="position:relative; left:-4px;"></i></div>
                         <h2>Progress Tracker</h2>
                     </div>
                 </div>
@@ -416,7 +572,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                 
                 <div class="weight-tracker">
                     <div class="section-header">
-                        <div class="title-wrapper">
+                        <div class="title-wrapper title-wrapper-centered">
                             <div class="title-icon"><i class="fas fa-weight"></i></div>
                             <h2>Body Weight Tracker</h2>
                         </div>
@@ -436,8 +592,12 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
         <div class="tab-content" id="exercises">
             <div class="container">
                 <div class="section-header">
-                    <div class="title-wrapper">
-                        <div class="title-icon"><i class="fas fa-dumbbell"></i></div>
+                    <div class="title-wrapper" id="exercise-library-title">
+                        <div class="title-icon">
+                            <span class="svg-icon" data-icon-type="exercises">
+                                <img src="assets/illustrations/exercises.svg" alt="exercises icon">
+                            </span>
+                        </div>
                         <h2>Exercise Library</h2>
                     </div>
                     <button class="add-button" id="add-exercise">
@@ -477,8 +637,8 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
         <div class="tab-content" id="history">
             <div class="container">
                 <div class="section-header">
-                    <div class="title-wrapper">
-                        <div class="title-icon"><i class="fas fa-history"></i></div>
+                    <div class="title-wrapper title-wrapper-centered">
+                        <div class="title-icon"><i class="fas fa-history" style="position:relative; left:-4px;"></i></div>
                         <h2>Workout History</h2>
                     </div>
                 </div>
@@ -502,8 +662,8 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
         <div class="tab-content" id="goals">
             <div class="container">
                 <div class="section-header">
-                    <div class="title-wrapper">
-                        <div class="title-icon"><i class="fas fa-bullseye"></i></div>
+                    <div class="title-wrapper title-wrapper-centered">
+                        <div class="title-icon"><i class="fas fa-bullseye" style="position:relative; left:-4px;"></i></div>
                         <h2>Goals</h2>
                     </div>
                 </div>
@@ -511,7 +671,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                 <!-- Exercise Goals Section -->
                 <div class="goals-section">
                     <div class="section-header">
-                        <div class="title-wrapper">
+                        <div class="title-wrapper title-wrapper-centered">
                             <div class="title-icon"><i class="fas fa-dumbbell"></i></div>
                             <h3>Exercise Weight Goals (PRs)</h3>
                         </div>
@@ -546,7 +706,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                 <!-- Gym Visits Goals Section -->
                 <div class="goals-section">
                     <div class="section-header">
-                        <div class="title-wrapper">
+                        <div class="title-wrapper title-wrapper-centered">
                             <div class="title-icon"><i class="fas fa-calendar-check"></i></div>
                             <h3>Gym Visits Goals</h3>
                         </div>
@@ -582,7 +742,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                 <!-- Bodyweight Goals Section -->
                 <div class="goals-section">
                     <div class="section-header">
-                        <div class="title-wrapper">
+                        <div class="title-wrapper title-wrapper-centered">
                             <div class="title-icon"><i class="fas fa-weight"></i></div>
                             <h3>Bodyweight Goal</h3>
                         </div>
@@ -612,7 +772,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
         <div class="tab-content" id="progress-pics">
             <div class="container">
                 <div class="section-header">
-                    <div class="title-wrapper">
+                    <div class="title-wrapper" id="progress-pics-title">
                         <div class="title-icon"><i class="fas fa-camera"></i></div>
                         <h2>Progress Pictures</h2>
                     </div>
@@ -946,6 +1106,14 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                         <h4 id="current-set-number">Set 1 - </h4>
                         <h4 id="target-reps-container"><span id="target-reps">10</span> reps</h4>
                         
+                        <div id="previous-workout-info" class="previous-workout-info">
+                            <div class="prev-workout-label">Last time: <span id="prev-workout-date">-</span></div>
+                            <div class="prev-workout-details">
+                                <span class="prev-workout-weight"><i class="fas fa-weight-hanging"></i> <span id="prev-workout-weight">-</span></span>
+                                <span class="prev-workout-reps"><i class="fas fa-redo"></i> <span id="prev-workout-reps">-</span> reps</span>
+                            </div>
+                        </div>
+                        
                         <form id="set-form">
                             <div class="set-form-inputs">
                                 <div class="form-group">
@@ -1149,6 +1317,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     <script src="js/workout.js"></script>
     <script src="js/workout-animations.js"></script>
     <script src="js/d3-charts.js"></script>
+    <script src="js/workout-graphics.js"></script>
     <script src="js/stats.js"></script>
     <script src="js/progress.js"></script>
     <script src="js/history.js"></script>
@@ -1160,6 +1329,12 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     <script src="js/button-interactions.js"></script>
     <script src="js/swipe-navigation.js"></script>
     
+    <!-- Timer completion sound -->
+    <script src="audio/timer-complete.js"></script>
+    
+    <!-- Input mode toggle functionality -->
+    <script src="js/input-mode-toggle.js"></script>
+    
     <!-- Main application - Loads after all modules are available -->
     <script src="js/app.js"></script>
     
@@ -1168,5 +1343,12 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     
     <!-- iOS scrolling fixes for fullscreen mode -->
     <script src="js/ios-scroll-fix.js"></script>
+    
+    <!-- Direct SVG icon replacement -->
+    <script src="js/direct-icons.js"></script>
+    <script src="js/app-logo-fix.js"></script>
+    
+    <!-- Title icon size fix - ensures title icons are doubled -->
+    <script src="js/title-icon-size-fix.js"></script>
 </body>
 </html>

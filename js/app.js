@@ -45,9 +45,17 @@ const initializeApp = () => {
                     console.warn('D3ChartsManager not found. D3 charts will not be available.');
                 }
                 
+                if (typeof WorkoutGraphics !== 'undefined') {
+                    console.log('Initializing Workout Graphics manager...');
+                    WorkoutGraphics.initialize();
+                } else {
+                    console.warn('WorkoutGraphics not found. Workout graphics will not be available.');
+                }
+                
                 // Initialize remaining modules
                 if (typeof TemplateManager !== 'undefined') TemplateManager.initialize();
                 if (typeof WorkoutManager !== 'undefined') WorkoutManager.initialize();
+                if (typeof InputModeManager !== 'undefined') InputModeManager.initialize();
                 if (typeof StatsManager !== 'undefined') StatsManager.initialize();
                 if (typeof ProgressManager !== 'undefined') ProgressManager.initialize();
                 if (typeof HistoryManager !== 'undefined') HistoryManager.initialize();

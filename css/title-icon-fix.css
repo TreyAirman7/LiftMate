@@ -1,0 +1,198 @@
+/**
+ * Title icon standardization
+ * Ensures all title icons have identical styling
+ */
+
+/* Base title icon container - centered with proper positioning */
+.title-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 144px !important;
+    height: 110px !important; /* Further increased height to fully prevent cutoff */
+    background-color: transparent !important;
+    margin: 0 auto -25px auto !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    top: 8px !important; /* Moved up by 12px from 20px */
+    padding-top: 25px !important; /* More top padding for Light Mode */
+}
+
+/* Font Awesome icons in title icon - reduced by 50% and centered */
+.title-icon i,
+.title-icon i.fas,
+.title-icon i.fa,
+.title-icon i.far,
+.title-icon i.fab {
+    color: black !important; /* Black in light mode */
+    font-size: 36px !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important; /* Perfectly centered */
+}
+
+/* SVG icons in title icon - centered */
+.title-icon .svg-icon {
+    width: 72px !important;
+    height: 72px !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important; /* Perfectly centered */
+}
+
+/* Custom SVG icons - centered */
+.title-icon .custom-icon {
+    width: 72px !important;
+    height: 72px !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important; /* Perfectly centered */
+}
+
+/* Create a new class for centered title wrappers */
+.title-wrapper-centered {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    height: auto !important;
+    padding: 0 !important; /* No padding */
+    text-align: center !important;
+    margin: 0 auto !important; /* Center the entire wrapper */
+    width: 100% !important;
+}
+
+/* Return the standard title-wrapper to horizontal layout */
+.title-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    position: relative !important;
+}
+
+/* Pull text headings dramatically into the icons */
+.title-wrapper-centered h2,
+.title-wrapper-centered h3 {
+    margin-top: -40px !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Light mode specific adjustment to prevent icon cutoff */
+body:not(.dark-mode) .title-icon {
+    padding-top: 18px !important; /* Reduced by 12px from 30px */
+}
+
+/* Adjust icons position in their containers for Light Mode */
+body:not(.dark-mode) .title-icon i,
+body:not(.dark-mode) .title-icon i.fas,
+body:not(.dark-mode) .title-icon i.fa,
+body:not(.dark-mode) .title-icon i.far,
+body:not(.dark-mode) .title-icon i.fab,
+body:not(.dark-mode) .title-icon .svg-icon,
+body:not(.dark-mode) .title-icon .custom-icon {
+    transform: translate(-50%, -52%) !important; /* Moved up by 12% from -40% */
+    left: 50% !important;
+}
+
+/* Adjust section headers with centered title wrappers */
+.section-header {
+    position: relative !important;
+    min-height: 120px !important; /* Ensure there's space for the centered title */
+    display: flex !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+}
+
+.section-header .title-wrapper-centered {
+    width: 100% !important;
+    flex-basis: 100% !important;
+    margin-bottom: 30px !important;
+}
+
+/* Specific styles for Exercise Library and Progress Pics */
+#exercises .section-header .title-wrapper,
+#progress-pics .section-header .title-wrapper,
+#exercise-library-title,
+#progress-pics-title {
+    display: flex !important;
+    flex-direction: row !important;
+    width: auto !important;
+    margin-right: auto !important;
+    margin-bottom: 0 !important;
+    align-items: center !important;
+}
+
+#exercises .section-header .title-wrapper h2,
+#progress-pics .section-header .title-wrapper h2,
+#exercise-library-title h2,
+#progress-pics-title h2 {
+    margin-top: 0 !important;
+}
+
+/* Fix horizontal icon positioning for these sections */
+#exercises .title-icon,
+#progress-pics .title-icon {
+    margin: 0 15px 0 0 !important;
+    height: 72px !important;
+    position: relative !important;
+    top: 0 !important;
+}
+
+/* Fix button positioning */
+.section-header .add-button {
+    align-self: flex-start !important;
+    margin-top: 15px !important;
+}
+
+/* Dark mode adjustments - Font Awesome icons */
+.dark-mode .title-icon i,
+.dark-mode .title-icon i.fas,
+.dark-mode .title-icon i.fa,
+.dark-mode .title-icon i.far,
+.dark-mode .title-icon i.fab {
+    color: white !important; /* White in dark mode */
+    font-size: 36px !important;
+    top: calc(50% - 12px) !important; /* Moved up by 12px from default 50% */
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important; /* Perfectly centered */
+    /* Other positioning handled in base class */
+}
+
+/* Target specific Font Awesome icons by type */
+.title-icon i.fa-dumbbell,
+.title-icon i.fa-chart-line,
+.title-icon i.fa-chart-bar,
+.title-icon i.fa-running,
+.title-icon i.fa-history,
+.title-icon i.fa-bullseye,
+.title-icon i.fa-camera,
+.title-icon i.fa-clipboard-list,
+.title-icon i.fa-weight,
+.title-icon i.fa-chart-pie {
+    font-size: 36px !important;
+    top: calc(50% - 12px) !important; /* Moved up by 12px from default 50% */
+    /* Other positioning handled in base class */
+}
+
+/* IMPORTANT: Move specific tab icons left */
+i.fas.fa-dumbbell,
+i.fas.fa-chart-line, 
+i.fas.fa-chart-bar,
+i.fas.fa-history,
+i.fas.fa-bullseye {
+    position: relative !important;
+    left: -4px !important;
+    margin-right: 8px !important;
+    margin-left: -8px !important;
+}
+
+/* Keep SVG icons at their doubled size */
+.title-icon [data-icon-type] {
+    font-size: 72px !important;
+    /* Position is handled in base class */
+}

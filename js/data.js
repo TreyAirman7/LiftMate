@@ -14,7 +14,8 @@ const DataManager = (() => {
         PROGRESS_PICS_META: 'liftmate-progress-pics-meta',
         SETTINGS: 'liftmate-settings',
         GOALS: 'liftmate-goals',
-        USER_PROFILE: 'liftmate-user-profile'
+        USER_PROFILE: 'liftmate-user-profile',
+        ACTIVE_WORKOUT: 'liftmate-active-workout'
     };
     
     // Default muscle groups
@@ -1397,6 +1398,43 @@ const DataManager = (() => {
         }
     };
 
+    /**
+     * Save the active workout state
+     * @param {Object} workout - Active workout object
+     * @param {Object} state - Additional workout state (indexes, time, etc)
+     * @returns {Object} - Saved workout state
+     */
+    const saveActiveWorkout = (workout, state) => {
+        if (!workout) return null;
+        
+        const activeWorkoutState = {
+            workout: workout,
+            state: state,
+            timestamp: new Date().toISOString()
+        };
+        
+        localStorage.setItem(STORAGE_KEYS.ACTIVE_WORKOUT, JSON.stringify(activeWorkoutState));
+        return activeWorkoutState;
+    };
+    
+    /**
+     * Get the active workout state if exists
+     * @returns {Object|null} - Active workout state or null if none exists
+     */
+    const getActiveWorkout = () => {
+        const activeWorkout = localStorage.getItem(STORAGE_KEYS.ACTIVE_WORKOUT);
+        return activeWorkout ? JSON.parse(activeWorkout) : null;
+    };
+    
+    /**
+     * Clear the active workout state
+     * @returns {boolean} - Success status
+     */
+    const clearActiveWorkout = () => {
+        localStorage.removeItem(STORAGE_KEYS.ACTIVE_WORKOUT);
+        return true;
+    };
+    
     // Public API
     return {
         initializeStorage,
@@ -1427,7 +1465,10 @@ const DataManager = (() => {
         getUserProfile,
         saveUserProfile,
         generateId,
-        getStorageInfo
+        getStorageInfo,
+        saveActiveWorkout,
+        getActiveWorkout,
+        clearActiveWorkout
     };
 })();
 

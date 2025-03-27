@@ -1,0 +1,145 @@
+/* LiftMate - Input Mode Toggle Styles */
+
+.input-mode-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--md-surface-variant);
+  color: var(--md-on-surface-variant);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--md-elevation-1);
+  z-index: 5;
+  cursor: pointer;
+  transition: all 0.2s var(--md-sys-motion-easing-emphasized);
+}
+
+.input-mode-toggle:hover, 
+.input-mode-toggle:focus {
+  background-color: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  transform: scale(1.05);
+  box-shadow: var(--md-elevation-2);
+}
+
+.input-mode-toggle i {
+  font-size: 18px;
+}
+
+/* Slider input styles */
+.slider-input-container {
+  width: 100%;
+  padding: 10px 0;
+}
+
+.slider-input {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--md-surface-variant);
+  outline: none;
+  transition: all 0.2s;
+}
+
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--md-primary);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+}
+
+.slider-input::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--md-primary);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+}
+
+.slider-input:active::-webkit-slider-thumb {
+  transform: scale(1.2);
+  background: var(--md-tertiary);
+}
+
+.slider-input:active::-moz-range-thumb {
+  transform: scale(1.2);
+  background: var(--md-tertiary);
+}
+
+.slider-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--md-on-surface);
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* Dark mode adjustments */
+.dark-mode .slider-input {
+  background: var(--md-surface-container-high);
+}
+
+.dark-mode .slider-input::-webkit-slider-thumb {
+  background: var(--md-primary);
+}
+
+.dark-mode .slider-input::-moz-range-thumb {
+  background: var(--md-primary);
+}
+
+.dark-mode .slider-value {
+  color: var(--md-on-surface);
+}
+
+/* Animation for changing input modes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slider-input-container {
+  animation: fadeInUp 0.3s var(--md-sys-motion-easing-emphasized);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .input-mode-toggle {
+    top: 5px;
+    right: 5px;
+    width: 32px;
+    height: 32px;
+  }
+  
+  .input-mode-toggle i {
+    font-size: 16px;
+  }
+  
+  .slider-input::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .slider-input::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+  }
+}

@@ -3,7 +3,7 @@
  * Provides offline support and caching
  */
 
-const CACHE_NAME = 'liftmate-md3-v1';
+const CACHE_NAME = 'liftmate-md3-v2';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -19,6 +19,7 @@ const ASSETS_TO_CACHE = [
     './js/weight.js',
     './js/progress-pics.js',
     './js/app.js',
+    './audio/timer-complete.js',
     'https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
     'https://cdn.jsdelivr.net/npm/chart.js'

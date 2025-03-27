@@ -1,0 +1,99 @@
+/* Custom SVG Icons Styling */
+
+.custom-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  color: currentColor;
+}
+
+.custom-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+/* Set both fill and stroke to ensure compatibility with different SVG formats */
+.custom-icon svg * {
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 0;
+}
+
+/* Make all SVGs in app header white in light mode */
+.app-header svg,
+.app-header svg *,
+.app-header .custom-icon svg,
+.app-header .custom-icon svg * {
+  fill: white !important;
+  stroke: white !important;
+  color: white !important;
+}
+
+/* Ensure app icon is white in light mode */
+.app-logo svg,
+.app-logo svg *,
+svg.app-icon,
+svg.app-icon * {
+  fill: white !important;
+  stroke: white !important;
+  color: white !important;
+}
+
+/* Icon sizes to match FontAwesome */
+.custom-icon.icon-small {
+  width: 0.875em;
+  height: 0.875em;
+}
+
+.custom-icon.icon-large {
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.custom-icon.icon-xlarge {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+/* Logo icon specific styling */
+.app-logo {
+  width: 1.2em;
+  height: 1.2em;
+  margin-right: 0.3em;
+}
+
+/* Title icon styling */
+.title-icon .custom-icon {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+/* Stat icon styling */
+.stat-icon .custom-icon {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+/* Nav icon styling */
+.nav-icon.custom-icon {
+  width: 1.25em;
+  height: 1.25em;
+}
+
+/* Option icon styling */
+.option-icon .custom-icon {
+  width: 2em;
+  height: 2em;
+}
+
+/* Welcome icon styling */
+.welcome-icon.custom-icon {
+  font-size: 48px;
+  width: 1em;
+  height: 1em;
+}
