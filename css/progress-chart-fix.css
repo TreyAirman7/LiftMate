@@ -1,0 +1,49 @@
+/* 
+ * Fix for the progress chart container structure
+ * Ensures the exercise dropdown remains visible when charts are rendered
+ */
+
+/* Create proper container structure */
+.progress-chart-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Style the filters section to be separate from the chart */
+.progress-chart-container .filters {
+    position: relative;
+    z-index: 10; /* Keep filters above the chart */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-bottom: 10px;
+}
+
+/* Ensure filter select controls are properly styled */
+.progress-chart-container .filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+}
+
+/* Create a separate container for the D3 chart */
+.chart-display-area {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    margin-top: 10px;
+}
+
+/* Style the empty state message when no data is available */
+.progress-chart-container .empty-state {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--md-on-surface-variant);
+    font-style: italic;
+}

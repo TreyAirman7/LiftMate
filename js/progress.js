@@ -21,6 +21,11 @@ const ProgressManager = (() => {
         // Initial rendering
         renderExerciseSelect();
         
+        // Try to load a default exercise if one is available
+        setTimeout(() => {
+            tryLoadDefaultExercise();
+        }, 300);
+        
         // Make sure Weight Chart is rendered when this tab is activated
         document.querySelectorAll('.nav-button').forEach(button => {
             button.addEventListener('click', () => {
@@ -35,9 +40,29 @@ const ProgressManager = (() => {
                             window.WeightManager.renderWeightChart();
                         }, 100);
                     }
+                    
+                    // Also try to load progress chart if not already displayed
+                    setTimeout(() => {
+                        tryLoadDefaultExercise();
+                    }, 300);
                 }
             });
         });
+    };
+    
+    /**
+     * Try to load a default exercise if one is available
+     */
+    const tryLoadDefaultExercise = () => {
+        // Only proceed if no exercise is currently selected
+        if (!selectedExerciseId) {
+            const exerciseSelect = document.getElementById('exercise-select');
+            // If there are options and none is selected, select the first one
+            if (exerciseSelect && exerciseSelect.options.length > 1 && !exerciseSelect.value) {
+                exerciseSelect.selectedIndex = 1; // Select first exercise (index 0 is the placeholder)
+                handleExerciseChange(); // Trigger chart display
+            }
+        }
     };
     
     /**
@@ -121,6 +146,11 @@ const ProgressManager = (() => {
         } else {
             clearProgressChart();
         }
+        
+        // Re-enable the select element to allow new selection after graph loads
+        setTimeout(() => {
+            select.disabled = false;
+        }, 50);
     };
     
     /**
@@ -143,6 +173,12 @@ const ProgressManager = (() => {
             return;
         }
         
+        // Temporarily disable the select element during chart loading
+        const select = document.getElementById('exercise-select');
+        if (select) {
+            select.disabled = true;
+        }
+        
         // Get exercise progress data
         const progressData = DataManager.getExerciseProgress(selectedExerciseId, selectedRepRange);
         
@@ -158,23 +194,44 @@ const ProgressManager = (() => {
             }
             
             // Add message if not already present
-            if (!progressChartContainer.querySelector('.empty-state')) {
+            let chartArea = progressChartContainer.querySelector('.chart-display-area');
+            if (!chartArea) {
+                chartArea = document.createElement('div');
+                chartArea.className = 'chart-display-area';
+                progressChartContainer.appendChild(chartArea);
+            }
+            
+            if (!chartArea.querySelector('.empty-state')) {
+                // Clear any existing content in chart area
+                chartArea.innerHTML = '';
+                
                 const emptyState = document.createElement('div');
                 emptyState.className = 'empty-state';
                 emptyState.innerHTML = `
                     <p>No data available for this exercise and rep range.</p>
                 `;
-                progressChartContainer.appendChild(emptyState);
+                chartArea.appendChild(emptyState);
+            }
+            
+            // Re-enable the select element
+            if (select) {
+                select.disabled = false;
             }
             
             return;
         }
         
-        // Remove any empty state message
-        const emptyState = document.querySelector('.progress-chart-container .empty-state');
-        if (emptyState) {
-            emptyState.remove();
+        // Get the chart area container or create it
+        const progressChartContainer = document.querySelector('.progress-chart-container');
+        let chartArea = progressChartContainer.querySelector('.chart-display-area');
+        if (!chartArea) {
+            chartArea = document.createElement('div');
+            chartArea.className = 'chart-display-area';
+            progressChartContainer.appendChild(chartArea);
         }
+        
+        // Remove any empty state message and prepare for new chart
+        chartArea.innerHTML = '';  // Clear the chart area for new content
         
         // Make sure progress-chart element exists and is visible
         const canvas = document.getElementById('progress-chart');
@@ -192,11 +249,20 @@ const ProgressManager = (() => {
         if (container) {
             // Make sure the container is visible
             container.style.display = 'block';
-            container.style.height = '350px';
+            
+            // Check if we have a specific chart area div
+            let chartArea = container.querySelector('.chart-display-area');
+            
+            // If not, create one to keep filters separate from chart
+            if (!chartArea) {
+                chartArea = document.createElement('div');
+                chartArea.className = 'chart-display-area';
+                container.appendChild(chartArea);
+            }
         }
         
-        // Use D3 for new chart
-        D3ChartsManager.createProgressChart(progressData, exerciseName);
+        // Use D3 for new chart, targeting the specific chart area instead of the whole container
+        D3ChartsManager.createProgressChart(progressData, exerciseName, '.chart-display-area');
         
         // Set progressChart to non-null to indicate a chart exists
         // This helps with compatibility with other code that checks if the chart exists

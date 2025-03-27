@@ -1,0 +1,10 @@
+/* 
+ * Adjustment for the pics navigation button SVG icon position
+ * Lowers the SVG icon in the pics navigation button by 4px
+ */
+
+/* Target specifically the camera icon in the pics navigation button */
+.nav-button[data-tab="progress-pics"] .nav-icon {
+    position: relative;
+    top: 4px; /* Move the icon down by 4px */
+}

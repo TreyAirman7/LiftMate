@@ -275,8 +275,9 @@ const D3ChartsManager = (() => {
      * Create a responsive D3.js line chart for exercise progress
      * @param {Array} data - Progress data array with date and weight properties
      * @param {string} exerciseName - Name of the exercise
+     * @param {string} containerSelector - CSS selector for the chart container (default: '.progress-chart-container')
      */
-    const createProgressChart = (data, exerciseName) => {
+    const createProgressChart = (data, exerciseName, containerSelector = '.progress-chart-container') => {
         if (!data || data.length === 0) {
             console.log('No data available for progress chart');
             return;
@@ -285,8 +286,8 @@ const D3ChartsManager = (() => {
         // Get current theme colors
         const colors = getCurrentThemeColors();
 
-        // Create SVG and margins
-        const chart = createChartSVG('.progress-chart-container', {
+        // Create SVG and margins using the specific container selector
+        const chart = createChartSVG(containerSelector, {
             height: 350,
             margin: { top: 30, right: 30, bottom: 50, left: 50 }
         });

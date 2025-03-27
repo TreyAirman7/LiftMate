@@ -1,0 +1,32 @@
+/* 
+ * Ensures all delete actions have a confirmation dialog
+ * Adds styling for confirmation dialog to make it more prominent
+ */
+
+/* Increase z-index to ensure it's above all other elements */
+#confirmation-modal {
+    z-index: 2000 !important;
+}
+
+/* Make confirmation dialog more prominent */
+#confirmation-modal .modal-content {
+    border: 2px solid var(--md-error) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Style buttons in confirmation dialog */
+#confirm-action {
+    background-color: var(--md-error) !important;
+    color: white !important;
+}
+
+#cancel-confirmation {
+    color: var(--md-text) !important;
+    border: 1px solid var(--md-text-secondary) !important;
+}
+
+/* Highlight the warning message */
+#confirmation-message {
+    font-weight: 500 !important;
+    padding: 10px 0 !important;
+}

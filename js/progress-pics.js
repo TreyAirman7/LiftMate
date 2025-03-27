@@ -181,14 +181,12 @@ const ProgressPicsManager = (() => {
             console.log('Delete button clicked, ID to delete:', picIdToDelete);
             
             if (picIdToDelete) {
-                // Directly delete without confirmation for testing
-                deleteProgressPic(picIdToDelete);
-                
-                // UI.showConfirmation(
-                //     'Delete Picture',
-                //     'Are you sure you want to delete this progress picture? This action cannot be undone.',
-                //     () => deleteProgressPic(picIdToDelete)
-                // );
+                // Show confirmation dialog before deleting
+                UI.showConfirmation(
+                    'Delete Picture',
+                    'Are you sure you want to delete this progress picture? This action cannot be undone.',
+                    () => deleteProgressPic(picIdToDelete)
+                );
             } else {
                 console.error('No picture ID found for deletion');
                 UI.showToast('Error: Cannot identify which picture to delete', 'error');
