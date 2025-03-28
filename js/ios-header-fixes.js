@@ -1,7 +1,7 @@
 /**
- * LiftMate - iOS Dark Mode Header Fixes
- * This script adds data attributes to specific header elements 
- * to enable more precise CSS targeting for header positioning fixes on iPhone.
+ * LiftMate - iOS Dark Mode Header Direct Positioning Fix
+ * This script directly applies inline styles to header elements
+ * ensuring they move down properly on iPhone in dark mode.
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -9,84 +9,115 @@ document.addEventListener('DOMContentLoaded', function() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     
     if (isIOS) {
-        console.log('Applying iOS-specific header fixes');
+        console.log('Applying iOS-specific header fixes for dark mode');
         
-        // Function to add data attributes to section headers
-        const addDataAttributes = () => {
-            // Find and tag Workout Analytics section
-            const workoutAnalyticsHeaders = Array.from(document.querySelectorAll('.section-header h2'))
-                .filter(h2 => h2.textContent.includes('Workout Analytics'));
-                
-            workoutAnalyticsHeaders.forEach(header => {
-                const sectionHeader = header.closest('.section-header');
-                if (sectionHeader) {
-                    header.setAttribute('data-title', 'Workout Analytics');
-                    const icon = sectionHeader.querySelector('.title-icon');
-                    if (icon) {
-                        icon.setAttribute('data-section', 'Workout Analytics');
-                    }
-                }
-            });
+        // Function to directly apply inline styles to elements
+        const applyHeaderFixes = () => {
+            // Check if in dark mode
+            const isDarkMode = document.documentElement.classList.contains('dark-mode');
             
-            // Find and tag One Rep Max Calculator section
-            const oneRepMaxHeaders = Array.from(document.querySelectorAll('.section-header h2'))
-                .filter(h2 => h2.textContent.includes('One Rep Max'));
+            if (isDarkMode) {
+                console.log('Dark mode detected - applying position fixes');
                 
-            oneRepMaxHeaders.forEach(header => {
-                const sectionHeader = header.closest('.section-header');
-                if (sectionHeader) {
-                    header.setAttribute('data-title', 'One Rep Max Calculator');
-                    const icon = sectionHeader.querySelector('.title-icon');
-                    if (icon) {
-                        icon.setAttribute('data-section', 'One Rep Max Calculator');
-                    }
-                }
-            });
-            
-            // Find and tag Muscle Group Focus section (might be dynamically generated)
-            const muscleGroupHeaders = Array.from(document.querySelectorAll('h3.graphic-title'))
-                .filter(h3 => h3.textContent.includes('Muscle Group') || h3.textContent.includes('Volume by Muscle'));
+                // Find all section headers in the stats tab
+                const statsTab = document.getElementById('stats-tab');
+                if (!statsTab) return;
                 
-            muscleGroupHeaders.forEach(header => {
-                header.setAttribute('data-title', 'Muscle Group Focus');
-                // Try to find associated icon
-                const parent = header.parentElement;
-                if (parent) {
-                    const icon = parent.querySelector('.title-icon');
-                    if (icon) {
-                        icon.setAttribute('data-section', 'Muscle Group Focus');
-                    }
-                }
-            });
-            
-            // Find and tag Personal Records section
-            const recordsHeaders = Array.from(document.querySelectorAll('.section-header h2'))
-                .filter(h2 => h2.textContent.includes('Personal Records'));
+                // Find all section headers in the stats tab
+                const sectionHeaders = statsTab.querySelectorAll('.section-header');
                 
-            recordsHeaders.forEach(header => {
-                const sectionHeader = header.closest('.section-header');
-                if (sectionHeader) {
-                    header.setAttribute('data-title', 'Personal Records');
-                    const icon = sectionHeader.querySelector('.title-icon');
-                    if (icon) {
-                        icon.setAttribute('data-section', 'Personal Records');
+                sectionHeaders.forEach(header => {
+                    const title = header.querySelector('h2');
+                    const titleIcon = header.querySelector('.title-icon');
+                    
+                    if (title) {
+                        const titleText = title.textContent.trim();
+                        
+                        // Apply style directly to the title
+                        title.style.position = 'relative';
+                        title.style.top = '20px';
+                        
+                        // Apply style directly to the title icon
+                        if (titleIcon) {
+                            titleIcon.style.position = 'relative';
+                            titleIcon.style.top = '40px';
+                        }
                     }
-                }
-            });
+                });
+                
+                // Handle special case for muscle group visualization title
+                const graphicTitles = statsTab.querySelectorAll('.graphic-title, h3');
+                graphicTitles.forEach(title => {
+                    if (title.textContent.includes('Muscle Group') || 
+                        title.textContent.includes('Volume by Muscle')) {
+                        title.style.position = 'relative';
+                        title.style.top = '20px';
+                        
+                        // Try to find associated icon in parent or siblings
+                        const parent = title.parentElement;
+                        if (parent) {
+                            const icon = parent.querySelector('.title-icon');
+                            if (icon) {
+                                icon.style.position = 'relative';
+                                icon.style.top = '40px';
+                            }
+                        }
+                    }
+                });
+            } else {
+                console.log('Light mode detected - removing position fixes');
+                
+                // If switched to light mode, remove the inline styles
+                const statsTab = document.getElementById('stats-tab');
+                if (!statsTab) return;
+                
+                // Clear all titles and icons we might have modified
+                const allTitles = statsTab.querySelectorAll('.section-header h2, .graphic-title, h3');
+                allTitles.forEach(title => {
+                    title.style.position = '';
+                    title.style.top = '';
+                });
+                
+                const allIcons = statsTab.querySelectorAll('.title-icon');
+                allIcons.forEach(icon => {
+                    icon.style.position = '';
+                    icon.style.top = '';
+                });
+            }
         };
         
-        // Run immediately 
-        addDataAttributes();
+        // Run when dark mode is toggled
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', () => {
+                // Wait for the dark mode class to be toggled
+                setTimeout(applyHeaderFixes, 100);
+            });
+        }
         
-        // Also run when tabs change or after small delay for dynamic content
-        document.querySelectorAll('.nav-button').forEach(button => {
-            button.addEventListener('click', () => {
-                setTimeout(addDataAttributes, 500);
+        // Run when stats tab is shown
+        const statsTabButton = document.querySelector('.nav-button[data-tab="stats"]');
+        if (statsTabButton) {
+            statsTabButton.addEventListener('click', () => {
+                setTimeout(applyHeaderFixes, 300);
+            });
+        }
+        
+        // Run immediately and after a delay to ensure elements are loaded
+        applyHeaderFixes();
+        setTimeout(applyHeaderFixes, 500);
+        setTimeout(applyHeaderFixes, 1000);
+        
+        // Also monitor for changes to the document class list (dark mode toggle)
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'class' && 
+                    mutation.target === document.documentElement) {
+                    applyHeaderFixes();
+                }
             });
         });
         
-        // Run periodically to catch dynamically loaded content
-        setTimeout(addDataAttributes, 1000);
-        setTimeout(addDataAttributes, 2000);
+        observer.observe(document.documentElement, { attributes: true });
     }
 });
