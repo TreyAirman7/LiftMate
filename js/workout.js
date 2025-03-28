@@ -390,7 +390,7 @@ const WorkoutManager = (() => {
             // Set the set number
             elements.currentSetNumber.textContent = `Set ${currentSetIndex + 1}`;
             
-            // Set target reps
+            // Set target reps - support for both number and string (range) formats
             if (elements.targetReps) {
                 elements.targetReps.textContent = currentSet.targetReps;
             } else {

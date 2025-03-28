@@ -275,6 +275,9 @@ const TemplateManager = (() => {
             `).join('');
             
             exerciseItem.innerHTML = `
+                <div class="drag-handle">
+                    <i class="fas fa-grip-vertical"></i>
+                </div>
                 <div class="exercise-item-header">
                     <h4>${exercise.exerciseName}</h4>
                     <button type="button" class="remove-exercise-button" data-exercise-id="${exercise.exerciseId}">×</button>
@@ -289,6 +292,9 @@ const TemplateManager = (() => {
         
         // Add event listeners to remove buttons
         setupRemoveExerciseListeners();
+        
+        // Setup drag and drop for exercise reordering
+        setupDragAndDrop();
         
         // Close selector modal if open
         const selectorModal = document.getElementById('template-selector-modal');
@@ -423,7 +429,7 @@ const TemplateManager = (() => {
     const openAddExerciseModal = () => {
         // Reset state
         selectedExercise = null;
-        exerciseSets = [{ targetReps: 10, restTime: 60 }];
+        exerciseSets = [{ targetReps: "10", restTime: 60 }];
         
         // Load exercises
         const exercises = DataManager.getExercises();
@@ -486,23 +492,25 @@ const TemplateManager = (() => {
     const selectExercise = (exercise) => {
         selectedExercise = exercise;
         
-        // Hide exercise list, show details
+        // Hide exercise list and search bar, show details
         document.getElementById('template-exercise-list').classList.add('hidden');
+        document.getElementById('template-exercise-search').parentElement.classList.add('hidden');
         document.getElementById('template-exercise-details').classList.remove('hidden');
         
         // Set exercise name
         document.getElementById('template-exercise-name').textContent = exercise.name;
         
         // Reset sets to default
-        exerciseSets = [{ targetReps: 10, restTime: 60 }];
+        exerciseSets = [{ targetReps: "10", restTime: 60 }];
         renderSets();
     };
     
     /**
-     * Hide exercise details and show exercise list
+     * Hide exercise details and show exercise list with search bar
      */
     const hideExerciseDetails = () => {
         document.getElementById('template-exercise-list').classList.remove('hidden');
+        document.getElementById('template-exercise-search').parentElement.classList.remove('hidden');
         document.getElementById('template-exercise-details').classList.add('hidden');
     };
     
@@ -521,7 +529,7 @@ const TemplateManager = (() => {
             const restInput = setItem.querySelector(`.set-rest`);
             
             return {
-                targetReps: parseInt(repsInput.value) || 10,
+                targetReps: repsInput.value || "10",
                 restTime: parseInt(restInput.value) || 60
             };
         });
@@ -542,6 +550,9 @@ const TemplateManager = (() => {
         `).join('');
         
         exerciseItem.innerHTML = `
+            <div class="drag-handle">
+                <i class="fas fa-grip-vertical"></i>
+            </div>
             <div class="exercise-item-header">
                 <h4>${selectedExercise.name}</h4>
                 <button type="button" class="remove-exercise-button" data-exercise-id="${selectedExercise.id}">×</button>
@@ -558,6 +569,9 @@ const TemplateManager = (() => {
         exerciseItem.querySelector('.remove-exercise-button').addEventListener('click', () => {
             exerciseItem.remove();
         });
+        
+        // Setup drag and drop for exercise reordering
+        setupDragAndDrop();
         
         // Close modal
         UI.closeModal(document.getElementById('add-template-exercise-modal'));
@@ -584,7 +598,7 @@ const TemplateManager = (() => {
                 <div class="set-inputs">
                     <div class="form-group">
                         <label for="set-${index + 1}-reps">Target Reps</label>
-                        <input type="number" id="set-${index + 1}-reps" class="set-reps" min="1" value="${set.targetReps}">
+                        <input type="text" id="set-${index + 1}-reps" class="set-reps" value="${set.targetReps}">
                     </div>
                     <div class="form-group">
                         <label for="set-${index + 1}-rest">Rest Time (seconds)</label>
@@ -608,8 +622,190 @@ const TemplateManager = (() => {
      * Add a new set to the exercise
      */
     const addSet = () => {
-        exerciseSets.push({ targetReps: 10, restTime: 60 });
+        // Collect current set values before adding a new set
+        const setInputs = document.querySelectorAll('#template-sets-list .set-item');
+        const currentSets = Array.from(setInputs).map((setItem, index) => {
+            const repsInput = setItem.querySelector(`.set-reps`);
+            const restInput = setItem.querySelector(`.set-rest`);
+            
+            return {
+                targetReps: repsInput.value || "10",
+                restTime: parseInt(restInput.value) || 60
+            };
+        });
+        
+        // Update exerciseSets with current values
+        exerciseSets = currentSets;
+        
+        // Add new set
+        exerciseSets.push({ targetReps: "10", restTime: 60 });
         renderSets();
+    };
+    
+    /**
+     * Setup drag and drop functionality for exercises in template creator
+     */
+    const setupDragAndDrop = () => {
+        const exerciseList = document.getElementById('template-exercises-list');
+        const exercises = exerciseList.querySelectorAll('.exercise-item');
+        
+        // If no exercises or only one exercise, nothing to reorder
+        if (exercises.length <= 1) {
+            return;
+        }
+        
+        let draggedItem = null;
+        let placeholder = null;
+        
+        // Add event listeners to each exercise item
+        exercises.forEach(exercise => {
+            // Set draggable on the item
+            exercise.setAttribute('draggable', 'true');
+            
+            // Drag start - store reference to dragged item, add dragging class
+            exercise.addEventListener('dragstart', (e) => {
+                draggedItem = exercise;
+                exercise.classList.add('dragging');
+                
+                // Set drag data
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', exercise.innerHTML);
+                
+                // Create placeholder for drag feedback
+                placeholder = document.createElement('div');
+                placeholder.className = 'drag-feedback';
+                
+                // For touch devices, create a clone of the element that follows finger
+                if (window.TouchEvent && e.touches) {
+                    const clone = exercise.cloneNode(true);
+                    clone.style.position = 'absolute';
+                    clone.style.opacity = '0.7';
+                    document.body.appendChild(clone);
+                    
+                    // Move clone with touch
+                    document.addEventListener('touchmove', (touchEvent) => {
+                        const touch = touchEvent.touches[0];
+                        clone.style.top = `${touch.pageY - clone.offsetHeight / 2}px`;
+                        clone.style.left = `${touch.pageX - clone.offsetWidth / 2}px`;
+                    }, { once: true });
+                    
+                    // Remove clone on touch end
+                    document.addEventListener('touchend', () => {
+                        if (clone.parentNode) {
+                            clone.parentNode.removeChild(clone);
+                        }
+                    }, { once: true });
+                }
+            });
+            
+            // Drag end - remove dragging class
+            exercise.addEventListener('dragend', () => {
+                exercise.classList.remove('dragging');
+                draggedItem = null;
+                
+                // Remove any placeholders
+                document.querySelectorAll('.drag-feedback').forEach(el => el.remove());
+            });
+            
+            // Drag over - prevent default to allow drop
+            exercise.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                
+                // Don't do anything if this is the dragged item
+                if (exercise === draggedItem) {
+                    return;
+                }
+                
+                // Get position of mouse relative to the exercise item
+                const rect = exercise.getBoundingClientRect();
+                const mouseY = e.clientY - rect.top;
+                
+                // Determine if placeholder should be before or after the current item
+                if (mouseY < rect.height / 2) {
+                    // Insert placeholder before this item
+                    exerciseList.insertBefore(placeholder, exercise);
+                } else {
+                    // Insert placeholder after this item
+                    if (exercise.nextElementSibling) {
+                        exerciseList.insertBefore(placeholder, exercise.nextElementSibling);
+                    } else {
+                        exerciseList.appendChild(placeholder);
+                    }
+                }
+                
+                // Make placeholder visible
+                placeholder.classList.add('active');
+            });
+            
+            // Drop - move the dragged item to the new position
+            exercise.addEventListener('drop', (e) => {
+                e.preventDefault();
+                
+                // Don't do anything if this is the dragged item
+                if (exercise === draggedItem || !draggedItem) {
+                    return;
+                }
+                
+                // Get position of mouse relative to the exercise item
+                const rect = exercise.getBoundingClientRect();
+                const mouseY = e.clientY - rect.top;
+                
+                // Determine if dragged item should be before or after the current item
+                if (mouseY < rect.height / 2) {
+                    // Insert before this item
+                    exerciseList.insertBefore(draggedItem, exercise);
+                } else {
+                    // Insert after this item
+                    if (exercise.nextElementSibling) {
+                        exerciseList.insertBefore(draggedItem, exercise.nextElementSibling);
+                    } else {
+                        exerciseList.appendChild(draggedItem);
+                    }
+                }
+                
+                // Clean up
+                if (placeholder && placeholder.parentNode) {
+                    placeholder.parentNode.removeChild(placeholder);
+                }
+            });
+        });
+        
+        // Handle drop in the empty area of the list
+        exerciseList.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            
+            if (!draggedItem) {
+                return;
+            }
+            
+            // Check if the mouse is over an exercise item
+            const overItem = e.target.closest('.exercise-item');
+            if (!overItem) {
+                // If not over an item, append the placeholder to the end of the list
+                exerciseList.appendChild(placeholder);
+                placeholder.classList.add('active');
+            }
+        });
+        
+        exerciseList.addEventListener('drop', (e) => {
+            e.preventDefault();
+            
+            if (!draggedItem) {
+                return;
+            }
+            
+            // Check if the mouse is over an exercise item
+            const overItem = e.target.closest('.exercise-item');
+            if (!overItem) {
+                // If not over an item, append the dragged item to the end of the list
+                exerciseList.appendChild(draggedItem);
+            }
+            
+            // Clean up
+            if (placeholder && placeholder.parentNode) {
+                placeholder.parentNode.removeChild(placeholder);
+            }
+        });
     };
     
     /**
