@@ -126,72 +126,72 @@ body:not(.animations-enabled) *:not(.dark-mode .template-card):not(.theme-transi
 @keyframes elasticSlideInRight {
   0% {
     opacity: 0;
-    transform: translateX(-100%);
+    transform: translate3d(-100%, 0, 0);
   }
   70% {
     opacity: 1;
-    transform: translateX(2%);
+    transform: translate3d(2%, 0, 0);
   }
   85% {
-    transform: translateX(-1%);
+    transform: translate3d(-1%, 0, 0);
   }
   100% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @-webkit-keyframes elasticSlideInRight {
   0% {
     opacity: 0;
-    -webkit-transform: translateX(-100%);
+    -webkit-transform: translate3d(-100%, 0, 0);
   }
   70% {
     opacity: 1;
-    -webkit-transform: translateX(2%);
+    -webkit-transform: translate3d(2%, 0, 0);
   }
   85% {
-    -webkit-transform: translateX(-1%);
+    -webkit-transform: translate3d(-1%, 0, 0);
   }
   100% {
     opacity: 1;
-    -webkit-transform: translateX(0);
+    -webkit-transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes elasticSlideInLeft {
   0% {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translate3d(100%, 0, 0);
   }
   70% {
     opacity: 1;
-    transform: translateX(-2%);
+    transform: translate3d(-2%, 0, 0);
   }
   85% {
-    transform: translateX(1%);
+    transform: translate3d(1%, 0, 0);
   }
   100% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @-webkit-keyframes elasticSlideInLeft {
   0% {
     opacity: 0;
-    -webkit-transform: translateX(100%);
+    -webkit-transform: translate3d(100%, 0, 0);
   }
   70% {
     opacity: 1;
-    -webkit-transform: translateX(-2%);
+    -webkit-transform: translate3d(-2%, 0, 0);
   }
   85% {
-    -webkit-transform: translateX(1%);
+    -webkit-transform: translate3d(1%, 0, 0);
   }
   100% {
     opacity: 1;
-    -webkit-transform: translateX(0);
+    -webkit-transform: translate3d(0, 0, 0);
   }
 }
 
@@ -370,29 +370,9 @@ input:invalid:not(:placeholder-shown) {
   right: 0;
   top: 0;
   overflow-x: hidden;
-  will-change: transform, opacity;
+  will-change: transform;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-/* Special optimizations for iOS Safari */
-.ios-device .tab-content {
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -webkit-perspective: 1000;
-  perspective: 1000;
-}
-
-/* Heavy tabs get special treatment on iOS */
-.ios-device #stats-tab,
-.ios-device #exercises-tab {
-  transition: opacity 0.3s ease !important;
-  animation: none !important;
-  -webkit-animation: none !important;
 }
 
 .tab-content.active {

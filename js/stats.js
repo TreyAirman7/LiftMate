@@ -45,48 +45,24 @@ const StatsManager = (() => {
      * Render all statistics
      */
     const renderStats = () => {
-        // Check if on iOS device for optimized loading
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        
-        // Always render core stats immediately
         renderDashboardStats();
         renderPersonalRecords();
         renderOneRepMaxCalculator();
         
-        // Get workout data for visualizations
+        // Render workout graphics instead of D3 charts
         const workouts = DataManager.getWorkouts();
         
-        if (isIOS) {
-            // On iOS, defer heavy visualizations to prevent tab switching lag
-            setTimeout(() => {
-                // Use WorkoutGraphics to create workout distribution visualization
-                WorkoutGraphics.createWorkoutDistributionGraphic(workouts, currentTimeframe);
-                
-                // Then defer the next visualization
-                setTimeout(() => {
-                    // Use WorkoutGraphics to create exercise distribution visualization
-                    WorkoutGraphics.createExerciseDistributionGraphic(workouts, currentTimeframe);
-                    
-                    // Then defer the next visualization
-                    setTimeout(() => {
-                        // Add muscle group volume visualization
-                        WorkoutGraphics.createMuscleGroupVolumeGraphic(workouts, currentTimeframe);
-                        
-                        // Finally add the last visualization
-                        setTimeout(() => {
-                            // Add rep ranges visualization
-                            WorkoutGraphics.createRepRangesGraphic(workouts, currentTimeframe);
-                        }, 100);
-                    }, 100);
-                }, 100);
-            }, 300); // Start after the tab transition completes
-        } else {
-            // On non-iOS devices, render everything immediately
-            WorkoutGraphics.createWorkoutDistributionGraphic(workouts, currentTimeframe);
-            WorkoutGraphics.createExerciseDistributionGraphic(workouts, currentTimeframe);
-            WorkoutGraphics.createMuscleGroupVolumeGraphic(workouts, currentTimeframe);
-            WorkoutGraphics.createRepRangesGraphic(workouts, currentTimeframe);
-        }
+        // Use WorkoutGraphics to create workout distribution visualization
+        WorkoutGraphics.createWorkoutDistributionGraphic(workouts, currentTimeframe);
+        
+        // Use WorkoutGraphics to create exercise distribution visualization
+        WorkoutGraphics.createExerciseDistributionGraphic(workouts, currentTimeframe);
+        
+        // Add muscle group volume visualization
+        WorkoutGraphics.createMuscleGroupVolumeGraphic(workouts, currentTimeframe);
+        
+        // Add rep ranges visualization
+        WorkoutGraphics.createRepRangesGraphic(workouts, currentTimeframe);
     };
     
     /**
