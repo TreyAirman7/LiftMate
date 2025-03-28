@@ -656,49 +656,162 @@ const TemplateManager = (() => {
         
         let draggedItem = null;
         let placeholder = null;
+        let startY = 0;
+        let currentY = 0;
+        let initialIndex = 0;
+        let isDragging = false;
+        
+        // Helper function to get item index
+        const getItemIndex = (item) => {
+            const items = Array.from(exerciseList.querySelectorAll('.exercise-item'));
+            return items.indexOf(item);
+        };
         
         // Add event listeners to each exercise item
         exercises.forEach(exercise => {
-            // Set draggable on the item
+            // Set draggable on the item for desktop
             exercise.setAttribute('draggable', 'true');
             
-            // Drag start - store reference to dragged item, add dragging class
+            // Handle drag start for desktop
             exercise.addEventListener('dragstart', (e) => {
                 draggedItem = exercise;
                 exercise.classList.add('dragging');
-                
-                // Set drag data
-                e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/html', exercise.innerHTML);
                 
                 // Create placeholder for drag feedback
                 placeholder = document.createElement('div');
                 placeholder.className = 'drag-feedback';
                 
-                // For touch devices, create a clone of the element that follows finger
-                if (window.TouchEvent && e.touches) {
-                    const clone = exercise.cloneNode(true);
-                    clone.style.position = 'absolute';
-                    clone.style.opacity = '0.7';
-                    document.body.appendChild(clone);
-                    
-                    // Move clone with touch
-                    document.addEventListener('touchmove', (touchEvent) => {
-                        const touch = touchEvent.touches[0];
-                        clone.style.top = `${touch.pageY - clone.offsetHeight / 2}px`;
-                        clone.style.left = `${touch.pageX - clone.offsetWidth / 2}px`;
-                    }, { once: true });
-                    
-                    // Remove clone on touch end
-                    document.addEventListener('touchend', () => {
-                        if (clone.parentNode) {
-                            clone.parentNode.removeChild(clone);
-                        }
-                    }, { once: true });
+                // Set drag data for desktop
+                if (e.dataTransfer) {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/html', exercise.innerHTML);
                 }
+                
+                // Store initial index
+                initialIndex = getItemIndex(exercise);
             });
             
-            // Drag end - remove dragging class
+            // Handle touch events for mobile
+            const dragHandle = exercise.querySelector('.drag-handle');
+            if (dragHandle) {
+                // Touch start - initialize touch dragging
+                dragHandle.addEventListener('touchstart', (e) => {
+                    e.preventDefault(); // Prevent scroll
+                    isDragging = true;
+                    draggedItem = exercise;
+                    exercise.classList.add('dragging');
+                    
+                    // Store initial touch position
+                    startY = e.touches[0].clientY;
+                    currentY = startY;
+                    
+                    // Create placeholder
+                    placeholder = document.createElement('div');
+                    placeholder.className = 'drag-feedback';
+                    
+                    // Store original position
+                    initialIndex = getItemIndex(exercise);
+                    
+                    // Create a clone that follows the finger
+                    const clone = exercise.cloneNode(true);
+                    clone.id = 'dragging-clone';
+                    clone.style.position = 'absolute';
+                    clone.style.width = `${exercise.offsetWidth}px`;
+                    clone.style.height = `${exercise.offsetHeight}px`;
+                    clone.style.opacity = '0.7';
+                    clone.style.zIndex = '1000';
+                    clone.style.pointerEvents = 'none';
+                    clone.style.top = `${e.touches[0].pageY - exercise.offsetHeight / 2}px`;
+                    clone.style.left = `${exercise.offsetLeft}px`;
+                    
+                    document.body.appendChild(clone);
+                    
+                    // Make original semi-transparent
+                    exercise.style.opacity = '0.3';
+                }, { passive: false });
+                
+                // Global touch move event - handle drag movement
+                document.addEventListener('touchmove', (e) => {
+                    if (!isDragging || !draggedItem) return;
+                    
+                    e.preventDefault(); // Prevent scroll while dragging
+                    
+                    // Update clone position to follow finger
+                    const clone = document.getElementById('dragging-clone');
+                    if (clone) {
+                        clone.style.top = `${e.touches[0].pageY - draggedItem.offsetHeight / 2}px`;
+                    }
+                    
+                    // Determine which item we're hovering over
+                    const touch = e.touches[0];
+                    const touchY = touch.clientY;
+                    currentY = touchY;
+                    
+                    // Find the element under the touch point
+                    const elementsAtPoint = document.elementsFromPoint(touch.clientX, touchY);
+                    let targetItem = null;
+                    
+                    // Find first exercise item in elements at point
+                    for (const el of elementsAtPoint) {
+                        if (el.classList.contains('exercise-item') && el !== draggedItem) {
+                            targetItem = el;
+                            break;
+                        }
+                    }
+                    
+                    // Position placeholder to show where item will be dropped
+                    if (targetItem) {
+                        const targetRect = targetItem.getBoundingClientRect();
+                        
+                        // Determine if placeholder should go before or after the target
+                        if (touchY < targetRect.top + targetRect.height / 2) {
+                            // Place before target
+                            exerciseList.insertBefore(placeholder, targetItem);
+                        } else {
+                            // Place after target
+                            if (targetItem.nextElementSibling) {
+                                exerciseList.insertBefore(placeholder, targetItem.nextElementSibling);
+                            } else {
+                                exerciseList.appendChild(placeholder);
+                            }
+                        }
+                        placeholder.classList.add('active');
+                    } else {
+                        // If not over any item, place at end
+                        exerciseList.appendChild(placeholder);
+                        placeholder.classList.add('active');
+                    }
+                }, { passive: false });
+                
+                // Touch end - finalize the drop
+                document.addEventListener('touchend', (e) => {
+                    if (!isDragging || !draggedItem) return;
+                    
+                    isDragging = false;
+                    
+                    // Remove the clone
+                    const clone = document.getElementById('dragging-clone');
+                    if (clone) {
+                        clone.remove();
+                    }
+                    
+                    // Reset original opacity
+                    draggedItem.style.opacity = '';
+                    draggedItem.classList.remove('dragging');
+                    
+                    // Move the dragged item to the placeholder position
+                    if (placeholder && placeholder.parentNode) {
+                        exerciseList.insertBefore(draggedItem, placeholder);
+                        placeholder.remove();
+                    }
+                    
+                    // Clean up
+                    draggedItem = null;
+                    document.querySelectorAll('.drag-feedback').forEach(el => el.remove());
+                });
+            }
+            
+            // Handle standard (desktop) drag and drop events
             exercise.addEventListener('dragend', () => {
                 exercise.classList.remove('dragging');
                 draggedItem = null;
@@ -707,7 +820,6 @@ const TemplateManager = (() => {
                 document.querySelectorAll('.drag-feedback').forEach(el => el.remove());
             });
             
-            // Drag over - prevent default to allow drop
             exercise.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 
@@ -737,7 +849,6 @@ const TemplateManager = (() => {
                 placeholder.classList.add('active');
             });
             
-            // Drop - move the dragged item to the new position
             exercise.addEventListener('drop', (e) => {
                 e.preventDefault();
                 
