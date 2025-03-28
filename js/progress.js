@@ -274,12 +274,7 @@ const ProgressManager = (() => {
      */
     const clearProgressChart = () => {
         if (progressChart) {
-            // D3 charts don't have a destroy method
-            // Instead, clear the chart display area
-            const chartArea = document.querySelector('.chart-display-area');
-            if (chartArea) {
-                chartArea.innerHTML = '';
-            }
+            progressChart.destroy();
             progressChart = null;
         }
     };
