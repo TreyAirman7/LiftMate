@@ -534,3 +534,30 @@ input:invalid:not(:placeholder-shown) {
     animation: none !important;
   }
 }
+
+/* Ensure iOS Safari properly supports the elastic animations */
+@supports (-webkit-touch-callout: none) {
+  /* Force GPU acceleration for smoother animations */
+  .tab-content {
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+  }
+  
+  /* Explicitly redefine animations for iOS */
+  .tab-content.sliding-in-right {
+    animation: elasticSlideInRight 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  }
+  
+  .tab-content.sliding-in-left {
+    animation: elasticSlideInLeft 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  }
+  
+  .tab-content.sliding-out-left {
+    animation: elasticSlideOutLeft 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  }
+  
+  .tab-content.sliding-out-right {
+    animation: elasticSlideOutRight 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  }
+}

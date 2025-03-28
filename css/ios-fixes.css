@@ -807,3 +807,75 @@ input[type="date"] {
     transform: translateY(-50%) scale(1);
   }
 }
+
+/* ===== iOS Animation Optimizations ===== */
+/* Tab switching animation optimizations for iOS */
+.ios-device .tab-content {
+  /* Force hardware acceleration and prevent jank */
+  -webkit-transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  perspective: 1000;
+  will-change: transform, opacity;
+}
+
+/* Ensure tab switching animations are smooth */
+.ios-device .tab-content.sliding-in-right,
+.ios-device .tab-content.sliding-in-left,
+.ios-device .tab-content.sliding-out-right,
+.ios-device .tab-content.sliding-out-left {
+  -webkit-transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Fix for exercise cards to ensure proper animation */
+.ios-device .exercise-card.reveal-on-scroll {
+  -webkit-transform-style: preserve-3d !important;
+  -webkit-backface-visibility: hidden !important;
+  transform-style: preserve-3d !important;
+  backface-visibility: hidden !important;
+  will-change: transform, opacity !important;
+  visibility: visible !important;
+}
+
+/* Ensure exercise cards transition properly */
+.ios-device .exercise-card.reveal-on-scroll.is-visible {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Exercise tab specific fixes */
+.ios-device #exercises .exercises-container {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Goals tab specific fixes */
+.ios-device #goals .goals-list,
+.ios-device #goals .goal-item {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Progress pics tab specific fixes */
+.ios-device #progress-pics .pics-grid,
+.ios-device #progress-pics .progress-pic-item {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Make sure origami animation is properly GPU accelerated */
+.ios-device .perspective-container {
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
+}
+
+/* Always ensure content is visible within tabs */
+.ios-device .tab-content .container > div {
+  visibility: visible !important;
+}

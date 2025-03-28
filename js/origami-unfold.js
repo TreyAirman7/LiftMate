@@ -18,6 +18,11 @@
     // Detect iOS device
     isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     
+    // Add a class to the body for iOS-specific CSS optimizations
+    if (isIOS) {
+        document.body.classList.add('ios-device');
+    }
+    
     // Initialize when DOM is fully loaded
     document.addEventListener('DOMContentLoaded', initOrigamiUnfold);
     
