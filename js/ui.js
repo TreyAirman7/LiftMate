@@ -186,7 +186,7 @@ const UI = (() => {
         };
         
         /**
-         * Perform the tab transition with optimized animations for iOS
+         * Perform the tab transition with elastic slide effect
          * @param {HTMLElement} oldTab - The tab to slide out
          * @param {HTMLElement} newTab - The tab to slide in
          * @param {boolean} goingRight - Direction of the transition
@@ -194,9 +194,6 @@ const UI = (() => {
         const performTransition = (oldTab, newTab, goingRight) => {
             if (isAnimating) return;
             isAnimating = true;
-            
-            // Detect iOS device for special handling
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
             
             // Make sure both tabs are ready for animation
             oldTab.style.display = 'block';
@@ -214,149 +211,64 @@ const UI = (() => {
             void oldTab.offsetWidth;
             void newTab.offsetWidth;
             
-            // For iOS, use simpler animation to improve performance
-            if (isIOS) {
-                // Prepare tabs
-                if (goingRight) {
-                    // Set initial positions
-                    oldTab.style.transform = 'translateX(0)';
-                    newTab.style.transform = 'translateX(100%)';
-                    oldTab.style.zIndex = '1';
-                    newTab.style.zIndex = '2';
-                    
-                    // After short delay, apply transitions
-                    requestAnimationFrame(() => {
-                        // Apply transition
-                        oldTab.style.transition = 'transform 0.3s ease-out';
-                        newTab.style.transition = 'transform 0.3s ease-out';
-                        
-                        // Move tabs
-                        oldTab.style.transform = 'translateX(-100%)';
-                        newTab.style.transform = 'translateX(0)';
-                        
-                        // Set new tab as active
-                        oldTab.classList.remove('active');
-                        
-                        // Clean up after animation
-                        setTimeout(() => {
-                            // Make new tab active
-                            newTab.classList.add('active');
-                            
-                            // Hide old tab
-                            oldTab.style.display = 'none';
-                            
-                            // Reset transition and transforms
-                            oldTab.style.transition = '';
-                            newTab.style.transition = '';
-                            oldTab.style.transform = '';
-                            newTab.style.transform = '';
-                            oldTab.style.willChange = '';
-                            newTab.style.willChange = '';
-                            
-                            isAnimating = false;
-                        }, 300);
-                    });
-                } else {
-                    // Set initial positions
-                    oldTab.style.transform = 'translateX(0)';
-                    newTab.style.transform = 'translateX(-100%)';
-                    oldTab.style.zIndex = '1';
-                    newTab.style.zIndex = '2';
-                    
-                    // After short delay, apply transitions
-                    requestAnimationFrame(() => {
-                        // Apply transition
-                        oldTab.style.transition = 'transform 0.3s ease-out';
-                        newTab.style.transition = 'transform 0.3s ease-out';
-                        
-                        // Move tabs
-                        oldTab.style.transform = 'translateX(100%)';
-                        newTab.style.transform = 'translateX(0)';
-                        
-                        // Set new tab as active
-                        oldTab.classList.remove('active');
-                        
-                        // Clean up after animation
-                        setTimeout(() => {
-                            // Make new tab active
-                            newTab.classList.add('active');
-                            
-                            // Hide old tab
-                            oldTab.style.display = 'none';
-                            
-                            // Reset transition and transforms
-                            oldTab.style.transition = '';
-                            newTab.style.transition = '';
-                            oldTab.style.transform = '';
-                            newTab.style.transform = '';
-                            oldTab.style.willChange = '';
-                            newTab.style.willChange = '';
-                            
-                            isAnimating = false;
-                        }, 300);
-                    });
-                }
+            // Animate both tabs for better transition
+            if (goingRight) {
+                oldTab.classList.add('sliding-out-left');
+                newTab.classList.add('sliding-in-left');
             } else {
-                // For non-iOS, use CSS class-based animations (more versatile)
-                // Animate both tabs for better transition
-                if (goingRight) {
-                    oldTab.classList.add('sliding-out-left');
-                    newTab.classList.add('sliding-in-left');
-                } else {
-                    oldTab.classList.add('sliding-out-right');
-                    newTab.classList.add('sliding-in-right');
-                }
-                
-                // Remove active class from old tab
-                oldTab.classList.remove('active');
-                
-                // Ensure the sliding-in tab is properly positioned and visible
-                newTab.style.opacity = '1';
-                
-                // Listen for animation completion
-                const animationEndHandler = (event) => {
-                    if (event.target === newTab) {
-                        // Animation complete, clean up
-                        // Make new tab active
-                        newTab.classList.add('active');
-                        newTab.classList.remove('sliding-in-right', 'sliding-in-left');
-                        
-                        // Also hide the old tab properly now that animation is complete
-                        oldTab.style.display = 'none';
-                        oldTab.classList.remove('sliding-out-left', 'sliding-out-right');
-                        
-                        // Reset animation state
-                        oldTab.style.willChange = '';
-                        newTab.style.willChange = '';
-                        isAnimating = false;
-                        
-                        // Remove this listener to avoid duplicate triggers
-                        newTab.removeEventListener('animationend', animationEndHandler);
-                    }
-                };
-                
-                // Add listener to detect animation completion
-                newTab.addEventListener('animationend', animationEndHandler);
-                
-                // Fallback in case animation event doesn't fire
-                setTimeout(() => {
-                    if (isAnimating) {
-                        // Clean up manually if animation event didn't fire
-                        newTab.classList.add('active');
-                        newTab.classList.remove('sliding-in-right', 'sliding-in-left');
-                        
-                        // Also clean up old tab animation classes
-                        oldTab.style.display = 'none';
-                        oldTab.classList.remove('sliding-out-left', 'sliding-out-right');
-                        
-                        // Reset willChange for performance
-                        oldTab.style.willChange = '';
-                        newTab.style.willChange = '';
-                        
-                        isAnimating = false;
-                    }
-                }, 350);
+                oldTab.classList.add('sliding-out-right');
+                newTab.classList.add('sliding-in-right');
             }
+            
+            // Remove active class from old tab
+            oldTab.classList.remove('active');
+            
+            // Ensure the sliding-in tab is properly positioned and visible
+            newTab.style.opacity = '1';
+            
+            // Listen for animation completion
+            const animationEndHandler = (event) => {
+                if (event.target === newTab) {
+                    // Animation complete, clean up
+                    // Make new tab active
+                    newTab.classList.add('active');
+                    newTab.classList.remove('sliding-in-right', 'sliding-in-left');
+                    
+                    // Also hide the old tab properly now that animation is complete
+                    oldTab.style.display = 'none';
+                    oldTab.classList.remove('sliding-out-left', 'sliding-out-right');
+                    
+                    // Reset animation state
+                    oldTab.style.willChange = '';
+                    newTab.style.willChange = '';
+                    isAnimating = false;
+                    
+                    // Remove this listener to avoid duplicate triggers
+                    newTab.removeEventListener('animationend', animationEndHandler);
+                }
+            };
+            
+            // Add listener to detect animation completion
+            newTab.addEventListener('animationend', animationEndHandler);
+            
+            // Fallback in case animation event doesn't fire
+            setTimeout(() => {
+                if (isAnimating) {
+                    // Clean up manually if animation event didn't fire
+                    newTab.classList.add('active');
+                    newTab.classList.remove('sliding-in-right', 'sliding-in-left');
+                    
+                    // Also hide the old tab properly now that animation is complete
+                    oldTab.style.display = 'none';
+                    oldTab.classList.remove('sliding-out-left', 'sliding-out-right');
+                    
+                    // Reset willChange for performance
+                    oldTab.style.willChange = '';
+                    newTab.style.willChange = '';
+                    
+                    isAnimating = false;
+                }
+            }, 400);
         };
         
         // Initialize tabs

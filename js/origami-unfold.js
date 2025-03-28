@@ -99,12 +99,22 @@
         window.addEventListener('scroll', scrollHandler, { passive: true });
         
         // For iOS, add a timer to periodically clean up observed-in-scroll flags
+        // and force visibility for exercise cards that may be stuck
         if (isIOS) {
             setInterval(() => {
+                // Clean up observed-in-scroll flags
                 tabElement.querySelectorAll('.observed-in-scroll').forEach(element => {
                     element.classList.remove('observed-in-scroll');
                 });
-            }, 1000); // Reset every second
+                
+                // Force exercise cards to be visible if in viewport but not visible yet
+                tabElement.querySelectorAll('.exercise-card.reveal-on-scroll:not(.is-visible)').forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    if (rect.top >= 0 && rect.top < window.innerHeight) {
+                        card.classList.add('is-visible');
+                    }
+                });
+            }, 800); // Reset every 800ms
         }
     }
     
@@ -191,9 +201,9 @@
         // Make sure the tab is visible
         tabElement.style.opacity = "1";
         
-        // iOS specific optimizations
+        // iOS specific optimizations but keeping the same animations
         if (isIOS) {
-            // For iOS, we'll use a simpler, more direct approach to reduce load
+            // For iOS, optimize display but keep original animation look
             
             // 1. First, make sure container-level elements are visible immediately
             // These elements help establish the layout and provide immediate feedback to user
@@ -218,23 +228,60 @@
                 });
             }
             
+            // Special handling for exercise cards - ensure they get proper animation
+            if (tabElement.id === 'exercises') {
+                // Add special animation directly to visible cards in the viewport
+                const exerciseCards = Array.from(tabElement.querySelectorAll('.exercise-card.reveal-on-scroll:not(.is-visible)'));
+                
+                if (exerciseCards.length) {
+                    // Mark all as observed first to prevent observer issues
+                    exerciseCards.forEach(card => card.classList.add('observed'));
+                    
+                    // Stagger animation for visible cards
+                    exerciseCards
+                        .filter(card => {
+                            const rect = card.getBoundingClientRect();
+                            return rect.top >= 0 && rect.top < window.innerHeight;
+                        })
+                        .forEach((card, index) => {
+                            setTimeout(() => {
+                                // Apply GPU acceleration
+                                card.style.willChange = 'transform, opacity';
+                                card.classList.add('is-visible');
+                                
+                                // Clean up will-change after animation
+                                setTimeout(() => {
+                                    card.style.willChange = '';
+                                }, 700);
+                            }, index * 80 + 100); // More pronounced staggering for cards
+                        });
+                }
+            }
+            
             // 2. Process visible elements in the viewport - with a small delay
             setTimeout(() => {
-                // Get all elements in viewport
-                const elementsInView = Array.from(tabElement.querySelectorAll('.reveal-on-scroll:not(.is-visible)'))
-                    .filter(element => {
-                        const rect = element.getBoundingClientRect();
-                        return rect.top >= 0 && rect.top < window.innerHeight;
-                    })
-                    .slice(0, 8); // Limit to 8 elements at most
+                // Get all elements in viewport except exercise cards (handled separately)
+                const elementsInView = Array.from(tabElement.querySelectorAll(
+                    '.reveal-on-scroll:not(.is-visible):not(.exercise-card)'
+                ))
+                .filter(element => {
+                    const rect = element.getBoundingClientRect();
+                    return rect.top >= 0 && rect.top < window.innerHeight;
+                });
                 
-                // Activate these with minimal staggering
+                // Activate these with staggered delay
                 elementsInView.forEach((element, index) => {
                     element.classList.add('observed');
                     
                     setTimeout(() => {
+                        element.style.willChange = 'transform, opacity';
                         element.classList.add('is-visible');
-                    }, index * 20 + 50);
+                        
+                        // Clean up will-change after animation
+                        setTimeout(() => {
+                            element.style.willChange = '';
+                        }, 700);
+                    }, index * 50 + 100);
                 });
                 
                 // 3. Let scroll observer handle the rest as user scrolls
@@ -249,7 +296,7 @@
                     
                     observer.observe(element);
                 });
-            }, 100);
+            }, 150);
             
         } else {
             // Non-iOS devices get the full animation experience
