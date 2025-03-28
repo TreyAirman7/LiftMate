@@ -261,6 +261,27 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
             }
         }
     </style>
+    
+    <!-- Header sticky position fix for iOS -->
+    <style>
+        /* Critical fix for iPhone header sticking */
+        .app-header {
+            position: -webkit-sticky !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 1000 !important;
+        }
+        
+        /* Ensure sticky header works in iOS PWA mode */
+        @media all and (display-mode: standalone) {
+            .app-header {
+                position: -webkit-sticky !important;
+                position: sticky !important;
+                top: 0 !important;
+                z-index: 1000 !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- SVG Icon Sprite - Inline for better compatibility -->
@@ -323,7 +344,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
             </div>
         </div>
         <!-- Material Design App Bar -->
-        <div class="app-header">
+        <div class="app-header" style="position: sticky !important; top: 0 !important; z-index: 1000 !important;">
             <div class="header-content">
                 <h1 style="color: white !important;">
                     <!-- Use Unicode character instead of Font Awesome for maximum compatibility -->

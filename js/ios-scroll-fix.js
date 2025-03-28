@@ -25,12 +25,20 @@
         // Configure app container for proper scrolling
         appContainer.style.webkitOverflowScrolling = 'touch';
         
-        // Prevent scrolling on body/document
+        // Configure body but allow proper scrolling within app container
         document.body.style.overflow = 'hidden';
         document.body.style.position = 'fixed';
         document.body.style.width = '100%';
         document.body.style.height = '100%';
         document.body.style.overscrollBehavior = 'none';
+        
+        // Ensure the app header stays sticky
+        const appHeader = document.querySelector('.app-header');
+        if (appHeader) {
+            appHeader.style.position = 'sticky';
+            appHeader.style.top = '0';
+            appHeader.style.zIndex = '1000';
+        }
         
         // Prevent pull-to-refresh on iOS Safari in standalone mode
         document.addEventListener('touchmove', function(e) {
@@ -60,7 +68,18 @@
             
             // Calculate available space
             const availableHeight = window.innerHeight;
+            
+            // Make sure app container takes full height but allows header to remain sticky
             appContainer.style.height = `${availableHeight}px`;
+            appContainer.style.position = 'relative';
+            
+            // Ensure the app header stays sticky even after resize
+            const appHeader = document.querySelector('.app-header');
+            if (appHeader) {
+                appHeader.style.position = 'sticky';
+                appHeader.style.top = '0';
+                appHeader.style.zIndex = '1000';
+            }
             
             // Force reflow to apply changes
             appContainer.style.display = 'none';
