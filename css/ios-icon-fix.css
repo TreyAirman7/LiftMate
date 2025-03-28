@@ -1,0 +1,20 @@
+/* Fix for Exercise Library and Progress Pictures icons on iPhone in Light Mode */
+@supports (-webkit-touch-callout: none) {
+    /* Fix for Exercise Library icon in Light Mode */
+    html:not(.dark-mode) #exercise-library-title .title-icon .svg-icon {
+        position: relative !important;
+        top: 15px !important;
+    }
+    
+    /* Fix for Progress Pictures icon in Light Mode */
+    html:not(.dark-mode) #progress-pics-title .title-icon i.fas {
+        position: relative !important;
+        top: 15px !important;
+    }
+    
+    /* Apply more padding for icons in these specific sections */
+    html:not(.dark-mode) #exercise-library-title .title-icon,
+    html:not(.dark-mode) #progress-pics-title .title-icon {
+        padding-top: 35px !important;
+    }
+}

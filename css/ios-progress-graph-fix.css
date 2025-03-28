@@ -1,16 +1,26 @@
 /* Fix for Progress Tracker graph on iPhone */
 @supports (-webkit-touch-callout: none) {
-    /* iOS-specific CSS */
-    .progress-chart-container {
-        margin-top: -20px;
+    /* Stronger iOS-specific selectors for the progress chart */
+    #progress .container .progress-chart-container {
+        margin-top: -40px !important;
     }
     
-    .filters {
-        margin-bottom: 10px;
+    #progress .container .section-header + .progress-chart-container {
+        margin-top: -25px !important;
     }
     
-    /* Ensure there's no excessive gap */
-    #progress .section-header + .progress-chart-container {
-        margin-top: -15px;
+    #progress .container .progress-chart-container .filters {
+        margin-bottom: 5px !important;
+    }
+    
+    /* Force chart to move up on small iOS screens */
+    @media screen and (max-width: 480px) {
+        #progress .container .progress-chart-container {
+            margin-top: -55px !important;
+        }
+        
+        #progress .container .section-header + .progress-chart-container {
+            margin-top: -35px !important;
+        }
     }
 }
