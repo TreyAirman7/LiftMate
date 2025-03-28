@@ -146,3 +146,61 @@
     opacity: 1;
     transform: translateY(0);
 }
+
+/* Form controls and UI elements */
+.form-group.reveal-on-scroll,
+.filter-group.reveal-on-scroll,
+.exercise-filters .reveal-on-scroll,
+.muscle-filters .reveal-on-scroll,
+.date-filter-button.reveal-on-scroll,
+input.reveal-on-scroll,
+select.reveal-on-scroll,
+button.reveal-on-scroll:not(.add-button):not(.nav-button) {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.form-group.reveal-on-scroll.is-visible,
+.filter-group.reveal-on-scroll.is-visible,
+.exercise-filters .reveal-on-scroll.is-visible,
+.muscle-filters .reveal-on-scroll.is-visible,
+.date-filter-button.reveal-on-scroll.is-visible,
+input.reveal-on-scroll.is-visible,
+select.reveal-on-scroll.is-visible,
+button.reveal-on-scroll.is-visible:not(.add-button):not(.nav-button) {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Exercise sets and workout summary items */
+.exercise-set.reveal-on-scroll,
+.workout-summary-item.reveal-on-scroll {
+    opacity: 0;
+    transform: translateX(-15px);
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.exercise-set.reveal-on-scroll.is-visible,
+.workout-summary-item.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* General animations for any other elements */
+.reveal-on-scroll:not(.exercise-card):not(.progress-pic-item):not(.stat-card):not(.goal-item):not(.workout-item)
+:not(.section-header):not(.start-options-container):not(.templates-section):not(.timeframe-selector)
+:not(.progress-chart-container):not(.weight-tracker):not(.goals-section):not(.form-group):not(.filter-group)
+:not(.exercise-filters):not(.muscle-filters):not(.date-filter-button):not(.exercise-set):not(.workout-summary-item) {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.6s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.reveal-on-scroll.is-visible:not(.exercise-card):not(.progress-pic-item):not(.stat-card):not(.goal-item):not(.workout-item)
+:not(.section-header):not(.start-options-container):not(.templates-section):not(.timeframe-selector)
+:not(.progress-chart-container):not(.weight-tracker):not(.goals-section):not(.form-group):not(.filter-group)
+:not(.exercise-filters):not(.muscle-filters):not(.date-filter-button):not(.exercise-set):not(.workout-summary-item) {
+    opacity: 1;
+    transform: scale(1);
+}

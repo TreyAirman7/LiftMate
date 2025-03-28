@@ -19,59 +19,6 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     <link rel="icon" type="image/png" sizes="512x512" href="LiftMate.png">
     <link rel="manifest" href="manifest.json">
     <title>LiftMate: Gym Tracking Tool</title>
-    
-    <!-- Ensure animation works on initial load -->
-    <script>
-        window.addEventListener('load', function() {
-            console.log("Window load - checking for morph animation");
-            setTimeout(function() {
-                const feDisplacementMap = document.getElementById('displacementMapNode');
-                if (feDisplacementMap) {
-                    console.log("Found filter node, ensuring proper scale:", feDisplacementMap);
-                    feDisplacementMap.setAttribute('scale', '100');
-                }
-                
-                // Force animation on initial visible elements
-                const visibleElements = Array.from(document.querySelectorAll('.morph-on-scroll')).filter(el => {
-                    const rect = el.getBoundingClientRect();
-                    return rect.top < window.innerHeight && rect.bottom >= 0;
-                });
-                
-                if (visibleElements.length) {
-                    console.log(`Found ${visibleElements.length} visible elements to animate`);
-                    visibleElements.forEach(el => {
-                        el.classList.add('is-visible');
-                        el.classList.add('is-animating');
-                    });
-                }
-            }, 500);
-        });
-    </script>
-    
-    <!-- Optimized SVG Filter - simplified for better performance -->
-    <svg width="0" height="0" style="position: absolute; overflow: hidden;">
-        <defs>
-            <filter id="displacementFilter">
-                <!-- Single turbulence pattern (simplified for performance) -->
-                <feTurbulence
-                    id="displacementTurbulence"
-                    type="fractalNoise"
-                    baseFrequency="0.03"
-                    numOctaves="2"
-                    seed="10"
-                    result="noise" />
-                
-                <!-- Direct displacement with reduced scale -->
-                <feDisplacementMap
-                    id="displacementMapNode" 
-                    in="SourceGraphic"
-                    in2="noise"
-                    scale="80"
-                    xChannelSelector="R"
-                    yChannelSelector="G" />
-            </filter>
-        </defs>
-    </svg>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/light-mode.css">
     <link rel="stylesheet" href="css/animations.css">
@@ -102,7 +49,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     <link rel="stylesheet" href="css/pics-nav-button-fix.css">
     <link rel="stylesheet" href="css/confirmation-dialog-fix.css">
     <link rel="stylesheet" href="css/progress-chart-fix.css">
-    <link rel="stylesheet" href="css/sculpted-clay-effect.css">
+    <link rel="stylesheet" href="css/origami-unfold.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     
     
@@ -1444,11 +1391,8 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     <!-- iOS scrolling fixes for fullscreen mode -->
     <script src="js/ios-scroll-fix.js"></script>
     
-    <!-- Sculpted Clay / Displacement Morph Effect -->
-    <script src="js/sculpted-clay-effect.js"></script>
-    
-    <!-- Simple Fallback (in case the advanced effect doesn't work) -->
-    <script src="js/simple-morph-fallback.js"></script>
+    <!-- Origami Unfold Effect -->
+    <script src="js/origami-unfold.js"></script>
     
     <!-- Direct SVG icon replacement -->
     <script src="js/direct-icons.js"></script>

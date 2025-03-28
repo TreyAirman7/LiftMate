@@ -2,12 +2,14 @@ Instructions for Features to FIX:
 These are the features I wish to Fix. Do them one at a time. After confirmation that the changes are acceptable, you may remove the individual entry that you have completed. While applying these fixes, DO NOT CHANGE OR TOUCH ANY CODE THAT IS NOT RELEVANT TO THE FIX. BEFORE EVERY CHANGE MAKE A COPY OF THE CURRENT STATE OF THE DIRECTORY ON THE DESKTOP called "save". These copies should replace each other so we dont end up with a bunch of them.
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-1.) The New Template Button, the Add Entry button, add exercise button, add photo button are currently are purple within the dark mode. They should be changed so they change with the current theme. In the white theme they are the correct color but you need to add a border around the button that matches the current theme color. The Bottom navigation menu should tint the active tab button with the current theme but currently it tints it purple in dark mode and not at all in light mode.
+1.) Within the Create a Template page, after choosing an exercise, the search bar should dissappear and only reappear when it is time to choose a new exercise again.
 
-2.) The Charts on the stats page and the line graphs on the progress page should be Re-Designed aesthetically including slightly larger or more readable font. Also currently the Progress Tracker graph does not show any graphs upon entering the tab by default on startup so ensure that it displays a graph on startup just like the body weight tracker does (unless there is no data to make any graphs with).
+2.) Within the Create a Template page, the Text "Target Reps" and "Rest Time (Seconds)" cover the corresponding input text bar below.
 
-3.) The colored circles around the 3 buttons at the top right (theme, light/dark, and storage) should be a little more transparent.
+3.) Within the Create a template page, If you fill out the info for "Set 1"  and then hit the "add another set" button, it clears the data you just put into "Set 1".
 
-4.) The theme changing dropdown menu for the colors is very long and goes very far down. We need to adjust the method of display, or the formatting, in order to optimize the feel.
+4.) Within the Create a Template page, You should be able to put a range for target reps, such as 8-10.
 
-5.) Redesign the Template Cards, Start Option Template Cards, Stat Cards, with the exact same glassmorphism effect as the other container-like components within the tabs.  ALL EFFECTS APPLIED TO THESE CARDS, CONTAINERS, ETC. THAT WILL CLASH WITH THE NEW EFFECT SHOULD BE REMOVED.
+5.) After saving an exercise to a template, you should be able to re-order the exercises within the template.
+
+6.) On Iphone only, the Progress Tracker graph is pushed down the page and there is a large gap between the drop down bar and the graph.

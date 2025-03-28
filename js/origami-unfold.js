@@ -43,20 +43,22 @@
             if (now - lastScrollTime < scrollThrottleTime) return;
             lastScrollTime = now;
             
-            // Find all not-yet-visible individual elements
-            const hiddenElements = tabElement.querySelectorAll(
-                '.exercise-card.reveal-on-scroll:not(.is-visible), ' +
-                '.progress-pic-item.reveal-on-scroll:not(.is-visible), ' +
-                '.stat-card.reveal-on-scroll:not(.is-visible), ' +
-                '.goal-item.reveal-on-scroll:not(.is-visible), ' +
-                '.workout-item.reveal-on-scroll:not(.is-visible)'
-            );
+            // Find all not-yet-visible elements with reveal-on-scroll class
+            const hiddenElements = tabElement.querySelectorAll('.reveal-on-scroll:not(.is-visible)');
             
             // Nothing to do if all elements are already visible
             if (!hiddenElements.length) {
                 window.removeEventListener('scroll', scrollHandler);
                 return;
             }
+            
+            // Check which elements are now in viewport and could be revealed
+            hiddenElements.forEach(element => {
+                if (isInViewport(element) && !element.classList.contains('is-visible')) {
+                    // Mark element as visible
+                    element.classList.add('is-visible');
+                }
+            });
         };
         
         // Add scroll listener
@@ -146,10 +148,7 @@
         // Make sure the tab is visible
         tabElement.style.opacity = "1";
         
-        // Instead of forcing all elements at once, just force the container elements
-        // and let the individual elements be handled by IntersectionObserver as they scroll into view
-        
-        // Force container/section elements to be visible
+        // Force container/section elements to be visible first (these set the stage for the tab)
         const containerElements = tabElement.querySelectorAll(
             '.section-header.reveal-on-scroll:not(.is-visible), ' +
             '.start-options-container.reveal-on-scroll:not(.is-visible), ' +
@@ -157,7 +156,8 @@
             '.timeframe-selector.reveal-on-scroll:not(.is-visible), ' +
             '.progress-chart-container.reveal-on-scroll:not(.is-visible), ' + 
             '.weight-tracker.reveal-on-scroll:not(.is-visible), ' +
-            '.goals-section.reveal-on-scroll:not(.is-visible)'
+            '.goals-section.reveal-on-scroll:not(.is-visible), ' +
+            '.container > div.reveal-on-scroll:not(.is-visible):not(.exercise-card):not(.progress-pic-item):not(.stat-card):not(.goal-item):not(.workout-item)'
         );
         
         if (containerElements.length) {
@@ -169,16 +169,10 @@
             });
         }
         
-        // For the initial load, we want to make sure all appropriate elements 
-        // are being observed, but we don't want to force-animate them
-        
-        // Find all individual elements that should be observed with our individual observer
+        // Find all individual elements that should be observed/animated
         const individualElements = tabElement.querySelectorAll(
-            '.exercise-card.reveal-on-scroll:not(.observed), ' +
-            '.progress-pic-item.reveal-on-scroll:not(.observed), ' +
-            '.stat-card.reveal-on-scroll:not(.observed), ' +
-            '.goal-item.reveal-on-scroll:not(.observed), ' +
-            '.workout-item.reveal-on-scroll:not(.observed)'
+            '.reveal-on-scroll:not(.observed):not(.section-header):not(.start-options-container):not(.templates-section)' +
+            ':not(.timeframe-selector):not(.progress-chart-container):not(.weight-tracker):not(.goals-section)'
         );
         
         if (individualElements.length) {
@@ -186,21 +180,35 @@
                 // Mark as observed
                 element.classList.add('observed');
                 
-                // Trigger only the first few visible elements
+                // Determine if this is a prioritized individual element type
+                const isPrioritizedElement = 
+                    element.classList.contains('exercise-card') || 
+                    element.classList.contains('progress-pic-item') ||
+                    element.classList.contains('stat-card') || 
+                    element.classList.contains('goal-item') ||
+                    element.classList.contains('workout-item');
+                
+                // Trigger only the elements that are fully visible in viewport
                 const rect = element.getBoundingClientRect();
                 const isFullyVisible = rect.top >= 0 && 
-                                      rect.bottom <= window.innerHeight &&
-                                      rect.top < window.innerHeight * 0.33; // Only top third of screen
+                                      rect.bottom <= window.innerHeight;
                 
-                if (isFullyVisible) {
-                    // For elements at the very top of the screen, activate immediately with staggered delay
+                const isInTopThird = rect.top < window.innerHeight * 0.33; // Only top third of screen
+                
+                if (isFullyVisible && (isInTopThird || !isPrioritizedElement)) {
+                    // For visible elements, activate immediately with staggered delay
+                    // Non-prioritized elements get activated even if they're not in the top third
                     setTimeout(() => {
                         void element.offsetWidth; // Force reflow
                         element.classList.add('is-visible');
-                    }, Math.random() * 300 + 200); // Random delay for more natural appearance
+                    }, isPrioritizedElement ? (Math.random() * 300 + 200) : (Math.random() * 200 + 300)); 
                 } else {
-                    // For elements lower down, let the observer handle them
-                    intersectionObserver.individual.observe(element);
+                    // For elements not yet visible, let the observer handle them
+                    const observer = isPrioritizedElement ? 
+                        intersectionObserver.individual : 
+                        intersectionObserver.container;
+                    
+                    observer.observe(element);
                 }
             });
         }
@@ -267,7 +275,14 @@
                element.classList.contains('progress-pic-item') ||
                element.classList.contains('stat-card') ||
                element.classList.contains('goal-item') ||
-               element.classList.contains('workout-item');
+               element.classList.contains('workout-item') ||
+               element.classList.contains('form-group') ||
+               element.classList.contains('exercise-filter') ||
+               element.classList.contains('muscle-filter') ||
+               element.classList.contains('date-filter-button') ||
+               element.classList.contains('filter-group') ||
+               element.classList.contains('exercise-set') ||
+               element.classList.contains('workout-summary-item');
     }
     
     function setupIndividualAnimations() {
@@ -297,7 +312,37 @@
             item.classList.add('reveal-on-scroll');
         });
         
-        // If more elements need individual animation, add them here
+        // Apply reveal-on-scroll to ALL elements inside each tab content
+        // Exclude elements that already have the class or are part of the app header
+        document.querySelectorAll('.tab-content').forEach(tabContent => {
+            // First, add the perspective-container class to all tab containers if not already applied
+            if (!tabContent.parentElement.classList.contains('perspective-container')) {
+                tabContent.parentElement.classList.add('perspective-container');
+            }
+            
+            // Get all direct child elements that need animation
+            const elementsToAnimate = tabContent.querySelectorAll(
+                '.section-header:not(.reveal-on-scroll), ' +
+                '.container > div:not(.reveal-on-scroll):not(.section-header):not(.perspective-container), ' +
+                '.container > button:not(.reveal-on-scroll), ' +
+                '.container > form:not(.reveal-on-scroll), ' +
+                '.container > input:not(.reveal-on-scroll), ' +
+                '.container > select:not(.reveal-on-scroll), ' +
+                '.container > ul:not(.reveal-on-scroll), ' +
+                '.container > ol:not(.reveal-on-scroll), ' +
+                '.container > canvas:not(.reveal-on-scroll)'
+            );
+            
+            elementsToAnimate.forEach(element => {
+                // Skip elements that are part of the header or already have animation
+                if (!element.closest('.app-header') && 
+                    !element.classList.contains('reveal-on-scroll') &&
+                    !element.classList.contains('theme-panel') &&
+                    !element.parentElement.classList.contains('theme-panel')) {
+                    element.classList.add('reveal-on-scroll');
+                }
+            });
+        });
     }
     
     function isInViewport(element) {
