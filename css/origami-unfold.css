@@ -1,0 +1,148 @@
+/* Origami Unfold Effect Styles */
+
+/* Parent container to establish the 3D space */
+.perspective-container {
+    perspective: 1000px; /* Adjust value to control the intensity of the 3D effect */
+}
+
+/* Elements to be animated */
+.reveal-on-scroll {
+    /* Initial State: Hidden and Folded */
+    opacity: 0;
+    transform: rotateX(-90deg); /* Folded flat, facing away */
+    transform-origin: top center; /* The "hinge" or fold line is at the top */
+
+    /* Transition definition */
+    transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1.0),
+                opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+
+    /* Helps prevent flickering during transform in some browsers */
+    backface-visibility: hidden;
+    
+    /* Ensure we don't have any will-change issues on tab change */
+    will-change: transform, opacity;
+}
+
+/* Variations - will be applied to different elements for more variety */
+.reveal-on-scroll:nth-child(odd) {
+    transform: rotateX(-90deg);
+    transform-origin: top center;
+}
+
+.reveal-on-scroll:nth-child(even) {
+    transform: rotateY(-90deg);
+    transform-origin: left center;
+}
+
+/* Statistics cards get special treatment and animate individually */
+.stat-card.reveal-on-scroll {
+    opacity: 0;
+    transform: rotateY(-90deg);
+    transform-origin: left center;
+    transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1.0),
+                opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+    backface-visibility: hidden;
+}
+
+.stat-card.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: rotateY(0deg);
+}
+
+/* Visible State: Triggered by JavaScript */
+.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: rotate(0deg); /* Unfolded */
+}
+
+.reveal-on-scroll.is-visible .stat-card {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+
+/* Add slight delay to staggered animations */
+.section-header.reveal-on-scroll {
+    transition-delay: 0.1s;
+}
+
+/* Add delay to alternate odd/even for more visual interest */
+.reveal-on-scroll:nth-child(odd).is-visible {
+    transition-delay: 0.05s;
+}
+
+.reveal-on-scroll:nth-child(even).is-visible {
+    transition-delay: 0.15s;
+}
+
+/* Special animations for specific sections */
+.weight-tracker.reveal-on-scroll {
+    transform: rotateY(90deg);
+    transform-origin: right center;
+}
+
+.weight-tracker.reveal-on-scroll.is-visible {
+    transform: rotateY(0deg);
+}
+
+.progress-chart-container.reveal-on-scroll {
+    transform: rotateZ(-5deg) scale(0.9);
+    transform-origin: center bottom;
+    opacity: 0;
+}
+
+.progress-chart-container.reveal-on-scroll.is-visible {
+    transform: rotateZ(0deg) scale(1);
+    opacity: 1;
+}
+
+/* Exercise cards will animate individually */
+.exercise-card.reveal-on-scroll {
+    opacity: 0;
+    transform: rotateX(-60deg);
+    transform-origin: top center;
+    transition: transform 0.7s cubic-bezier(0.25, 0.1, 0.25, 1.0),
+                opacity 0.5s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+    backface-visibility: hidden;
+}
+
+.exercise-card.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: rotateX(0deg);
+}
+
+/* Progress pics items will animate individually */
+.progress-pic-item.reveal-on-scroll {
+    opacity: 0;
+    transform: rotateY(-90deg) translateX(-20px);
+    transform-origin: left center;
+    transition: all 0.7s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.progress-pic-item.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: rotateY(0deg) translateX(0);
+}
+
+/* History workout items animate individually */
+.workout-item.reveal-on-scroll {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: all 0.6s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.workout-item.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Goal items animate individually */
+.goal-item.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.goal-item.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}

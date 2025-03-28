@@ -49,6 +49,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     <link rel="stylesheet" href="css/pics-nav-button-fix.css">
     <link rel="stylesheet" href="css/confirmation-dialog-fix.css">
     <link rel="stylesheet" href="css/progress-chart-fix.css">
+    <link rel="stylesheet" href="css/origami-unfold.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     
     
@@ -444,19 +445,19 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
         </div>
         
         <!-- Tab Container for elastic transitions -->
-        <div class="tab-container">
+        <div class="tab-container perspective-container">
         
         <!-- Current Workout Tab -->
         <div class="tab-content active" id="current-workout">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header reveal-on-scroll">
                     <div class="title-wrapper title-wrapper-centered">
                         <div class="title-icon"><i class="fas fa-dumbbell" style="position:relative; left:-4px;"></i></div>
                         <h2>Current Workout</h2>
                     </div>
                 </div>
                 
-                <div class="start-options-container">
+                <div class="start-options-container reveal-on-scroll">
                     <div class="start-option" id="template-workout">
                         <div class="option-icon"><i class="fas fa-clipboard-list"></i></div>
                         <h3>Template Workout</h3>
@@ -465,7 +466,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                     </div>
                 </div>
                 
-                <div class="templates-section">
+                <div class="templates-section reveal-on-scroll">
                     <div class="section-header">
                         <div class="title-wrapper title-wrapper-centered">
                             <div class="title-icon"><i class="fas fa-clipboard-list"></i></div>
@@ -486,7 +487,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
         <!-- Statistics Tab -->
         <div class="tab-content" id="statistics">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header reveal-on-scroll">
                     <div class="title-wrapper title-wrapper-centered">
                         <div class="title-icon"><i class="fas fa-chart-line" style="position:relative; left:-4px;"></i></div>
                         <h2>Statistics & Analytics</h2>
@@ -500,7 +501,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                     <button class="timeframe-button" data-timeframe="all">All Time</button>
                 </div>
                 
-                <div class="stats-summary">
+                <div class="stats-summary reveal-on-scroll">
                     <div class="stat-card">
                         <div class="stat-icon"><i class="fas fa-dumbbell"></i></div>
                         <div class="stat-content">
@@ -592,7 +593,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                     </div>
                 </div>
                 
-                <div class="progress-chart-container">
+                <div class="progress-chart-container reveal-on-scroll">
                     <div class="filters">
                         <div class="filter-group">
                             <label for="exercise-select">Exercise:</label>
@@ -616,7 +617,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                     <canvas id="progress-chart"></canvas>
                 </div>
                 
-                <div class="weight-tracker">
+                <div class="weight-tracker reveal-on-scroll">
                     <div class="section-header">
                         <div class="title-wrapper title-wrapper-centered">
                             <div class="title-icon"><i class="fas fa-weight"></i></div>
@@ -673,7 +674,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                     </div>
                 </div>
                 
-                <div class="exercises-container" id="exercises-list">
+                <div class="exercises-container reveal-on-scroll" id="exercises-list">
                     <!-- Exercises will be added here dynamically -->
                 </div>
             </div>
@@ -698,7 +699,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                     </div>
                 </div>
                 
-                <div class="history-list" id="workout-history">
+                <div class="history-list reveal-on-scroll" id="workout-history">
                     <!-- Workout history items will be added here dynamically -->
                 </div>
             </div>
@@ -715,7 +716,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                 </div>
                 
                 <!-- Exercise Goals Section -->
-                <div class="goals-section">
+                <div class="goals-section reveal-on-scroll">
                     <div class="section-header">
                         <div class="title-wrapper title-wrapper-centered">
                             <div class="title-icon"><i class="fas fa-dumbbell"></i></div>
@@ -750,7 +751,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                 </div>
                 
                 <!-- Gym Visits Goals Section -->
-                <div class="goals-section">
+                <div class="goals-section reveal-on-scroll">
                     <div class="section-header">
                         <div class="title-wrapper title-wrapper-centered">
                             <div class="title-icon"><i class="fas fa-calendar-check"></i></div>
@@ -786,7 +787,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                 </div>
                 
                 <!-- Bodyweight Goals Section -->
-                <div class="goals-section">
+                <div class="goals-section reveal-on-scroll">
                     <div class="section-header">
                         <div class="title-wrapper title-wrapper-centered">
                             <div class="title-icon"><i class="fas fa-weight"></i></div>
@@ -835,7 +836,7 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
                         <button class="date-filter-button" data-filter="year">This Year</button>
                     </div>
                     
-                    <div class="pics-grid" id="progress-pics-grid">
+                    <div class="pics-grid reveal-on-scroll" id="progress-pics-grid">
                         <!-- Progress pics will be added here dynamically -->
                     </div>
                     
@@ -1389,6 +1390,9 @@ Then open in your browser at: http://localhost:8000 or the appropriate port
     
     <!-- iOS scrolling fixes for fullscreen mode -->
     <script src="js/ios-scroll-fix.js"></script>
+    
+    <!-- Origami Unfold Effect -->
+    <script src="js/origami-unfold.js"></script>
     
     <!-- Direct SVG icon replacement -->
     <script src="js/direct-icons.js"></script>
