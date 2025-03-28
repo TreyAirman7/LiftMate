@@ -13,6 +13,10 @@
 (function() {
     let intersectionObserver; // Store observer reference
     let currentTabId = null; // Track active tab
+    let isIOS = false; // Flag for iOS devices
+    
+    // Detect iOS device
+    isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     
     // Initialize when DOM is fully loaded
     document.addEventListener('DOMContentLoaded', initOrigamiUnfold);
@@ -28,7 +32,7 @@
                 
                 // Start observing scroll position for active tab
                 setupScrollObserver(activeTab);
-            }, 150);
+            }, isIOS ? 300 : 150); // Longer delay for iOS
         }
     });
     
@@ -36,33 +40,72 @@
     function setupScrollObserver(tabElement) {
         // Create a throttled scroll handler
         let lastScrollTime = 0;
-        const scrollThrottleTime = 100; // ms
+        const scrollThrottleTime = isIOS ? 150 : 100; // Higher throttle on iOS
+        
+        // Use requestAnimationFrame for better performance
+        let scrollTicking = false;
         
         const scrollHandler = () => {
             const now = Date.now();
             if (now - lastScrollTime < scrollThrottleTime) return;
             lastScrollTime = now;
             
-            // Find all not-yet-visible elements with reveal-on-scroll class
-            const hiddenElements = tabElement.querySelectorAll('.reveal-on-scroll:not(.is-visible)');
-            
-            // Nothing to do if all elements are already visible
-            if (!hiddenElements.length) {
-                window.removeEventListener('scroll', scrollHandler);
-                return;
+            if (!scrollTicking) {
+                requestAnimationFrame(() => {
+                    // Find all not-yet-visible elements with reveal-on-scroll class
+                    // On iOS, limit the batch size to improve performance
+                    const selector = isIOS ? 
+                        '.reveal-on-scroll:not(.is-visible):not(.observed-in-scroll)' : 
+                        '.reveal-on-scroll:not(.is-visible)';
+                    
+                    const hiddenElements = tabElement.querySelectorAll(selector);
+                    
+                    // Nothing to do if all elements are already visible
+                    if (!hiddenElements.length) {
+                        window.removeEventListener('scroll', scrollHandler);
+                        return;
+                    }
+                    
+                    // For iOS, process fewer elements per frame
+                    const batchSize = isIOS ? 5 : 20;
+                    let processedCount = 0;
+                    
+                    // Check which elements are now in viewport and could be revealed
+                    hiddenElements.forEach(element => {
+                        if (processedCount >= batchSize) {
+                            // Mark element as observed to skip it in the next batch
+                            if (isIOS) element.classList.add('observed-in-scroll');
+                            return;
+                        }
+                        
+                        if (isInViewport(element) && !element.classList.contains('is-visible')) {
+                            // Mark element as visible
+                            element.classList.add('is-visible');
+                            processedCount++;
+                        }
+                        
+                        // Mark as observed for batch processing on iOS
+                        if (isIOS) element.classList.add('observed-in-scroll');
+                    });
+                    
+                    scrollTicking = false;
+                });
+                
+                scrollTicking = true;
             }
-            
-            // Check which elements are now in viewport and could be revealed
-            hiddenElements.forEach(element => {
-                if (isInViewport(element) && !element.classList.contains('is-visible')) {
-                    // Mark element as visible
-                    element.classList.add('is-visible');
-                }
-            });
         };
         
-        // Add scroll listener
-        window.addEventListener('scroll', scrollHandler);
+        // Add scroll listener with passive flag for better touch performance
+        window.addEventListener('scroll', scrollHandler, { passive: true });
+        
+        // For iOS, add a timer to periodically clean up observed-in-scroll flags
+        if (isIOS) {
+            setInterval(() => {
+                tabElement.querySelectorAll('.observed-in-scroll').forEach(element => {
+                    element.classList.remove('observed-in-scroll');
+                });
+            }, 1000); // Reset every second
+        }
     }
     
     // If DOM is already loaded (when script is loaded after DOMContentLoaded)
@@ -148,69 +191,128 @@
         // Make sure the tab is visible
         tabElement.style.opacity = "1";
         
-        // Force container/section elements to be visible first (these set the stage for the tab)
-        const containerElements = tabElement.querySelectorAll(
-            '.section-header.reveal-on-scroll:not(.is-visible), ' +
-            '.start-options-container.reveal-on-scroll:not(.is-visible), ' +
-            '.templates-section.reveal-on-scroll:not(.is-visible), ' +
-            '.timeframe-selector.reveal-on-scroll:not(.is-visible), ' +
-            '.progress-chart-container.reveal-on-scroll:not(.is-visible), ' + 
-            '.weight-tracker.reveal-on-scroll:not(.is-visible), ' +
-            '.goals-section.reveal-on-scroll:not(.is-visible), ' +
-            '.container > div.reveal-on-scroll:not(.is-visible):not(.exercise-card):not(.progress-pic-item):not(.stat-card):not(.goal-item):not(.workout-item)'
-        );
-        
-        if (containerElements.length) {
-            containerElements.forEach((element, index) => {
-                setTimeout(() => {
-                    void element.offsetWidth; // Force reflow
+        // iOS specific optimizations
+        if (isIOS) {
+            // For iOS, we'll use a simpler, more direct approach to reduce load
+            
+            // 1. First, make sure container-level elements are visible immediately
+            // These elements help establish the layout and provide immediate feedback to user
+            const primaryElements = tabElement.querySelectorAll(
+                '.section-header.reveal-on-scroll:not(.is-visible), ' +
+                '.progress-chart-container.reveal-on-scroll:not(.is-visible), ' + 
+                '.weight-tracker.reveal-on-scroll:not(.is-visible)'
+            );
+            
+            if (primaryElements.length) {
+                primaryElements.forEach(element => {
+                    // Apply GPU acceleration
+                    element.style.willChange = 'transform, opacity';
+                    
+                    // Make visible immediately
                     element.classList.add('is-visible');
-                }, index * 50 + 100);
-            });
-        }
-        
-        // Find all individual elements that should be observed/animated
-        const individualElements = tabElement.querySelectorAll(
-            '.reveal-on-scroll:not(.observed):not(.section-header):not(.start-options-container):not(.templates-section)' +
-            ':not(.timeframe-selector):not(.progress-chart-container):not(.weight-tracker):not(.goals-section)'
-        );
-        
-        if (individualElements.length) {
-            individualElements.forEach(element => {
-                // Mark as observed
-                element.classList.add('observed');
-                
-                // Determine if this is a prioritized individual element type
-                const isPrioritizedElement = 
-                    element.classList.contains('exercise-card') || 
-                    element.classList.contains('progress-pic-item') ||
-                    element.classList.contains('stat-card') || 
-                    element.classList.contains('goal-item') ||
-                    element.classList.contains('workout-item');
-                
-                // Trigger only the elements that are fully visible in viewport
-                const rect = element.getBoundingClientRect();
-                const isFullyVisible = rect.top >= 0 && 
-                                      rect.bottom <= window.innerHeight;
-                
-                const isInTopThird = rect.top < window.innerHeight * 0.33; // Only top third of screen
-                
-                if (isFullyVisible && (isInTopThird || !isPrioritizedElement)) {
-                    // For visible elements, activate immediately with staggered delay
-                    // Non-prioritized elements get activated even if they're not in the top third
+                    
+                    // Clean up will-change
                     setTimeout(() => {
-                        void element.offsetWidth; // Force reflow
+                        element.style.willChange = '';
+                    }, 300);
+                });
+            }
+            
+            // 2. Process visible elements in the viewport - with a small delay
+            setTimeout(() => {
+                // Get all elements in viewport
+                const elementsInView = Array.from(tabElement.querySelectorAll('.reveal-on-scroll:not(.is-visible)'))
+                    .filter(element => {
+                        const rect = element.getBoundingClientRect();
+                        return rect.top >= 0 && rect.top < window.innerHeight;
+                    })
+                    .slice(0, 8); // Limit to 8 elements at most
+                
+                // Activate these with minimal staggering
+                elementsInView.forEach((element, index) => {
+                    element.classList.add('observed');
+                    
+                    setTimeout(() => {
                         element.classList.add('is-visible');
-                    }, isPrioritizedElement ? (Math.random() * 300 + 200) : (Math.random() * 200 + 300)); 
-                } else {
-                    // For elements not yet visible, let the observer handle them
+                    }, index * 20 + 50);
+                });
+                
+                // 3. Let scroll observer handle the rest as user scrolls
+                // Mark remaining elements to be observed but not processed yet
+                tabElement.querySelectorAll('.reveal-on-scroll:not(.is-visible):not(.observed)').forEach(element => {
+                    element.classList.add('observed');
+                    
+                    const isPrioritizedElement = isIndividualAnimatedElement(element);
                     const observer = isPrioritizedElement ? 
                         intersectionObserver.individual : 
                         intersectionObserver.container;
                     
                     observer.observe(element);
-                }
-            });
+                });
+            }, 100);
+            
+        } else {
+            // Non-iOS devices get the full animation experience
+            
+            // Force container/section elements to be visible first (these set the stage for the tab)
+            const containerElements = tabElement.querySelectorAll(
+                '.section-header.reveal-on-scroll:not(.is-visible), ' +
+                '.start-options-container.reveal-on-scroll:not(.is-visible), ' +
+                '.templates-section.reveal-on-scroll:not(.is-visible), ' +
+                '.timeframe-selector.reveal-on-scroll:not(.is-visible), ' +
+                '.progress-chart-container.reveal-on-scroll:not(.is-visible), ' + 
+                '.weight-tracker.reveal-on-scroll:not(.is-visible), ' +
+                '.goals-section.reveal-on-scroll:not(.is-visible), ' +
+                '.container > div.reveal-on-scroll:not(.is-visible):not(.exercise-card):not(.progress-pic-item):not(.stat-card):not(.goal-item):not(.workout-item)'
+            );
+            
+            if (containerElements.length) {
+                containerElements.forEach((element, index) => {
+                    setTimeout(() => {
+                        void element.offsetWidth; // Force reflow
+                        element.classList.add('is-visible');
+                    }, index * 50 + 100);
+                });
+            }
+            
+            // Find all individual elements that should be observed/animated
+            const individualElements = tabElement.querySelectorAll(
+                '.reveal-on-scroll:not(.observed):not(.section-header):not(.start-options-container):not(.templates-section)' +
+                ':not(.timeframe-selector):not(.progress-chart-container):not(.weight-tracker):not(.goals-section)'
+            );
+            
+            if (individualElements.length) {
+                individualElements.forEach(element => {
+                    // Mark as observed
+                    element.classList.add('observed');
+                    
+                    // Determine if this is a prioritized individual element type
+                    const isPrioritizedElement = isIndividualAnimatedElement(element);
+                    
+                    // Trigger only the elements that are fully visible in viewport
+                    const rect = element.getBoundingClientRect();
+                    const isFullyVisible = rect.top >= 0 && 
+                                          rect.bottom <= window.innerHeight;
+                    
+                    const isInTopThird = rect.top < window.innerHeight * 0.33; // Only top third of screen
+                    
+                    if (isFullyVisible && (isInTopThird || !isPrioritizedElement)) {
+                        // For visible elements, activate immediately with staggered delay
+                        // Non-prioritized elements get activated even if they're not in the top third
+                        setTimeout(() => {
+                            void element.offsetWidth; // Force reflow
+                            element.classList.add('is-visible');
+                        }, isPrioritizedElement ? (Math.random() * 300 + 200) : (Math.random() * 200 + 300)); 
+                    } else {
+                        // For elements not yet visible, let the observer handle them
+                        const observer = isPrioritizedElement ? 
+                            intersectionObserver.individual : 
+                            intersectionObserver.container;
+                        
+                        observer.observe(element);
+                    }
+                });
+            }
         }
     }
     

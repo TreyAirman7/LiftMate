@@ -23,6 +23,21 @@
     will-change: transform, opacity;
 }
 
+/* iOS-specific optimizations */
+@supports (-webkit-touch-callout: none) {
+    /* iOS devices - simpler animations for better performance */
+    .reveal-on-scroll {
+        /* Use simpler transforms on iOS */
+        transform: translateY(30px) scale(0.95);
+        transform-origin: center;
+        transition: transform 0.5s ease-out,
+                    opacity 0.4s ease-out;
+        /* Use GPU acceleration */
+        -webkit-transform-style: preserve-3d;
+        -webkit-backface-visibility: hidden;
+    }
+}
+
 /* Variations - will be applied to different elements for more variety */
 .reveal-on-scroll:nth-child(odd) {
     transform: rotateX(-90deg);
@@ -32,6 +47,19 @@
 .reveal-on-scroll:nth-child(even) {
     transform: rotateY(-90deg);
     transform-origin: left center;
+}
+
+/* iOS-specific optimizations for element variations */
+@supports (-webkit-touch-callout: none) {
+    .reveal-on-scroll:nth-child(odd) {
+        transform: translateY(25px);
+        transform-origin: center;
+    }
+    
+    .reveal-on-scroll:nth-child(even) {
+        transform: translateX(-25px);
+        transform-origin: center;
+    }
 }
 
 /* Statistics cards get special treatment and animate individually */
@@ -58,6 +86,19 @@
 .reveal-on-scroll.is-visible .stat-card {
     opacity: 1;
     transform: rotate(0deg);
+}
+
+/* iOS optimization for visible state */
+@supports (-webkit-touch-callout: none) {
+    .reveal-on-scroll.is-visible {
+        opacity: 1;
+        transform: translate(0) scale(1); /* Simplify transform for performance */
+    }
+    
+    .reveal-on-scroll.is-visible .stat-card {
+        opacity: 1;
+        transform: translate(0) scale(1);
+    }
 }
 
 /* Add slight delay to staggered animations */
@@ -110,6 +151,19 @@
     transform: rotateX(0deg);
 }
 
+/* iOS optimization for exercise cards */
+@supports (-webkit-touch-callout: none) {
+    .exercise-card.reveal-on-scroll {
+        transform: translateY(20px) scale(0.96);
+        transition: transform 0.4s ease-out,
+                    opacity 0.3s ease-out;
+    }
+    
+    .exercise-card.reveal-on-scroll.is-visible {
+        transform: translateY(0) scale(1);
+    }
+}
+
 /* Progress pics items will animate individually */
 .progress-pic-item.reveal-on-scroll {
     opacity: 0;
@@ -121,6 +175,19 @@
 .progress-pic-item.reveal-on-scroll.is-visible {
     opacity: 1;
     transform: rotateY(0deg) translateX(0);
+}
+
+/* iOS optimization for progress pic items */
+@supports (-webkit-touch-callout: none) {
+    .progress-pic-item.reveal-on-scroll {
+        transform: translateX(-15px) scale(0.95);
+        transition: transform 0.4s ease-out,
+                    opacity 0.35s ease-out;
+    }
+    
+    .progress-pic-item.reveal-on-scroll.is-visible {
+        transform: translateX(0) scale(1);
+    }
 }
 
 /* History workout items animate individually */
