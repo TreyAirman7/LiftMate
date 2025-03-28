@@ -195,6 +195,9 @@ const UI = (() => {
             if (isAnimating) return;
             isAnimating = true;
             
+            // Check if on iOS device
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
             // Make sure both tabs are ready for animation
             oldTab.style.display = 'block';
             newTab.style.display = 'block';
@@ -211,6 +214,15 @@ const UI = (() => {
             oldTab.style.display = 'none';
             oldTab.classList.remove('active');
             
+            // Special handling for iOS devices
+            if (isIOS) {
+                // Add a special class for iOS animation trigger
+                newTab.classList.add('ios-tab-transition');
+                
+                // Force browser to recognize the change
+                void newTab.offsetWidth;
+            }
+            
             // Start animation for the new tab only
             // Invert the directions to match visual expectations
             if (goingRight) {
@@ -222,47 +234,61 @@ const UI = (() => {
             // Ensure the sliding-in tab is properly positioned and visible
             newTab.style.opacity = '1';
             
-            // Listen for animation completion
+            // Listen for animation completion with multiple event types for better iOS support
+            const animationEndEvents = ['animationend', 'webkitAnimationEnd', 'oAnimationEnd', 'MSAnimationEnd'];
+            
             const animationEndHandler = (event) => {
                 if (event.target === newTab) {
-                    // Animation complete, clean up
-                    // Make new tab active
-                    newTab.classList.add('active');
-                    newTab.classList.remove('sliding-in-right', 'sliding-in-left');
-                    
-                    // Reset animation state
-                    isAnimating = false;
-                    
-                    // Remove this listener to avoid duplicate triggers
-                    newTab.removeEventListener('animationend', animationEndHandler);
+                    completeAnimation();
                 }
             };
             
-            // Add listener to detect animation completion
-            newTab.addEventListener('animationend', animationEndHandler);
+            // Function to complete the animation (called by event or timer)
+            const completeAnimation = () => {
+                if (!isAnimating) return; // Avoid duplicate calls
+                
+                // Animation complete, clean up
+                // Make new tab active
+                newTab.classList.add('active');
+                newTab.classList.remove('sliding-in-right', 'sliding-in-left', 'ios-tab-transition');
+                
+                // Reset animation state
+                isAnimating = false;
+                
+                // Remove all listeners
+                animationEndEvents.forEach(eventName => {
+                    newTab.removeEventListener(eventName, animationEndHandler);
+                });
+            };
             
-            // Fallback in case animation event doesn't fire
-            setTimeout(() => {
-                if (isAnimating) {
-                    // Clean up manually if animation event didn't fire
-                    newTab.classList.add('active');
-                    newTab.classList.remove('sliding-in-right', 'sliding-in-left');
-                    
-                    isAnimating = false;
-                }
-            }, 400);
+            // Add listeners for all animation end events for cross-browser/iOS support
+            animationEndEvents.forEach(eventName => {
+                newTab.addEventListener(eventName, animationEndHandler);
+            });
+            
+            // More reliable fallback with longer timeout for iOS 
+            setTimeout(completeAnimation, isIOS ? 500 : 400);
         };
         
         // Initialize tabs
         initTabNavigation();
         
-        // Attach click handlers to navigation buttons
+        // Attach click handlers to navigation buttons with extra iOS support
         navButtons.forEach((button, index) => {
-            button.addEventListener('click', () => {
+            // Use both click and touchend for better iOS support
+            const handleTabSwitch = (e) => {
+                // Prevent default only for touchend to avoid delays
+                if (e.type === 'touchend') {
+                    e.preventDefault();
+                }
+                
                 const tabId = button.getAttribute('data-tab');
                 const newTab = document.getElementById(tabId);
                 
                 if (!newTab || newTab === currentTab || isAnimating) return;
+                
+                // Check if on iOS device
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
                 
                 // Update navigation buttons
                 navButtons.forEach(btn => btn.classList.remove('active'));
@@ -271,8 +297,15 @@ const UI = (() => {
                 // Determine slide direction
                 const goingRight = index > currentTabIndex;
                 
-                // Perform the transition
-                performTransition(currentTab, newTab, goingRight);
+                // Perform the transition with a small delay for iOS to ensure UI updates first
+                if (isIOS) {
+                    // Small delay can help iOS process the UI changes first
+                    setTimeout(() => {
+                        performTransition(currentTab, newTab, goingRight);
+                    }, 10);
+                } else {
+                    performTransition(currentTab, newTab, goingRight);
+                }
                 
                 // Update current tab references
                 currentTab = newTab;
@@ -280,7 +313,11 @@ const UI = (() => {
                 
                 // Scroll to top
                 window.scrollTo(0, 0);
-            });
+            };
+            
+            // Add both event listeners for better iOS support
+            button.addEventListener('click', handleTabSwitch);
+            button.addEventListener('touchend', handleTabSwitch);
         });
     };
     
