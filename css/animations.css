@@ -372,7 +372,27 @@ input:invalid:not(:placeholder-shown) {
   overflow-x: hidden;
   will-change: transform, opacity;
   transform: translateZ(0);
+  -webkit-transform: translateZ(0);
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Special optimizations for iOS Safari */
+.ios-device .tab-content {
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+}
+
+/* Heavy tabs get special treatment on iOS */
+.ios-device #stats-tab,
+.ios-device #exercises-tab {
+  transition: opacity 0.3s ease !important;
+  animation: none !important;
+  -webkit-animation: none !important;
 }
 
 .tab-content.active {

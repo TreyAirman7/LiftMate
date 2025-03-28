@@ -63,9 +63,11 @@ const ExerciseManager = (() => {
     };
     
     /**
-     * Render the list of exercises
+     * Render the list of exercises with optimizations for iOS
      */
     const renderExercisesList = () => {
+        // Check if on iOS device for optimized loading
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const exercises = DataManager.getExercises();
         const exercisesList = document.getElementById('exercises-list');
         
@@ -85,26 +87,71 @@ const ExerciseManager = (() => {
             return;
         }
         
-        exercises.forEach(exercise => {
-            const exerciseCard = document.createElement('div');
-            exerciseCard.className = 'exercise-card';
-            exerciseCard.setAttribute('data-exercise-id', exercise.id);
-            exerciseCard.setAttribute('data-muscles', exercise.muscles.join(',').toLowerCase());
+        if (isIOS) {
+            // For iOS, use document fragment and batch processing for better performance
+            const fragment = document.createDocumentFragment();
             
-            exerciseCard.innerHTML = `
-                <h3>${exercise.name}</h3>
-                <div class="muscle-tags">
-                    ${exercise.muscles.map(muscle => `<span class="muscle-tag">${muscle}</span>`).join('')}
-                </div>
-            `;
+            // Function to render exercises in batches
+            const renderBatch = (startIndex, count) => {
+                const endIndex = Math.min(startIndex + count, exercises.length);
+                
+                for (let i = startIndex; i < endIndex; i++) {
+                    const exercise = exercises[i];
+                    const exerciseCard = document.createElement('div');
+                    exerciseCard.className = 'exercise-card';
+                    exerciseCard.setAttribute('data-exercise-id', exercise.id);
+                    exerciseCard.setAttribute('data-muscles', exercise.muscles.join(',').toLowerCase());
+                    
+                    exerciseCard.innerHTML = `
+                        <h3>${exercise.name}</h3>
+                        <div class="muscle-tags">
+                            ${exercise.muscles.map(muscle => `<span class="muscle-tag">${muscle}</span>`).join('')}
+                        </div>
+                    `;
+                    
+                    fragment.appendChild(exerciseCard);
+                    
+                    // Add click event to show exercise details
+                    exerciseCard.addEventListener('click', () => {
+                        showExerciseDetails(exercise);
+                    });
+                }
+                
+                exercisesList.appendChild(fragment);
+                
+                // Continue with next batch if needed
+                if (endIndex < exercises.length) {
+                    setTimeout(() => {
+                        renderBatch(endIndex, count);
+                    }, 0);
+                }
+            };
             
-            exercisesList.appendChild(exerciseCard);
-            
-            // Add click event to show exercise details
-            exerciseCard.addEventListener('click', () => {
-                showExerciseDetails(exercise);
+            // Start with the first batch (render 20 at a time)
+            renderBatch(0, 20);
+        } else {
+            // For non-iOS devices, render all at once
+            exercises.forEach(exercise => {
+                const exerciseCard = document.createElement('div');
+                exerciseCard.className = 'exercise-card';
+                exerciseCard.setAttribute('data-exercise-id', exercise.id);
+                exerciseCard.setAttribute('data-muscles', exercise.muscles.join(',').toLowerCase());
+                
+                exerciseCard.innerHTML = `
+                    <h3>${exercise.name}</h3>
+                    <div class="muscle-tags">
+                        ${exercise.muscles.map(muscle => `<span class="muscle-tag">${muscle}</span>`).join('')}
+                    </div>
+                `;
+                
+                exercisesList.appendChild(exerciseCard);
+                
+                // Add click event to show exercise details
+                exerciseCard.addEventListener('click', () => {
+                    showExerciseDetails(exercise);
+                });
             });
-        });
+        }
     };
     
     /**

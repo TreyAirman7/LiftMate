@@ -290,21 +290,53 @@ const UI = (() => {
                 // Check if on iOS device
                 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
                 
-                // Update navigation buttons
+                // Update navigation buttons immediately
                 navButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 
                 // Determine slide direction
                 const goingRight = index > currentTabIndex;
                 
-                // Perform the transition with a small delay for iOS to ensure UI updates first
-                if (isIOS) {
-                    // Small delay can help iOS process the UI changes first
+                // Special optimization for stats and exercise tabs on iOS
+                if (isIOS && (tabId === 'stats-tab' || tabId === 'exercises-tab')) {
+                    // For heavy tabs on iOS, use a simpler, more performant transition
+                    isAnimating = true;
+                    
+                    // Hide the old tab immediately
+                    currentTab.style.display = 'none';
+                    currentTab.classList.remove('active');
+                    
+                    // Prepare the new tab
+                    newTab.style.display = 'block';
+                    newTab.style.opacity = '0';
+                    
+                    // Force reflow to ensure the browser processes the display change
+                    void newTab.offsetWidth;
+                    
+                    // Simple fade in with minimal animation
+                    newTab.style.transition = 'opacity 0.3s ease';
+                    newTab.style.opacity = '1';
+                    
+                    // Mark as active and reset animation state
                     setTimeout(() => {
-                        performTransition(currentTab, newTab, goingRight);
-                    }, 10);
+                        newTab.classList.add('active');
+                        isAnimating = false;
+                        
+                        // Reset the transition property
+                        setTimeout(() => {
+                            newTab.style.transition = '';
+                        }, 300);
+                    }, 300);
                 } else {
-                    performTransition(currentTab, newTab, goingRight);
+                    // For other tabs or non-iOS, use the regular transition
+                    if (isIOS) {
+                        // Small delay can help iOS process the UI changes first
+                        setTimeout(() => {
+                            performTransition(currentTab, newTab, goingRight);
+                        }, 10);
+                    } else {
+                        performTransition(currentTab, newTab, goingRight);
+                    }
                 }
                 
                 // Update current tab references
