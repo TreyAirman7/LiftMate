@@ -303,6 +303,9 @@ const ProgressPicsManager = (() => {
             DataManager.saveProgressPic(picData, imageBlob)
                 .then(() => {
                     console.log('Progress picture saved successfully');
+                    // Reset button state
+                    saveProgressPicButton.disabled = false;
+                    saveProgressPicButton.innerHTML = 'SAVE';
                     UI.closeModal(document.getElementById('progress-pic-modal'));
                     UI.showToast('Progress picture saved successfully', 'success');
                     refreshProgressPics();
@@ -564,6 +567,9 @@ const ProgressPicsManager = (() => {
                 .then(success => {
                     console.log('Delete result:', success);
                     if (success) {
+                        // Restore button state before closing modal
+                        deleteButton.innerHTML = originalHtml;
+                        deleteButton.disabled = false;
                         UI.closeModal(document.getElementById('pic-detail-modal'));
                         UI.showToast('Progress picture deleted', 'success');
                         refreshProgressPics();

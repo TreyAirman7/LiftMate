@@ -1,0 +1,55 @@
+/* LiftMate - iPhone Dark Mode Header Positioning Fixes */
+
+/* iPhone-specific positioning fixes for dark mode headers */
+@media (max-width: 428px) {
+  /* Only apply these fixes in dark mode on iPhone */
+  
+  /* Target elements with data attributes (added by ios-header-fixes.js) */
+  .dark-mode .section-header h2[data-title="Workout Analytics"] {
+    margin-top: 20px !important;
+  }
+  
+  .dark-mode .section-header .title-icon[data-section="Workout Analytics"] {
+    margin-top: 40px !important;
+  }
+  
+  .dark-mode .section-header h2[data-title="One Rep Max Calculator"] {
+    margin-top: 20px !important;
+  }
+  
+  .dark-mode .section-header .title-icon[data-section="One Rep Max Calculator"] {
+    margin-top: 40px !important;
+  }
+  
+  .dark-mode h3.graphic-title[data-title="Muscle Group Focus"] {
+    margin-top: 20px !important;
+  }
+  
+  .dark-mode .title-icon[data-section="Muscle Group Focus"] {
+    margin-top: 40px !important;
+  }
+  
+  .dark-mode .section-header h2[data-title="Personal Records"] {
+    margin-top: 20px !important;
+  }
+  
+  .dark-mode .section-header .title-icon[data-section="Personal Records"] {
+    margin-top: 40px !important;
+  }
+  
+  /* Fallback CSS targets (will work without JavaScript) */
+  .dark-mode .stats-dashboard .section-header h2,
+  .dark-mode .one-rep-max-calculator .section-header h2,
+  .dark-mode .personal-records .section-header h2,
+  .dark-mode .stats-dashboard h3.graphic-title {
+    position: relative;
+    top: 20px;
+  }
+  
+  .dark-mode .stats-dashboard .section-header .title-icon,
+  .dark-mode .one-rep-max-calculator .section-header .title-icon,
+  .dark-mode .personal-records .section-header .title-icon {
+    position: relative;
+    top: 40px;
+  }
+}
