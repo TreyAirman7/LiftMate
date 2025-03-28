@@ -126,72 +126,36 @@ body:not(.animations-enabled) *:not(.dark-mode .template-card):not(.theme-transi
 @keyframes elasticSlideInRight {
   0% {
     opacity: 0;
-    transform: translate3d(-100%, 0, 0);
+    transform: translateX(-100%);
   }
   70% {
     opacity: 1;
-    transform: translate3d(2%, 0, 0);
+    transform: translateX(2%);
   }
   85% {
-    transform: translate3d(-1%, 0, 0);
+    transform: translateX(-1%);
   }
   100% {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@-webkit-keyframes elasticSlideInRight {
-  0% {
-    opacity: 0;
-    -webkit-transform: translate3d(-100%, 0, 0);
-  }
-  70% {
-    opacity: 1;
-    -webkit-transform: translate3d(2%, 0, 0);
-  }
-  85% {
-    -webkit-transform: translate3d(-1%, 0, 0);
-  }
-  100% {
-    opacity: 1;
-    -webkit-transform: translate3d(0, 0, 0);
+    transform: translateX(0);
   }
 }
 
 @keyframes elasticSlideInLeft {
   0% {
     opacity: 0;
-    transform: translate3d(100%, 0, 0);
+    transform: translateX(100%);
   }
   70% {
     opacity: 1;
-    transform: translate3d(-2%, 0, 0);
+    transform: translateX(-2%);
   }
   85% {
-    transform: translate3d(1%, 0, 0);
+    transform: translateX(1%);
   }
   100% {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@-webkit-keyframes elasticSlideInLeft {
-  0% {
-    opacity: 0;
-    -webkit-transform: translate3d(100%, 0, 0);
-  }
-  70% {
-    opacity: 1;
-    -webkit-transform: translate3d(-2%, 0, 0);
-  }
-  85% {
-    -webkit-transform: translate3d(1%, 0, 0);
-  }
-  100% {
-    opacity: 1;
-    -webkit-transform: translate3d(0, 0, 0);
+    transform: translateX(0);
   }
 }
 
@@ -370,9 +334,9 @@ input:invalid:not(:placeholder-shown) {
   right: 0;
   top: 0;
   overflow-x: hidden;
-  will-change: transform;
+  will-change: transform, opacity;
   transform: translateZ(0);
-  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .tab-content.active {
@@ -380,18 +344,14 @@ input:invalid:not(:placeholder-shown) {
   z-index: 2;
 }
 
-.tab-content.sliding-in-right,
-.tab-content.ios-tab-transition.sliding-in-right {
-  -webkit-animation: elasticSlideInRight 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.tab-content.sliding-in-right {
   animation: elasticSlideInRight 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   display: block !important;
   position: absolute;
   z-index: 3;
 }
 
-.tab-content.sliding-in-left,
-.tab-content.ios-tab-transition.sliding-in-left {
-  -webkit-animation: elasticSlideInLeft 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.tab-content.sliding-in-left {
   animation: elasticSlideInLeft 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   display: block !important;
   position: absolute;

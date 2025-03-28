@@ -195,9 +195,6 @@ const UI = (() => {
             if (isAnimating) return;
             isAnimating = true;
             
-            // Check if on iOS device
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            
             // Make sure both tabs are ready for animation
             oldTab.style.display = 'block';
             newTab.style.display = 'block';
@@ -206,122 +203,76 @@ const UI = (() => {
             oldTab.classList.remove('sliding-in-right', 'sliding-in-left', 'sliding-out-right', 'sliding-out-left');
             newTab.classList.remove('sliding-in-right', 'sliding-in-left', 'sliding-out-right', 'sliding-out-left');
             
-            // Force reflow to ensure clean animation state - critical for iOS
+            // Force reflow to ensure clean animation state
             void oldTab.offsetWidth;
             void newTab.offsetWidth;
             
-            // Hide old tab to prevent flicker
+            // Remove old tab immediately
             oldTab.style.display = 'none';
             oldTab.classList.remove('active');
             
-            // Improve performance specifically for iOS devices
-            if (isIOS) {
-                // Clear any lingering opacity settings
-                newTab.style.opacity = '';
-                
-                // Add hardware acceleration hints
-                newTab.style.transform = 'translateZ(0)';
-                newTab.style.webkitTransform = 'translateZ(0)';
-                
-                // Force layout calculation to ensure CSS is applied
-                void newTab.offsetHeight;
-            }
-            
-            // Start animation
-            // Invert the directions for proper slide effect
+            // Start animation for the new tab only
+            // Invert the directions to match visual expectations
             if (goingRight) {
                 newTab.classList.add('sliding-in-left');
             } else {
                 newTab.classList.add('sliding-in-right');
             }
             
-            // Listen for all animation end events for better cross-browser compatibility
-            const animationEvents = ['animationend', 'webkitAnimationEnd'];
+            // Ensure the sliding-in tab is properly positioned and visible
+            newTab.style.opacity = '1';
             
-            // Animation completion handler
-            const completeAnimation = () => {
-                if (!isAnimating) return; // Prevent duplicate calls
-                
-                // Finalize tab state
-                newTab.classList.add('active');
-                newTab.classList.remove('sliding-in-right', 'sliding-in-left');
-                
-                // Reset animation state
-                isAnimating = false;
-                
-                // Remove all animation end listeners
-                animationEvents.forEach(event => {
-                    newTab.removeEventListener(event, handleAnimationEnd);
-                });
-            };
-            
-            // Animation end event handler
-            const handleAnimationEnd = (event) => {
+            // Listen for animation completion
+            const animationEndHandler = (event) => {
                 if (event.target === newTab) {
-                    completeAnimation();
+                    // Animation complete, clean up
+                    // Make new tab active
+                    newTab.classList.add('active');
+                    newTab.classList.remove('sliding-in-right', 'sliding-in-left');
+                    
+                    // Reset animation state
+                    isAnimating = false;
+                    
+                    // Remove this listener to avoid duplicate triggers
+                    newTab.removeEventListener('animationend', animationEndHandler);
                 }
             };
             
-            // Add all animation end listeners
-            animationEvents.forEach(event => {
-                newTab.addEventListener(event, handleAnimationEnd);
-            });
+            // Add listener to detect animation completion
+            newTab.addEventListener('animationend', animationEndHandler);
             
-            // Reliable fallback - more time for iOS
-            const timeoutDuration = isIOS ? 600 : 500;
-            setTimeout(completeAnimation, timeoutDuration);
+            // Fallback in case animation event doesn't fire
+            setTimeout(() => {
+                if (isAnimating) {
+                    // Clean up manually if animation event didn't fire
+                    newTab.classList.add('active');
+                    newTab.classList.remove('sliding-in-right', 'sliding-in-left');
+                    
+                    isAnimating = false;
+                }
+            }, 400);
         };
         
         // Initialize tabs
         initTabNavigation();
         
-        // Attach click handlers to navigation buttons with extra iOS support
+        // Attach click handlers to navigation buttons
         navButtons.forEach((button, index) => {
-            // Use both click and touchend for better iOS support
-            const handleTabSwitch = (e) => {
-                // Prevent default only for touchend to avoid delays
-                if (e.type === 'touchend') {
-                    e.preventDefault();
-                }
-                
+            button.addEventListener('click', () => {
                 const tabId = button.getAttribute('data-tab');
                 const newTab = document.getElementById(tabId);
                 
                 if (!newTab || newTab === currentTab || isAnimating) return;
                 
-                // Check if on iOS device
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-                
-                // Update navigation buttons immediately
+                // Update navigation buttons
                 navButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 
                 // Determine slide direction
                 const goingRight = index > currentTabIndex;
                 
-                // For all tabs, use the same standard transition
-                // On iOS, add a small delay to ensure UI is ready
-                if (isIOS) {
-                    // Preload tab content before animation to improve performance
-                    newTab.style.display = 'block';
-                    newTab.style.opacity = '0';
-                    newTab.style.pointerEvents = 'none';
-                    
-                    // Force browser to process DOM updates
-                    void newTab.offsetWidth;
-                    
-                    // Hide it again before animation
-                    newTab.style.display = 'none';
-                    newTab.style.opacity = '';
-                    newTab.style.pointerEvents = '';
-                    
-                    // Small delay can help iOS process the DOM changes
-                    setTimeout(() => {
-                        performTransition(currentTab, newTab, goingRight);
-                    }, 50);
-                } else {
-                    performTransition(currentTab, newTab, goingRight);
-                }
+                // Perform the transition
+                performTransition(currentTab, newTab, goingRight);
                 
                 // Update current tab references
                 currentTab = newTab;
@@ -329,11 +280,7 @@ const UI = (() => {
                 
                 // Scroll to top
                 window.scrollTo(0, 0);
-            };
-            
-            // Add both event listeners for better iOS support
-            button.addEventListener('click', handleTabSwitch);
-            button.addEventListener('touchend', handleTabSwitch);
+            });
         });
     };
     
