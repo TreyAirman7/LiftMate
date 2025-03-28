@@ -1,0 +1,16 @@
+/* Fix for Progress Tracker graph on iPhone */
+@supports (-webkit-touch-callout: none) {
+    /* iOS-specific CSS */
+    .progress-chart-container {
+        margin-top: -20px;
+    }
+    
+    .filters {
+        margin-bottom: 10px;
+    }
+    
+    /* Ensure there's no excessive gap */
+    #progress .section-header + .progress-chart-container {
+        margin-top: -15px;
+    }
+}

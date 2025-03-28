@@ -1,0 +1,44 @@
+/* Styles for drag and drop in templates */
+.exercise-item {
+    position: relative;
+    cursor: grab;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.exercise-item:active {
+    cursor: grabbing;
+}
+
+.exercise-item.dragging {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    opacity: 0.8;
+    transform: scale(1.02);
+    z-index: 100;
+}
+
+.exercise-item .drag-handle {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color-secondary);
+    opacity: 0.6;
+    cursor: grab;
+}
+
+.exercise-item .exercise-item-header {
+    padding-left: 30px;
+}
+
+.drag-feedback {
+    height: 3px;
+    background-color: var(--primary-color);
+    margin: 5px 0;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.drag-feedback.active {
+    opacity: 1;
+}

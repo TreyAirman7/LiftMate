@@ -1,0 +1,12 @@
+/* Fix for template set form labels overlapping input fields */
+.set-inputs .form-group label {
+    position: static !important;
+    margin-bottom: 5px;
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-color-secondary);
+}
+
+.set-inputs .form-group input {
+    margin-top: 20px;
+}
