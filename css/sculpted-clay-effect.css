@@ -1,0 +1,168 @@
+/* 
+ * Sculpted Clay / Displacement Morph Effect - PERFORMANCE OPTIMIZED
+ * 
+ * Advanced SVG filter animation for creating elements that appear to 
+ * morph/emerge/push through the page surface
+ * 
+ * Optimized for smoother performance
+ */
+
+/* Base class for all morphing elements */
+.morph-on-scroll {
+    /* Initial State: Hidden, Filter Applied */
+    opacity: 0;
+    visibility: hidden; /* Crucial: prevents distorted shape showing prematurely */
+    filter: url(#displacementFilter); /* Apply the SVG filter */
+
+    /* Transition only for opacity */
+    transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.0),
+                visibility 0s linear 0s,
+                transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.0);
+
+    /* Prevent flickering during animation */
+    backface-visibility: hidden;
+    will-change: opacity, transform; /* Performance optimization */
+    
+    /* Subtle scale effect instead of 3D transforms for better performance */
+    transform: scale(0.98);
+}
+
+/* Visible State: Triggered by JavaScript */
+.morph-on-scroll.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+/* Make sure animations complete properly */
+.morph-on-scroll.animation-complete {
+    filter: none !important;
+}
+
+/* Performance-optimized variations for all element types */
+/* Cards & Major Containers */
+.morph-on-scroll.stat-card,
+.morph-on-scroll.exercise-card,
+.morph-on-scroll.progress-pic-item,
+.morph-on-scroll.workout-item,
+.morph-on-scroll.goal-item,
+.morph-on-scroll.templates-container,
+.morph-on-scroll.exercises-container,
+.morph-on-scroll.stats-summary,
+.morph-on-scroll.goals-section,
+.morph-on-scroll.progress-pics-container,
+.morph-on-scroll.weight-tracker,
+.morph-on-scroll.orm-container,
+.morph-on-scroll.personal-records {
+    transition-duration: 0.6s;
+    transform: scale(0.96);
+}
+
+/* Headers and Titles */
+.morph-on-scroll.section-header,
+.morph-on-scroll.title-wrapper,
+.morph-on-scroll h1,
+.morph-on-scroll h2,
+.morph-on-scroll h3,
+.morph-on-scroll h4 {
+    transition-duration: 0.4s;
+    transform: scale(0.97);
+}
+
+/* Charts and Visualizations */
+.morph-on-scroll.chart-container,
+.morph-on-scroll.progress-chart-container,
+.morph-on-scroll.weight-chart-container,
+.morph-on-scroll.stats-dashboard,
+.morph-on-scroll canvas {
+    transition-duration: 0.7s;
+    transform: scale(0.95);
+}
+
+/* Buttons and Interactive Elements */
+.morph-on-scroll.button,
+.morph-on-scroll.action-button,
+.morph-on-scroll.add-button,
+.morph-on-scroll.nav-button,
+.morph-on-scroll.icon-button,
+.morph-on-scroll.muscle-filter,
+.morph-on-scroll.timeframe-button {
+    transition-duration: 0.4s;
+    transform: scale(0.97);
+}
+
+/* Form Elements */
+.morph-on-scroll.form-group,
+.morph-on-scroll.form-actions,
+.morph-on-scroll input,
+.morph-on-scroll select,
+.morph-on-scroll label {
+    transition-duration: 0.45s;
+    transform: scale(0.98);
+}
+
+/* Filter Controls and Small UI Elements */
+.morph-on-scroll.timeframe-selector,
+.morph-on-scroll.date-filter,
+.morph-on-scroll.exercise-filters,
+.morph-on-scroll.muscle-filters,
+.morph-on-scroll.history-filters {
+    transition-duration: 0.45s;
+    transform: scale(0.98);
+}
+
+/* Text Elements */
+.morph-on-scroll p {
+    transition-duration: 0.5s;
+    transform: scale(0.99);
+}
+
+/* Lists and Containers */
+.morph-on-scroll.history-list,
+.morph-on-scroll.goals-list,
+.morph-on-scroll.pics-grid,
+.morph-on-scroll.templates-grid,
+.morph-on-scroll.records-container {
+    transition-duration: 0.6s;
+    transform: scale(0.97);
+}
+
+/* Stagger animations by type to avoid all elements animating simultaneously */
+.morph-on-scroll.stat-card { transition-delay: 50ms; }
+.morph-on-scroll.exercise-card { transition-delay: 75ms; }
+.morph-on-scroll.progress-pic-item { transition-delay: 25ms; }
+.morph-on-scroll.section-header { transition-delay: 0ms; }
+.morph-on-scroll h1, .morph-on-scroll h2 { transition-delay: 10ms; }
+.morph-on-scroll h3, .morph-on-scroll h4 { transition-delay: 20ms; }
+.morph-on-scroll.button { transition-delay: 30ms; }
+.morph-on-scroll p { transition-delay: 40ms; }
+
+/* Additional classes for animation states */
+.morph-on-scroll.is-animating {
+    filter: url(#displacementFilter);
+}
+
+/* Performance considerations */
+@media (prefers-reduced-motion: reduce) {
+    .morph-on-scroll {
+        transition-duration: 0.3s !important;
+        filter: none !important;
+        transform: none !important;
+    }
+    
+    .morph-on-scroll.is-visible {
+        transform: none !important;
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 767px) {
+    .morph-on-scroll {
+        transition-duration: 0.6s;
+        transform: translateZ(-2px) !important; /* Less extreme 3D on mobile */
+    }
+    
+    .morph-on-scroll.is-visible {
+        transform: translateZ(0) !important;
+    }
+}
