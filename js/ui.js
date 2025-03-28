@@ -207,17 +207,17 @@ const UI = (() => {
             void oldTab.offsetWidth;
             void newTab.offsetWidth;
             
-            // Remove old tab immediately
-            oldTab.style.display = 'none';
-            oldTab.classList.remove('active');
-            
-            // Start animation for the new tab only
-            // Invert the directions to match visual expectations
+            // Animate both tabs for better transition
             if (goingRight) {
+                oldTab.classList.add('sliding-out-left');
                 newTab.classList.add('sliding-in-left');
             } else {
+                oldTab.classList.add('sliding-out-right');
                 newTab.classList.add('sliding-in-right');
             }
+            
+            // Remove active class from old tab
+            oldTab.classList.remove('active');
             
             // Ensure the sliding-in tab is properly positioned and visible
             newTab.style.opacity = '1';
@@ -229,6 +229,10 @@ const UI = (() => {
                     // Make new tab active
                     newTab.classList.add('active');
                     newTab.classList.remove('sliding-in-right', 'sliding-in-left');
+                    
+                    // Also hide the old tab properly now that animation is complete
+                    oldTab.style.display = 'none';
+                    oldTab.classList.remove('sliding-out-left', 'sliding-out-right');
                     
                     // Reset animation state
                     isAnimating = false;
@@ -248,9 +252,13 @@ const UI = (() => {
                     newTab.classList.add('active');
                     newTab.classList.remove('sliding-in-right', 'sliding-in-left');
                     
+                    // Also clean up old tab animation classes
+                    oldTab.style.display = 'none';
+                    oldTab.classList.remove('sliding-out-left', 'sliding-out-right');
+                    
                     isAnimating = false;
                 }
-            }, 400);
+            }, 450);
         };
         
         // Initialize tabs
